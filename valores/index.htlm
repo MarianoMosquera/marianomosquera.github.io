@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ontología de Valores</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/rdflib@2.2.36/dist/rdflib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fa;
+      color: #222;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #ddd;
+      padding: 22px 30px;
+    }
+
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 0;
+      color: #666;
+    }
+
+    #container {
+      display: flex;
+      height: calc(100vh - 95px);
+    }
+
+    #graph {
+      flex: 1;
+      background: white;
+    }
+
+    #panel {
+      width: 320px;
+      padding: 24px;
+      background: #fafafa;
+      border-left: 1px solid #ddd;
+      overflow-y: auto;
+    }
+
+    #panel h2 {
+      margin-top: 0;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-top: 18px;
+    }
+
+    .node circle {
+      stroke: #333;
+      stroke-width: 1.5px;
+      cursor: pointer;
+    }
+
+    .node text {
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .link {
+      stroke: #aaa;
+      stroke-width: 1.5px;
+    }
+
+    .related {
+      stroke: #bbb;
+      stroke-width: 1px;
+      stroke-dasharray: 5,5;
+    }
+
+    #status {
+      padding: 30px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Ontología de Valores</h1>
+  <p>Visualización SKOS — Mariano Mosquera</p>
+</header>
+
+<div id="container">
+
+  <div id="graph">
+    <div id="status">Cargando ontología...</div>
+  </div>
+
+  <aside id="panel">
+    <h2>Concepto</h2>
+    <p>Selecciona un concepto del grafo para consultar su información.</p>
+  </aside>
+
+</div>
+
+<script>
+
+const ttlURL = "../valores.ttl";
+
+const SKOS = {
+  Concept: "http://www.w3.org/2004/02/skos/core#Concept",
+  prefLabel: "http://www.w3.org/2004/02/skos/core#prefLabel",
+  altLabel: "http://www.w3.org/2004/02/skos/core#altLabel",
+  broader: "http://www.w3.org/2004/02/skos/core#broader",
+  related: "http://www.w3.org/2004/02/skos/core#related"
+};
+
+fetch(ttlURL)
+  .then(response => {
+    if (!response.ok) throw new Error("No se pudo cargar valores.ttl");
+    return response.text();
+  })
+  .then(ttl => {
+
+    const store = $rdf.graph();
+
+    $rdf.parse(
+      ttl,
+      store,
+      window.location.origin + "/",
+      "text/turtle"
+    );
+
+    document.getElementById("status").remove();
+
+    const conceptStatements =
+      store.match(null, $rdf.sym(
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      ), $rdf.sym(SKOS.Concept));
+
+    const nodesMap = new Map();
+
+    conceptStatements.forEach(statement => {
+
+      const uri = statement.subject.value;
+
+      const pref =
+        store.any(
+          statement.subject,
+          $rdf.sym(SKOS.prefLabel)
+        );
+
+      nodesMap.set(uri, {
+        id: uri,
+        label: pref ? pref.value : uri.split("/").pop(),
+        altLabels: [],
+        broader: null,
+        related: []
+      });
+
+    });
+
+    nodesMap.forEach(node => {
+
+      const subject = $rdf.sym(node.id);
+
+      const alternatives =
+        store.each(
+          subject,
+          $rdf.sym(SKOS.altLabel)
+        );
+
+      node.altLabels =
+        alternatives.map(x => x.value);
+
+      const broader =
+        store.any(
+          subject,
+          $rdf.sym(SKOS.broader)
+        );
+
+      if (broader) {
+        node.broader = broader.value;
+      }
+
+      const related =
+        store.each(
+          subject,
+          $rdf.sym(SKOS.related)
+        );
+
+      node.related =
+        related.map(x => x.value);
+
+    });
+
+    const nodes = Array.from(nodesMap.values());
+
+    const hierarchyLinks = [];
+
+    nodes.forEach(node => {
+
+      if (
+        node.broader &&
+        nodesMap.has(node.broader)
+      ) {
+
+        hierarchyLinks.push({
+          source: node.broader,
+          target: node.id
+        });
+
+      }
+
+    });
+
+    const relatedLinks = [];
+
+    const relatedKeys = new Set();
+
+    nodes.forEach(node => {
+
+      node.related.forEach(target => {
+
+        if (!nodesMap.has(target)) return;
+
+        const key =
+          [node.id, target]
+            .sort()
+            .join("|");
+
+        if (!relatedKeys.has(key)) {
+
+          relatedKeys.add(key);
+
+          relatedLinks.push({
+            source: node.id,
+            target: target
+          });
+
+        }
+
+      });
+
+    });
+
+    drawGraph(
+      nodes,
+      hierarchyLinks,
+      relatedLinks,
+      nodesMap
+    );
+
+  })
+
+  .catch(error => {
+
+    document.getElementById("status").innerHTML =
+      "<strong>Error:</strong> " + error.message;
+
+    console.error(error);
+
+  });
+
+
+function drawGraph(
+  nodes,
+  hierarchyLinks,
+  relatedLinks,
+  nodesMap
+) {
+
+  const container =
+    document.getElementById("graph");
+
+  const width =
+    container.clientWidth;
+
+  const height =
+    container.clientHeight;
+
+  const svg =
+    d3.select("#graph")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr(
+        "viewBox",
+        [0, 0, width, height]
+      );
+
+  const zoomLayer =
+    svg.append("g");
+
+  svg.call(
+    d3.zoom()
+      .scaleExtent([0.3, 4])
+      .on("zoom", event => {
+        zoomLayer.attr(
+          "transform",
+          event.transform
+        );
+      })
+  );
+
+  const simulation =
+    d3.forceSimulation(nodes)
+
+      .force(
+        "link",
+        d3.forceLink(hierarchyLinks)
+          .id(d => d.id)
+          .distance(110)
+          .strength(0.9)
+      )
+
+      .force(
+        "charge",
+        d3.forceManyBody()
+          .strength(-420)
+      )
+
+      .force(
+        "center",
+        d3.forceCenter(
+          width / 2,
+          height / 2
+        )
+      )
+
+      .force(
+        "collision",
+        d3.forceCollide(45)
+      );
+
+  const related =
+    zoomLayer
+      .append("g")
+      .selectAll("line")
+      .data(relatedLinks)
+      .join("line")
+      .attr("class", "related");
+
+  const links =
+    zoomLayer
+      .append("g")
+      .selectAll("line")
+      .data(hierarchyLinks)
+      .join("line")
+      .attr("class", "link");
+
+  const node =
+    zoomLayer
+      .append("g")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+      .attr("class", "node")
+      .call(drag(simulation));
+
+  node
+    .append("circle")
+    .attr("r", d => {
+      return d.label === "Valores"
+        ? 18
+        : 11;
+    })
+    .attr("fill", d => {
+      return d.label === "Valores"
+        ? "#222"
+        : "#ffffff";
+    });
+
+  node
+    .append("text")
+    .attr("x", 16)
+    .attr("y", 4)
+    .text(d => d.label);
+
+  node.on(
+    "click",
+    (event, d) => {
+      showPanel(d, nodesMap);
+    }
+  );
+
+  simulation.on(
+    "tick",
+    () => {
+
+      links
+        .attr(
+          "x1",
+          d => d.source.x
+        )
+        .attr(
+          "y1",
+          d => d.source.y
+        )
+        .attr(
+          "x2",
+          d => d.target.x
+        )
+        .attr(
+          "y2",
+          d => d.target.y
+        );
+
+      related
+        .attr(
+          "x1",
+          d => nodesMap.get(d.source)?.x
+        )
+        .attr(
+          "y1",
+          d => nodesMap.get(d.source)?.y
+        )
+        .attr(
+          "x2",
+          d => nodesMap.get(d.target)?.x
+        )
+        .attr(
+          "y2",
+          d => nodesMap.get(d.target)?.y
+        );
+
+      node.attr(
+        "transform",
+        d =>
+          `translate(${d.x},${d.y})`
+      );
+
+    });
+
+}
+
+
+function showPanel(
+  concept,
+  nodesMap
+) {
+
+  const panel =
+    document.getElementById("panel");
+
+  const broader =
+    concept.broader &&
+    nodesMap.get(concept.broader)
+      ? nodesMap.get(
+          concept.broader
+        ).label
+      : "—";
+
+  const related =
+    concept.related
+      .map(uri =>
+        nodesMap.get(uri)?.label
+      )
+      .filter(Boolean);
+
+  panel.innerHTML = `
+    <h2>${concept.label}</h2>
+
+    <div class="label">
+      Etiqueta preferida
+    </div>
+    <div>${concept.label}</div>
+
+    <div class="label">
+      Etiquetas alternativas
+    </div>
+    <div>
+      ${
+        concept.altLabels.length
+          ? concept.altLabels.join(", ")
+          : "—"
+      }
+    </div>
+
+    <div class="label">
+      Concepto superior
+    </div>
+    <div>${broader}</div>
+
+    <div class="label">
+      Conceptos relacionados
+    </div>
+    <div>
+      ${
+        related.length
+          ? related.join(", ")
+          : "—"
+      }
+    </div>
+  `;
+
+}
+
+
+function drag(simulation) {
+
+  function dragstarted(
+    event,
+    d
+  ) {
+
+    if (!event.active)
+      simulation.alphaTarget(0.3)
+        .restart();
+
+    d.fx = d.x;
+    d.fy = d.y;
+
+  }
+
+  function dragged(
+    event,
+    d
+  ) {
+
+    d.fx = event.x;
+    d.fy = event.y;
+
+  }
+
+  function dragended(
+    event,
+    d
+  ) {
+
+    if (!event.active)
+      simulation.alphaTarget(0);
+
+    d.fx = null;
+    d.fy = null;
+
+  }
+
+  return d3.drag()
+    .on(
+      "start",
+      dragstarted
+    )
+    .on(
+      "drag",
+      dragged
+    )
+    .on(
+      "end",
+      dragended
+    );
+
+}
+
+</script>
+
+</body>
+</html>
