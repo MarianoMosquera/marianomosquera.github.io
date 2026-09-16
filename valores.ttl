@@ -1,0 +1,317 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ex: <https://marianomosquera.github.io/ontology/> .
+
+ex:Valores
+    a skos:Concept ;
+    skos:prefLabel "Valores"@es .
+
+ex:Cooperacion
+    skos:broader ex:Valores .
+
+ex:Igualdad
+    skos:broader ex:Valores .
+
+ex:Justicia
+    skos:broader ex:Valores .
+
+ex:Competencia
+    skos:broader ex:Valores .
+
+ex:Libertad
+    skos:broader ex:Valores .
+
+ex:Propiedad
+    skos:broader ex:Valores .
+
+ex:Cooperacion skos:related ex:Igualdad, ex:Justicia .
+ex:Igualdad skos:related ex:Cooperacion, ex:Justicia .
+ex:Justicia skos:related ex:Cooperacion, ex:Igualdad .
+ex:Competencia skos:related ex:Libertad, ex:Propiedad .
+ex:Libertad skos:related ex:Competencia, ex:Propiedad .
+ex:Propiedad skos:related ex:Competencia, ex:Libertad .
+
+ex:Cooperacion
+    a skos:Concept ;
+    skos:prefLabel "Cooperación"@es .
+
+ex:Verdad
+    a skos:Concept ;
+    skos:prefLabel "Verdad"@es ;
+    skos:altLabel "Veracidad"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Honestidad .
+
+ex:Honestidad
+    a skos:Concept ;
+    skos:prefLabel "Honestidad"@es ;
+    skos:altLabel "Honradez"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Verdad, ex:Confianza .
+
+ex:Reciprocidad
+    a skos:Concept ;
+    skos:prefLabel "Reciprocidad"@es ;
+    skos:altLabel "Correspondencia"@es,
+                  "Mutualidad"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Cooperacion, ex:Confianza, ex:Compromiso .
+
+ex:Confianza
+    a skos:Concept ;
+    skos:prefLabel "Confianza"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Honestidad, ex:Reciprocidad, ex:Lealtad, ex:Cooperacion .
+
+ex:BienComun
+    a skos:Concept ;
+    skos:prefLabel "Bien común"@es ;
+    skos:altLabel "Interés común"@es,
+                  "Bienestar colectivo"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Comunidad, ex:Cooperacion .
+
+ex:Comunidad
+    a skos:Concept ;
+    skos:prefLabel "Comunidad"@es ;
+    skos:altLabel "Colectividad"@es,
+                  "Comunidad de pertenencia"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:BienComun, ex:Cooperacion .
+
+ex:Compromiso
+    a skos:Concept ;
+    skos:prefLabel "Compromiso"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Lealtad, ex:Confianza, ex:Comunidad .
+
+ex:Lealtad
+    a skos:Concept ;
+    skos:prefLabel "Lealtad"@es ;
+    skos:altLabel "Fidelidad"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Confianza, ex:Compromiso, ex:Reciprocidad .
+
+ex:RespetoHistoria
+    a skos:Concept ;
+    skos:prefLabel "Respeto a la historia"@es ;
+    skos:altLabel "Respeto por la historia"@es,
+                  "Respeto a la tradición"@es ;
+    skos:broader ex:Cooperacion ;
+    skos:related ex:Comunidad .
+
+ex:Prudencia
+    a skos:Concept ;
+    skos:prefLabel "Prudencia"@es ;
+    skos:altLabel "Sensatez"@es,
+                  "Juicio prudente"@es ;
+    skos:broader ex:Cooperacion .
+
+ex:Igualdad
+    a skos:Concept ;
+    skos:prefLabel "Igualdad"@es .
+
+ex:Dignidad
+    a skos:Concept ;
+    skos:prefLabel "Dignidad"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Integridad, ex:Respeto, ex:NoEstigmatizacion .
+
+ex:Integridad
+    a skos:Concept ;
+    skos:prefLabel "Integridad"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Dignidad, ex:Respeto, ex:Imparcialidad .
+
+ex:Seguridad
+    a skos:Concept ;
+    skos:prefLabel "Seguridad"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:NoViolencia, ex:Paz .
+
+ex:NoViolencia
+    a skos:Concept ;
+    skos:prefLabel "No-violencia"@es ;
+    skos:altLabel "No violencia"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Seguridad, ex:Paz, ex:Tolerancia .
+
+ex:Paz
+    a skos:Concept ;
+    skos:prefLabel "Paz"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:NoViolencia, ex:Seguridad, ex:Tolerancia .
+
+ex:Respeto
+    a skos:Concept ;
+    skos:prefLabel "Respeto"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Dignidad, ex:Integridad, ex:Tolerancia, ex:NoEstigmatizacion .
+
+ex:Tolerancia
+    a skos:Concept ;
+    skos:prefLabel "Tolerancia"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Respeto, ex:NoViolencia, ex:Paz, ex:NoEstigmatizacion .
+
+ex:Imparcialidad
+    a skos:Concept ;
+    skos:prefLabel "Imparcialidad"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Integridad, ex:NoEstigmatizacion .
+
+ex:NoEstigmatizacion
+    a skos:Concept ;
+    skos:prefLabel "No estigmatización"@es ;
+    skos:broader ex:Igualdad ;
+    skos:related ex:Dignidad, ex:Respeto, ex:Tolerancia, ex:Imparcialidad .
+
+ex:Justicia
+    a skos:Concept ;
+    skos:prefLabel "Justicia"@es .
+
+ex:Vulnerabilidad
+    a skos:Concept ;
+    skos:prefLabel "Vulnerabilidad"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Solidaridad, ex:Equidad, ex:Inclusion, ex:Cuidado .
+
+ex:Solidaridad
+    a skos:Concept ;
+    skos:prefLabel "Solidaridad"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Vulnerabilidad, ex:Equidad, ex:Inclusion, ex:Cuidado .
+
+ex:Equidad
+    a skos:Concept ;
+    skos:prefLabel "Equidad"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Vulnerabilidad, ex:Solidaridad, ex:Inclusion, ex:IgualdadOportunidades, ex:Proporcionalidad .
+
+ex:Inclusion
+    a skos:Concept ;
+    skos:prefLabel "Inclusión"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Vulnerabilidad, ex:Solidaridad, ex:Equidad, ex:IgualdadOportunidades .
+
+ex:IgualdadOportunidades
+    a skos:Concept ;
+    skos:prefLabel "Igualdad de oportunidades"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Equidad, ex:Inclusion, ex:Proporcionalidad .
+
+ex:Proporcionalidad
+    a skos:Concept ;
+    skos:prefLabel "Proporcionalidad"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Equidad, ex:IgualdadOportunidades, ex:Beneficencia, ex:NoMaleficencia .
+
+ex:Sustentabilidad
+    a skos:Concept ;
+    skos:prefLabel "Sustentabilidad"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Sostenibilidad, ex:Cuidado .
+
+ex:Sostenibilidad
+    a skos:Concept ;
+    skos:prefLabel "Sostenibilidad"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Sustentabilidad, ex:Cuidado .
+
+ex:Beneficencia
+    a skos:Concept ;
+    skos:prefLabel "Beneficencia"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:NoMaleficencia, ex:Cuidado, ex:Vulnerabilidad .
+
+ex:NoMaleficencia
+    a skos:Concept ;
+    skos:prefLabel "No-maleficencia"@es ;
+    skos:altLabel "No maleficencia"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Beneficencia, ex:Cuidado, ex:Vulnerabilidad, ex:Proporcionalidad .
+
+ex:Cuidado
+    a skos:Concept ;
+    skos:prefLabel "Cuidado"@es ;
+    skos:broader ex:Justicia ;
+    skos:related ex:Vulnerabilidad, ex:Solidaridad, ex:Beneficencia, ex:NoMaleficencia, ex:Sustentabilidad, ex:Sostenibilidad .
+
+ex:Competencia
+    a skos:Concept ;
+    skos:prefLabel "Competencia"@es .
+
+ex:Merito
+    a skos:Concept ;
+    skos:prefLabel "Mérito"@es ;
+    skos:broader ex:Competencia ;
+    skos:related ex:Iniciativa, ex:Resiliencia .
+
+ex:Iniciativa
+    a skos:Concept ;
+    skos:prefLabel "Iniciativa"@es ;
+    skos:broader ex:Competencia ;
+    skos:related ex:Merito, ex:Resiliencia .
+
+ex:Resiliencia
+    a skos:Concept ;
+    skos:prefLabel "Resiliencia"@es ;
+    skos:broader ex:Competencia ;
+    skos:related ex:Merito, ex:Iniciativa .
+
+ex:Libertad
+    a skos:Concept ;
+    skos:prefLabel "Libertad"@es .
+
+ex:Autodeterminacion
+    a skos:Concept ;
+    skos:prefLabel "Autodeterminación"@es ;
+    skos:broader ex:Libertad ;
+    skos:related ex:Autonomia, ex:Independencia, ex:Diversidad .
+
+ex:Autonomia
+    a skos:Concept ;
+    skos:prefLabel "Autonomía"@es ;
+    skos:broader ex:Libertad ;
+    skos:related ex:Autodeterminacion, ex:Independencia .
+
+ex:Independencia
+    a skos:Concept ;
+    skos:prefLabel "Independencia"@es ;
+    skos:broader ex:Libertad ;
+    skos:related ex:Autodeterminacion, ex:Autonomia .
+
+ex:Diversidad
+    a skos:Concept ;
+    skos:prefLabel "Diversidad"@es ;
+    skos:broader ex:Libertad ;
+    skos:related ex:Autodeterminacion .
+
+ex:Propiedad
+    a skos:Concept ;
+    skos:prefLabel "Propiedad"@es .
+
+ex:Privacidad
+    a skos:Concept ;
+    skos:prefLabel "Privacidad"@es ;
+    skos:broader ex:Propiedad ;
+    skos:related ex:Confidencialidad .
+
+ex:Confidencialidad
+    a skos:Concept ;
+    skos:prefLabel "Confidencialidad"@es ;
+    skos:broader ex:Propiedad ;
+    skos:related ex:Privacidad, ex:SecretoEmpresarial .
+
+ex:SecretoEmpresarial
+    a skos:Concept ;
+    skos:prefLabel "Secreto empresarial"@es ;
+    skos:altLabel "Secreto industrial"@es ;
+    skos:broader ex:Propiedad ;
+    skos:related ex:Confidencialidad, ex:Autoria .
+
+ex:Autoria
+    a skos:Concept ;
+    skos:prefLabel "Autoría"@es ;
+    skos:altLabel "Copyright"@es ;
+    skos:broader ex:Propiedad ;
+    skos:related ex:SecretoEmpresarial .
