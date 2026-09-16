@@ -40,6 +40,14 @@
     #graph {
       flex: 1;
       background: white;
+      min-width: 0;
+    }
+
+    #graph svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
     }
 
     #panel {
@@ -48,6 +56,7 @@
       background: #fafafa;
       border-left: 1px solid #ddd;
       overflow-y: auto;
+      box-sizing: border-box;
     }
 
     #panel h2 {
@@ -60,7 +69,7 @@
     }
 
     .node circle {
-      stroke: #333;
+      stroke: #666;
       stroke-width: 1.5px;
       cursor: pointer;
     }
@@ -84,6 +93,45 @@
     #status {
       padding: 30px;
       font-size: 16px;
+    }
+
+    /* Responsive para celular */
+    @media (max-width: 700px) {
+
+      header {
+        padding: 16px 18px;
+      }
+
+      header h1 {
+        font-size: 21px;
+      }
+
+      header p {
+        font-size: 13px;
+      }
+
+      #container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #graph {
+        width: 100%;
+        height: 70vh;
+        min-height: 480px;
+      }
+
+      #panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #ddd;
+        padding: 20px;
+        overflow-y: visible;
+      }
+
+      .node text {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -284,15 +332,25 @@ function drawGraph(
   const height =
     container.clientHeight;
 
+  const pastelColors = [
+    "#dceaf7",
+    "#e4f1e8",
+    "#f8e7dc",
+    "#eee4f5",
+    "#f7efcf",
+    "#dff1ef"
+  ];
+
   const svg =
     d3.select("#graph")
       .append("svg")
-      .attr("width", width)
-      .attr("height", height)
+      .attr("width", "100%")
+      .attr("height", "100%")
       .attr(
         "viewBox",
         [0, 0, width, height]
-      );
+      )
+      .attr("preserveAspectRatio", "xMidYMid meet");
 
   const zoomLayer =
     svg.append("g");
@@ -370,10 +428,10 @@ function drawGraph(
         ? 18
         : 11;
     })
-    .attr("fill", d => {
+    .attr("fill", (d, i) => {
       return d.label === "Valores"
-        ? "#222"
-        : "#ffffff";
+        ? "transparent"
+        : pastelColors[i % pastelColors.length];
     });
 
   node
@@ -436,6 +494,29 @@ function drawGraph(
       );
 
     });
+
+  /* Adaptación automática al cambiar el tamaño de pantalla */
+  window.addEventListener("resize", () => {
+
+    const newWidth = container.clientWidth;
+    const newHeight = container.clientHeight;
+
+    svg.attr(
+      "viewBox",
+      [0, 0, newWidth, newHeight]
+    );
+
+    simulation.force(
+      "center",
+      d3.forceCenter(
+        newWidth / 2,
+        newHeight / 2
+      )
+    );
+
+    simulation.alpha(0.3).restart();
+
+  });
 
 }
 
