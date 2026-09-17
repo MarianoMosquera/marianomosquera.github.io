@@ -67,7 +67,7 @@ pol:Elecciones
 pol:Globalizacion
     a skos:Concept ;
     skos:prefLabel "Globalización"@es ;
-    skos:broader pol:Temas ;
+    skos:broader pol:PoliticaInternacional ;
     skos:related pol:PoliticaInternacional .
 
 pol:Ciudadania
@@ -147,8 +147,3 @@ pol:PartidosPoliticos
     skos:prefLabel "Partidos políticos"@es ;
     skos:broader pol:Elecciones ;
     skos:related pol:Ideologia .
-
-pol:Antiglobalizacion
-    a skos:Concept ;
-    skos:prefLabel "Antiglobalización"@es ;
-    skos:broader pol:Globalizacion .
