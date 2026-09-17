@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -201,21 +202,18 @@ const SKOS = {
 
 
 /* =========================================
-   CONCEPTOS NEGATIVOS
+   EXCEPCIONES NEGATIVAS DENTRO DE TEMAS
 
-   Estos conceptos SIEMPRE se representan
-   como triángulos rojos, independientemente
-   de la rama jerárquica en la que estén.
+   Todos los descendientes de Problemas serán
+   negativos automáticamente.
+
+   Autoritarismo y Populismo también serán
+   negativos aunque estén dentro de Temas.
    ========================================= */
 
-const negativeConcepts = new Set([
-
-  "Polarización",
-  "Desinformación",
+const negativeExceptions = new Set([
   "Autoritarismo",
-  "Populismo",
-  "Antiglobalización"
-
+  "Populismo"
 ]);
 
 
@@ -224,12 +222,10 @@ const negativeConcepts = new Set([
    ========================================= */
 
 const structuralConcepts = new Set([
-
   "Política",
   "Temas",
   "Problemas",
   "Actores"
-
 ]);
 
 
@@ -254,15 +250,10 @@ fetch(ttlURL)
     const store = $rdf.graph();
 
     $rdf.parse(
-
       ttl,
-
       store,
-
       window.location.origin + "/",
-
       "text/turtle"
-
     );
 
 
@@ -300,11 +291,8 @@ fetch(ttlURL)
       const pref =
 
         store.any(
-
           statement.subject,
-
           $rdf.sym(SKOS.prefLabel)
-
         );
 
 
@@ -343,11 +331,8 @@ fetch(ttlURL)
       const alternatives =
 
         store.each(
-
           subject,
-
           $rdf.sym(SKOS.altLabel)
-
         );
 
       node.altLabels =
@@ -359,18 +344,12 @@ fetch(ttlURL)
       const broader =
 
         store.any(
-
           subject,
-
           $rdf.sym(SKOS.broader)
-
         );
 
       if (broader) {
-
-        node.broader =
-          broader.value;
-
+        node.broader = broader.value;
       }
 
 
@@ -379,11 +358,8 @@ fetch(ttlURL)
       const related =
 
         store.each(
-
           subject,
-
           $rdf.sym(SKOS.related)
-
         );
 
       node.related =
@@ -413,7 +389,6 @@ fetch(ttlURL)
         hierarchyLinks.push({
 
           source: node.broader,
-
           target: node.id
 
         });
@@ -445,9 +420,7 @@ fetch(ttlURL)
         const key =
 
           [node.id, target]
-
             .sort()
-
             .join("|");
 
 
@@ -458,7 +431,6 @@ fetch(ttlURL)
           relatedLinks.push({
 
             source: node.id,
-
             target: target
 
           });
@@ -471,15 +443,10 @@ fetch(ttlURL)
 
 
     drawGraph(
-
       nodes,
-
       hierarchyLinks,
-
       relatedLinks,
-
       nodesMap
-
     );
 
   })
@@ -490,7 +457,6 @@ fetch(ttlURL)
     document
       .getElementById("status")
       .innerHTML =
-
       "<strong>Error:</strong> " +
       error.message;
 
@@ -506,15 +472,10 @@ fetch(ttlURL)
    ========================================= */
 
 function drawGraph(
-
   nodes,
-
   hierarchyLinks,
-
   relatedLinks,
-
   nodesMap
-
 ) {
 
   const container =
@@ -534,17 +495,16 @@ function drawGraph(
      COLORES
      ===================================== */
 
+  /* PROBLEMAS — rojo pastel */
 
-  /* Triángulos negativos */
-
-  const negativeColor =
+  const problemColor =
     "#e8a0a0";
 
-  const negativeStroke =
+  const problemStroke =
     "#b94a4a";
 
 
-  /* Actores */
+  /* ACTORES — azul pastel */
 
   const actorColor =
     "#cfe3f4";
@@ -553,7 +513,7 @@ function drawGraph(
     "#6f9fc4";
 
 
-  /* Temas */
+  /* TEMAS — amarillo pastel */
 
   const topicColor =
     "#f7e7a9";
@@ -562,13 +522,13 @@ function drawGraph(
     "#c9aa45";
 
 
-  /* Categorías transparentes */
+  /* ESTRUCTURALES — transparentes */
 
   const transparentStroke =
     "#777";
 
 
-  /* Conceptos residuales */
+  /* RESPALDO */
 
   const neutralColor =
     "#eeeeee";
@@ -578,19 +538,27 @@ function drawGraph(
 
 
 
-  /* =====================================
+  /* =========================================
      DETERMINAR PERTENENCIA A UNA RAMA
 
-     Recorre toda la jerarquía hacia arriba.
-     ===================================== */
+     IMPORTANTE:
+     recorre toda la jerarquía hacia arriba.
 
-  function belongsToBranch(
+     Por ejemplo:
 
-    concept,
+     Partidos políticos
+        ↓
+     Elecciones
+        ↓
+     Democracia
+        ↓
+     Temas
 
-    branchLabel
+     Por lo tanto Partidos políticos será
+     reconocido automáticamente como Temas.
+     ========================================= */
 
-  ) {
+  function belongsToBranch(concept, branchLabel) {
 
     let current = concept;
 
@@ -603,51 +571,125 @@ function drawGraph(
       current.broader
     ) {
 
-
       if (
         visited.has(current.id)
       ) {
-
         break;
-
       }
 
 
-      visited.add(
-        current.id
-      );
+      visited.add(current.id);
 
 
       const parent =
-        nodesMap.get(
-          current.broader
-        );
+        nodesMap.get(current.broader);
 
 
       if (!parent) {
-
         break;
-
       }
 
 
       if (
-        parent.label ===
-        branchLabel
+        parent.label === branchLabel
       ) {
-
         return true;
-
       }
 
 
-      current =
-        parent;
+      current = parent;
 
     }
 
 
     return false;
+
+  }
+
+
+
+  /* =========================================
+     FUNCIÓN DEFINITIVA DE CLASIFICACIÓN
+     ========================================= */
+
+  function nodeType(d) {
+
+    /*
+       1. ESTRUCTURALES
+       Siempre transparentes.
+    */
+
+    if (
+      structuralConcepts.has(d.label)
+    ) {
+      return "structural";
+    }
+
+
+    /*
+       2. PROBLEMAS
+       Todo descendiente de Problemas,
+       directo o indirecto,
+       es triángulo rojo pastel.
+    */
+
+    if (
+      belongsToBranch(d, "Problemas")
+    ) {
+      return "problem";
+    }
+
+
+    /*
+       3. EXCEPCIONES NEGATIVAS EN TEMAS
+
+       Autoritarismo
+       Populismo
+    */
+
+    if (
+      negativeExceptions.has(d.label)
+    ) {
+      return "problem";
+    }
+
+
+    /*
+       4. ACTORES
+
+       Todo descendiente directo o indirecto
+       de Actores es cuadrado azul.
+    */
+
+    if (
+      belongsToBranch(d, "Actores")
+    ) {
+      return "actor";
+    }
+
+
+    /*
+       5. TEMAS
+
+       Todo descendiente directo o indirecto
+       de Temas es círculo amarillo.
+
+       Las excepciones negativas ya fueron
+       capturadas anteriormente.
+    */
+
+    if (
+      belongsToBranch(d, "Temas")
+    ) {
+      return "topic";
+    }
+
+
+    /*
+       6. RESPALDO
+    */
+
+    return "neutral";
 
   }
 
@@ -663,30 +705,18 @@ function drawGraph(
 
       .append("svg")
 
-      .attr(
-        "width",
-        "100%"
-      )
+      .attr("width", "100%")
+
+      .attr("height", "100%")
 
       .attr(
-        "height",
-        "100%"
-      )
-
-      .attr(
-
         "viewBox",
-
         [0, 0, width, height]
-
       )
 
       .attr(
-
         "preserveAspectRatio",
-
         "xMidYMid meet"
-
       );
 
 
@@ -713,11 +743,8 @@ function drawGraph(
         event => {
 
           zoomLayer.attr(
-
             "transform",
-
             event.transform
-
           );
 
         }
@@ -758,7 +785,6 @@ function drawGraph(
         "charge",
 
         d3.forceManyBody()
-
           .strength(-420)
 
       )
@@ -769,11 +795,8 @@ function drawGraph(
         "center",
 
         d3.forceCenter(
-
           width / 2,
-
           height / 2
-
         )
 
       )
@@ -865,41 +888,35 @@ function drawGraph(
 
 
   /* =========================================
-     1. CONCEPTOS ESTRUCTURALES
+     1. ESTRUCTURALES
 
      Política
      Temas
      Problemas
      Actores
 
-     Todos transparentes.
+     TRANSPARENTES
      ========================================= */
 
   node
 
     .filter(
-      d =>
-        structuralConcepts.has(
-          d.label
-        )
+      d => nodeType(d) === "structural"
     )
 
     .append("circle")
 
     .attr(
-
       "r",
-
       d =>
         d.label === "Política"
           ? 18
           : 14
-
     )
 
     .attr(
       "fill",
-      "transparent"
+      "none"
     )
 
     .attr(
@@ -915,20 +932,22 @@ function drawGraph(
 
 
   /* =========================================
-     2. CONCEPTOS NEGATIVOS
+     2. PROBLEMAS
+
+     TODO LO QUE ESTÁ BAJO PROBLEMAS
+
+     +
+
+     AUTORITARISMO
+     POPULISMO
 
      TRIÁNGULO ROJO PASTEL
-
-     Esta regla tiene prioridad absoluta.
      ========================================= */
 
   node
 
     .filter(
-      d =>
-        negativeConcepts.has(
-          d.label
-        )
+      d => nodeType(d) === "problem"
     )
 
     .append("path")
@@ -938,23 +957,19 @@ function drawGraph(
       "d",
 
       d3.symbol()
-
-        .type(
-          d3.symbolTriangle
-        )
-
+        .type(d3.symbolTriangle)
         .size(360)
 
     )
 
     .attr(
       "fill",
-      negativeColor
+      problemColor
     )
 
     .attr(
       "stroke",
-      negativeStroke
+      problemStroke
     )
 
     .attr(
@@ -967,29 +982,15 @@ function drawGraph(
   /* =========================================
      3. ACTORES
 
-     CUADRADOS AZULES
+     TODOS LOS DESCENDIENTES DE ACTORES
 
-     La función detecta también descendientes
-     indirectos de Actores.
+     CUADRADO AZUL PASTEL
      ========================================= */
 
   node
 
     .filter(
-      d =>
-
-        !structuralConcepts.has(
-          d.label
-        ) &&
-
-        !negativeConcepts.has(
-          d.label
-        ) &&
-
-        belongsToBranch(
-          d,
-          "Actores"
-        )
+      d => nodeType(d) === "actor"
     )
 
     .append("rect")
@@ -1039,29 +1040,18 @@ function drawGraph(
   /* =========================================
      4. TEMAS
 
-     CÍRCULOS AMARILLOS
+     TODOS LOS DESCENDIENTES DE TEMAS
 
-     Incluye todos los descendientes de Temas,
-     salvo los conceptos negativos.
+     CÍRCULO AMARILLO PASTEL
+
+     excepto Autoritarismo y Populismo,
+     que ya fueron clasificados como problemas.
      ========================================= */
 
   node
 
     .filter(
-      d =>
-
-        !structuralConcepts.has(
-          d.label
-        ) &&
-
-        !negativeConcepts.has(
-          d.label
-        ) &&
-
-        belongsToBranch(
-          d,
-          "Temas"
-        )
+      d => nodeType(d) === "topic"
     )
 
     .append("circle")
@@ -1089,34 +1079,13 @@ function drawGraph(
 
 
   /* =========================================
-     5. OTROS CONCEPTOS
-
-     Solo actúa como respaldo si en el futuro
-     aparece un concepto fuera de las ramas.
+     5. RESPALDO
      ========================================= */
 
   node
 
     .filter(
-      d =>
-
-        !structuralConcepts.has(
-          d.label
-        ) &&
-
-        !negativeConcepts.has(
-          d.label
-        ) &&
-
-        !belongsToBranch(
-          d,
-          "Actores"
-        ) &&
-
-        !belongsToBranch(
-          d,
-          "Temas"
-        )
+      d => nodeType(d) === "neutral"
     )
 
     .append("circle")
@@ -1232,9 +1201,7 @@ function drawGraph(
           d =>
             typeof d.source === "object"
               ? d.source.x
-              : nodesMap.get(
-                  d.source
-                )?.x
+              : nodesMap.get(d.source)?.x
 
         )
 
@@ -1245,9 +1212,7 @@ function drawGraph(
           d =>
             typeof d.source === "object"
               ? d.source.y
-              : nodesMap.get(
-                  d.source
-                )?.y
+              : nodesMap.get(d.source)?.y
 
         )
 
@@ -1258,9 +1223,7 @@ function drawGraph(
           d =>
             typeof d.target === "object"
               ? d.target.x
-              : nodesMap.get(
-                  d.target
-                )?.x
+              : nodesMap.get(d.target)?.x
 
         )
 
@@ -1271,9 +1234,7 @@ function drawGraph(
           d =>
             typeof d.target === "object"
               ? d.target.y
-              : nodesMap.get(
-                  d.target
-                )?.y
+              : nodesMap.get(d.target)?.y
 
         );
 
@@ -1332,11 +1293,8 @@ function drawGraph(
         "center",
 
         d3.forceCenter(
-
           newWidth / 2,
-
           newHeight / 2
-
         )
 
       );
@@ -1359,11 +1317,8 @@ function drawGraph(
    ========================================= */
 
 function showPanel(
-
   concept,
-
   nodesMap
-
 ) {
 
   const panel =
@@ -1471,26 +1426,20 @@ function drag(simulation) {
 
 
   function dragstarted(
-
     event,
-
     d
-
   ) {
 
     if (!event.active) {
 
       simulation
-
         .alphaTarget(0.3)
-
         .restart();
 
     }
 
 
     d.fx = d.x;
-
     d.fy = d.y;
 
   }
@@ -1498,15 +1447,11 @@ function drag(simulation) {
 
 
   function dragged(
-
     event,
-
     d
-
   ) {
 
     d.fx = event.x;
-
     d.fy = event.y;
 
   }
@@ -1514,11 +1459,8 @@ function drag(simulation) {
 
 
   function dragended(
-
     event,
-
     d
-
   ) {
 
     if (!event.active) {
@@ -1530,7 +1472,6 @@ function drag(simulation) {
 
 
     d.fx = null;
-
     d.fy = null;
 
   }
