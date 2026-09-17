@@ -540,22 +540,6 @@ function drawGraph(
 
   /* =========================================
      DETERMINAR PERTENENCIA A UNA RAMA
-
-     IMPORTANTE:
-     recorre toda la jerarquía hacia arriba.
-
-     Por ejemplo:
-
-     Partidos políticos
-        ↓
-     Elecciones
-        ↓
-     Democracia
-        ↓
-     Temas
-
-     Por lo tanto Partidos políticos será
-     reconocido automáticamente como Temas.
      ========================================= */
 
   function belongsToBranch(concept, branchLabel) {
@@ -614,24 +598,12 @@ function drawGraph(
 
   function nodeType(d) {
 
-    /*
-       1. ESTRUCTURALES
-       Siempre transparentes.
-    */
-
     if (
       structuralConcepts.has(d.label)
     ) {
       return "structural";
     }
 
-
-    /*
-       2. PROBLEMAS
-       Todo descendiente de Problemas,
-       directo o indirecto,
-       es triángulo rojo pastel.
-    */
 
     if (
       belongsToBranch(d, "Problemas")
@@ -640,26 +612,12 @@ function drawGraph(
     }
 
 
-    /*
-       3. EXCEPCIONES NEGATIVAS EN TEMAS
-
-       Autoritarismo
-       Populismo
-    */
-
     if (
       negativeExceptions.has(d.label)
     ) {
       return "problem";
     }
 
-
-    /*
-       4. ACTORES
-
-       Todo descendiente directo o indirecto
-       de Actores es cuadrado azul.
-    */
 
     if (
       belongsToBranch(d, "Actores")
@@ -668,26 +626,12 @@ function drawGraph(
     }
 
 
-    /*
-       5. TEMAS
-
-       Todo descendiente directo o indirecto
-       de Temas es círculo amarillo.
-
-       Las excepciones negativas ya fueron
-       capturadas anteriormente.
-    */
-
     if (
       belongsToBranch(d, "Temas")
     ) {
       return "topic";
     }
 
-
-    /*
-       6. RESPALDO
-    */
 
     return "neutral";
 
@@ -886,6 +830,29 @@ function drawGraph(
       );
 
 
+  /* =========================================
+     ÁREA INVISIBLE DE CAPTURA PARA DRAG
+
+     ÚNICA CORRECCIÓN:
+     garantiza que TODOS los nodos tengan
+     una superficie amplia para arrastrarlos.
+     ========================================= */
+
+  node
+
+    .append("circle")
+
+    .attr("r", 22)
+
+    .attr("fill", "transparent")
+
+    .attr("stroke", "none")
+
+    .style("pointer-events", "all")
+
+    .style("cursor", "grab");
+
+
 
   /* =========================================
      1. ESTRUCTURALES
@@ -935,9 +902,7 @@ function drawGraph(
      2. PROBLEMAS
 
      TODO LO QUE ESTÁ BAJO PROBLEMAS
-
      +
-
      AUTORITARISMO
      POPULISMO
 
@@ -1044,8 +1009,7 @@ function drawGraph(
 
      CÍRCULO AMARILLO PASTEL
 
-     excepto Autoritarismo y Populismo,
-     que ya fueron clasificados como problemas.
+     excepto Autoritarismo y Populismo.
      ========================================= */
 
   node
