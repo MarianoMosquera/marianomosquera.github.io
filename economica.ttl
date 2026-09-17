@@ -251,6 +251,10 @@ eco:Educacion
     skos:prefLabel "Educación"@es ;
     skos:broader eco:Servicios .
 
+eco:Salud
+    a skos:Concept ;
+    skos:prefLabel "Salud"@es ;
+    skos:broader eco:Servicios .
 # =========================================
 # INDUSTRIA
 # =========================================
