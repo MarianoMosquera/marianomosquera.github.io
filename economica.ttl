@@ -1,0 +1,365 @@
+@prefix eco: <https://marianomosquera.github.io/economica/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# =========================================
+# CONCEPTO PRINCIPAL
+# =========================================
+
+eco:Economica
+    a skos:Concept ;
+    skos:prefLabel "Económica"@es ;
+    skos:altLabel "Economía"@es .
+
+# =========================================
+# CONCEPTOS PRIMARIOS
+# =========================================
+
+eco:Mercado
+    a skos:Concept ;
+    skos:prefLabel "Mercado"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Empresas,
+                 eco:Produccion,
+                 eco:Consumo,
+                 eco:Comercio .
+
+eco:Empresas
+    a skos:Concept ;
+    skos:prefLabel "Empresas"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Mercado,
+                 eco:Inversiones,
+                 eco:Capital,
+                 eco:Rentabilidad,
+                 eco:Utilidad,
+                 eco:Emprendedores .
+
+eco:Crecimiento
+    a skos:Concept ;
+    skos:prefLabel "Crecimiento"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Produccion,
+                 eco:Inversiones,
+                 eco:Riqueza .
+
+eco:Produccion
+    a skos:Concept ;
+    skos:prefLabel "Producción"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Mercado,
+                 eco:Crecimiento,
+                 eco:CadenaDeSuministros,
+                 eco:Capital,
+                 eco:Industria .
+
+eco:Riqueza
+    a skos:Concept ;
+    skos:prefLabel "Riqueza"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Crecimiento,
+                 eco:Capital,
+                 eco:Inversiones .
+
+eco:Inversiones
+    a skos:Concept ;
+    skos:prefLabel "Inversiones"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Empresas,
+                 eco:Crecimiento,
+                 eco:Riqueza,
+                 eco:Capital,
+                 eco:Rentabilidad,
+                 eco:PoliticaMonetaria .
+
+eco:Capital
+    a skos:Concept ;
+    skos:prefLabel "Capital"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Empresas,
+                 eco:Produccion,
+                 eco:Riqueza,
+                 eco:Inversiones,
+                 eco:Rentabilidad,
+                 eco:Deuda .
+
+eco:Rentabilidad
+    a skos:Concept ;
+    skos:prefLabel "Rentabilidad"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Empresas,
+                 eco:Inversiones,
+                 eco:Capital,
+                 eco:Utilidad .
+
+eco:Utilidad
+    a skos:Concept ;
+    skos:prefLabel "Utilidad"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Empresas,
+                 eco:Rentabilidad .
+
+eco:Consumo
+    a skos:Concept ;
+    skos:prefLabel "Consumo"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Mercado,
+                 eco:Produccion,
+                 eco:Impuestos,
+                 eco:Servicios .
+
+eco:Impuestos
+    a skos:Concept ;
+    skos:prefLabel "Impuestos"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Empresas,
+                 eco:Consumo .
+
+eco:Aranceles
+    a skos:Concept ;
+    skos:prefLabel "Aranceles"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Comercio .
+
+eco:CadenaDeSuministros
+    a skos:Concept ;
+    skos:prefLabel "Cadena de suministros"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Produccion,
+                 eco:Comercio,
+                 eco:Industria .
+
+eco:PoliticaCambiaria
+    a skos:Concept ;
+    skos:prefLabel "Política cambiaria"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Comercio,
+                 eco:Inflacion .
+
+eco:PoliticaMonetaria
+    a skos:Concept ;
+    skos:prefLabel "Política monetaria"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Inflacion,
+                 eco:Inversiones .
+
+eco:Inflacion
+    a skos:Concept ;
+    skos:prefLabel "Inflación"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:PoliticaMonetaria,
+                 eco:PoliticaCambiaria .
+
+eco:Deuda
+    a skos:Concept ;
+    skos:prefLabel "Deuda"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Capital .
+
+eco:Monopolios
+    a skos:Concept ;
+    skos:prefLabel "Monopolios"@es ;
+    skos:broader eco:Economica ;
+    skos:related eco:Mercado,
+                 eco:Empresas .
+
+# =========================================
+# ASUNTOS DE SECTORES
+# =========================================
+
+eco:AsuntosDeSectores
+    a skos:Concept ;
+    skos:prefLabel "Asuntos de sectores"@es ;
+    skos:broader eco:Economica ;
+    skos:narrower eco:Emprendedores,
+                  eco:Industria,
+                  eco:Servicios,
+                  eco:Comercio .
+
+eco:Emprendedores
+    a skos:Concept ;
+    skos:prefLabel "Emprendedores"@es ;
+    skos:broader eco:AsuntosDeSectores ;
+    skos:related eco:Empresas .
+
+eco:Industria
+    a skos:Concept ;
+    skos:prefLabel "Industria"@es ;
+    skos:broader eco:AsuntosDeSectores ;
+    skos:related eco:Produccion,
+                 eco:CadenaDeSuministros ;
+    skos:narrower eco:Farmaceutica,
+                  eco:Alimentaria,
+                  eco:Automotriz,
+                  eco:Quimica,
+                  eco:Petroquimica,
+                  eco:Energetica,
+                  eco:Minera,
+                  eco:Metalurgica,
+                  eco:Siderurgica,
+                  eco:Textil,
+                  eco:Construccion,
+                  eco:Forestal,
+                  eco:Papelera,
+                  eco:Plastica,
+                  eco:Transporte,
+                  eco:Telecomunicaciones,
+                  eco:Audiovisual,
+                  eco:Aeroespacial,
+                  eco:Agropecuaria .
+
+eco:Servicios
+    a skos:Concept ;
+    skos:prefLabel "Servicios"@es ;
+    skos:broader eco:AsuntosDeSectores ;
+    skos:related eco:Empresas,
+                 eco:Consumo ;
+    skos:narrower eco:Turismo,
+                  eco:Finanzas,
+                  eco:Seguros,
+                  eco:Educacion .
+
+eco:Comercio
+    a skos:Concept ;
+    skos:prefLabel "Comercio"@es ;
+    skos:broader eco:AsuntosDeSectores ;
+    skos:related eco:Mercado,
+                 eco:Aranceles,
+                 eco:CadenaDeSuministros,
+                 eco:PoliticaCambiaria .
+
+# =========================================
+# SERVICIOS
+# =========================================
+
+eco:Turismo
+    a skos:Concept ;
+    skos:prefLabel "Turismo"@es ;
+    skos:broader eco:Servicios .
+
+eco:Finanzas
+    a skos:Concept ;
+    skos:prefLabel "Finanzas"@es ;
+    skos:broader eco:Servicios .
+
+eco:Seguros
+    a skos:Concept ;
+    skos:prefLabel "Seguros"@es ;
+    skos:broader eco:Servicios .
+
+eco:Educacion
+    a skos:Concept ;
+    skos:prefLabel "Educación"@es ;
+    skos:broader eco:Servicios .
+
+# =========================================
+# INDUSTRIA
+# =========================================
+
+eco:Farmaceutica
+    a skos:Concept ;
+    skos:prefLabel "Farmacéutica"@es ;
+    skos:broader eco:Industria .
+
+eco:Alimentaria
+    a skos:Concept ;
+    skos:prefLabel "Alimentaria"@es ;
+    skos:broader eco:Industria .
+
+eco:Automotriz
+    a skos:Concept ;
+    skos:prefLabel "Automotriz"@es ;
+    skos:broader eco:Industria .
+
+eco:Quimica
+    a skos:Concept ;
+    skos:prefLabel "Química"@es ;
+    skos:broader eco:Industria .
+
+eco:Petroquimica
+    a skos:Concept ;
+    skos:prefLabel "Petroquímica"@es ;
+    skos:broader eco:Industria .
+
+eco:Energetica
+    a skos:Concept ;
+    skos:prefLabel "Energética"@es ;
+    skos:broader eco:Industria .
+
+eco:Minera
+    a skos:Concept ;
+    skos:prefLabel "Minera"@es ;
+    skos:broader eco:Industria .
+
+eco:Metalurgica
+    a skos:Concept ;
+    skos:prefLabel "Metalúrgica"@es ;
+    skos:broader eco:Industria .
+
+eco:Siderurgica
+    a skos:Concept ;
+    skos:prefLabel "Siderúrgica"@es ;
+    skos:broader eco:Industria .
+
+eco:Textil
+    a skos:Concept ;
+    skos:prefLabel "Textil"@es ;
+    skos:broader eco:Industria .
+
+eco:Construccion
+    a skos:Concept ;
+    skos:prefLabel "Construcción"@es ;
+    skos:broader eco:Industria .
+
+eco:Forestal
+    a skos:Concept ;
+    skos:prefLabel "Forestal"@es ;
+    skos:broader eco:Industria .
+
+eco:Papelera
+    a skos:Concept ;
+    skos:prefLabel "Papelera"@es ;
+    skos:broader eco:Industria .
+
+eco:Plastica
+    a skos:Concept ;
+    skos:prefLabel "Plástica"@es ;
+    skos:broader eco:Industria .
+
+eco:Transporte
+    a skos:Concept ;
+    skos:prefLabel "Transporte"@es ;
+    skos:broader eco:Industria .
+
+eco:Telecomunicaciones
+    a skos:Concept ;
+    skos:prefLabel "Telecomunicaciones"@es ;
+    skos:broader eco:Industria .
+
+eco:Audiovisual
+    a skos:Concept ;
+    skos:prefLabel "Audiovisual"@es ;
+    skos:broader eco:Industria .
+
+eco:Aeroespacial
+    a skos:Concept ;
+    skos:prefLabel "Aeroespacial"@es ;
+    skos:broader eco:Industria .
+
+eco:Agropecuaria
+    a skos:Concept ;
+    skos:prefLabel "Agropecuaria"@es ;
+    skos:broader eco:Industria .
+
+# =========================================
+# NOTA PARA LA VISUALIZACIÓN
+# =========================================
+# Los siguientes conceptos deben representarse en el HTML
+# como triángulos de color rojo pastel por su carga
+# semántica problemática/negativa:
+#
+# Inflación
+# Deuda
+# Monopolios
+#
+# Esta característica visual NO forma parte de la
+# semántica SKOS del archivo TTL.
