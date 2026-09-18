@@ -70,9 +70,8 @@
     }
 
     .node circle,
+    .node rect,
     .node path {
-      stroke: #666;
-      stroke-width: 1.5px;
       cursor: pointer;
     }
 
@@ -97,9 +96,12 @@
       font-size: 16px;
     }
 
-    /* Responsive para celular */
+    /* =========================================
+       RESPONSIVE PARA CELULAR
+       ========================================= */
 
     @media (max-width: 700px) {
+
       header {
         padding: 16px 18px;
       }
@@ -160,31 +162,61 @@
 
 <script>
 
+/* =========================================
+   ARCHIVO TTL
+   ========================================= */
+
 const ttlURL = "../social.ttl";
 
+
+/* =========================================
+   VOCABULARIO SKOS
+   ========================================= */
+
 const SKOS = {
-  Concept: "http://www.w3.org/2004/02/skos/core#Concept",
-  prefLabel: "http://www.w3.org/2004/02/skos/core#prefLabel",
-  altLabel: "http://www.w3.org/2004/02/skos/core#altLabel",
-  broader: "http://www.w3.org/2004/02/skos/core#broader",
-  related: "http://www.w3.org/2004/02/skos/core#related"
+
+  Concept:
+    "http://www.w3.org/2004/02/skos/core#Concept",
+
+  prefLabel:
+    "http://www.w3.org/2004/02/skos/core#prefLabel",
+
+  altLabel:
+    "http://www.w3.org/2004/02/skos/core#altLabel",
+
+  broader:
+    "http://www.w3.org/2004/02/skos/core#broader",
+
+  related:
+    "http://www.w3.org/2004/02/skos/core#related"
 };
 
-/* Conceptos con carga semántica negativa */
 
-const negativeConcepts = new Set([
-  "Pobreza"
+/* =========================================
+   CONCEPTOS ESTRUCTURALES TRANSPARENTES
+   ========================================= */
+
+const structuralConcepts = new Set([
+  "Social",
+  "Temas",
+  "Problemas",
+  "Actores"
 ]);
+
+
+/* =========================================
+   CARGA DEL TTL
+   ========================================= */
 
 fetch(ttlURL)
 
   .then(response => {
 
-    if (!response.ok)
+    if (!response.ok) {
       throw new Error("No se pudo cargar social.ttl");
+    }
 
     return response.text();
-
   })
 
   .then(ttl => {
@@ -198,7 +230,14 @@ fetch(ttlURL)
       "text/turtle"
     );
 
-    document.getElementById("status").remove();
+    document
+      .getElementById("status")
+      .remove();
+
+
+    /* =====================================
+       EXTRAER CONCEPTOS
+       ===================================== */
 
     const conceptStatements =
       store.match(
@@ -209,7 +248,9 @@ fetch(ttlURL)
         $rdf.sym(SKOS.Concept)
       );
 
+
     const nodesMap = new Map();
+
 
     conceptStatements.forEach(statement => {
 
@@ -221,19 +262,37 @@ fetch(ttlURL)
           $rdf.sym(SKOS.prefLabel)
         );
 
+
       nodesMap.set(uri, {
+
         id: uri,
-        label: pref ? pref.value : uri.split("/").pop(),
+
+        label:
+          pref
+            ? pref.value
+            : uri.split("/").pop(),
+
         altLabels: [],
+
         broader: null,
+
         related: []
       });
 
     });
 
+
+    /* =====================================
+       EXTRAER PROPIEDADES SKOS
+       ===================================== */
+
     nodesMap.forEach(node => {
 
-      const subject = $rdf.sym(node.id);
+      const subject =
+        $rdf.sym(node.id);
+
+
+      /* ALT LABELS */
 
       const alternatives =
         store.each(
@@ -244,6 +303,9 @@ fetch(ttlURL)
       node.altLabels =
         alternatives.map(x => x.value);
 
+
+      /* BROADER */
+
       const broader =
         store.any(
           subject,
@@ -253,6 +315,9 @@ fetch(ttlURL)
       if (broader) {
         node.broader = broader.value;
       }
+
+
+      /* RELATED */
 
       const related =
         store.each(
@@ -265,9 +330,17 @@ fetch(ttlURL)
 
     });
 
-    const nodes = Array.from(nodesMap.values());
+
+    const nodes =
+      Array.from(nodesMap.values());
+
+
+    /* =====================================
+       ENLACES JERÁRQUICOS
+       ===================================== */
 
     const hierarchyLinks = [];
+
 
     nodes.forEach(node => {
 
@@ -285,19 +358,31 @@ fetch(ttlURL)
 
     });
 
+
+    /* =====================================
+       ENLACES RELATED
+       ===================================== */
+
     const relatedLinks = [];
-    const relatedKeys = new Set();
+
+    const relatedKeys =
+      new Set();
+
 
     nodes.forEach(node => {
 
       node.related.forEach(target => {
 
-        if (!nodesMap.has(target)) return;
+        if (!nodesMap.has(target)) {
+          return;
+        }
+
 
         const key =
           [node.id, target]
             .sort()
             .join("|");
+
 
         if (!relatedKeys.has(key)) {
 
@@ -314,6 +399,7 @@ fetch(ttlURL)
 
     });
 
+
     drawGraph(
       nodes,
       hierarchyLinks,
@@ -323,15 +409,24 @@ fetch(ttlURL)
 
   })
 
+
   .catch(error => {
 
-    document.getElementById("status").innerHTML =
-      "<strong>Error:</strong> " + error.message;
+    document
+      .getElementById("status")
+      .innerHTML =
+      "<strong>Error:</strong> " +
+      error.message;
 
     console.error(error);
 
   });
 
+
+
+/* =========================================
+   DIBUJAR GRAFO
+   ========================================= */
 
 function drawGraph(
   nodes,
@@ -343,25 +438,158 @@ function drawGraph(
   const container =
     document.getElementById("graph");
 
+
   const width =
     container.clientWidth;
+
 
   const height =
     container.clientHeight;
 
-  const pastelColors = [
-    "#dceaf7",
-    "#e4f1e8",
-    "#f8e7dc",
-    "#eee4f5",
-    "#f7efcf",
-    "#dff1ef"
-  ];
 
-  /* Rojo pastel para conceptos con carga negativa */
 
-  const negativeColor = "#e8a0a0";
-  const negativeStroke = "#b94a4a";
+  /* =====================================
+     COLORES
+     ===================================== */
+
+  /* PROBLEMAS — rojo pastel */
+
+  const problemColor =
+    "#e8a0a0";
+
+  const problemStroke =
+    "#b94a4a";
+
+
+  /* ACTORES — azul pastel */
+
+  const actorColor =
+    "#cfe3f4";
+
+  const actorStroke =
+    "#6f9fc4";
+
+
+  /* TEMAS — amarillo pastel */
+
+  const topicColor =
+    "#f7e7a9";
+
+  const topicStroke =
+    "#c9aa45";
+
+
+  /* ESTRUCTURALES — transparentes */
+
+  const transparentStroke =
+    "#777";
+
+
+  /* RESPALDO */
+
+  const neutralColor =
+    "#eeeeee";
+
+  const neutralStroke =
+    "#888";
+
+
+
+  /* =========================================
+     DETERMINAR PERTENENCIA A UNA RAMA
+     ========================================= */
+
+  function belongsToBranch(concept, branchLabel) {
+
+    let current = concept;
+
+    const visited =
+      new Set();
+
+
+    while (
+      current &&
+      current.broader
+    ) {
+
+      if (
+        visited.has(current.id)
+      ) {
+        break;
+      }
+
+
+      visited.add(current.id);
+
+
+      const parent =
+        nodesMap.get(current.broader);
+
+
+      if (!parent) {
+        break;
+      }
+
+
+      if (
+        parent.label === branchLabel
+      ) {
+        return true;
+      }
+
+
+      current = parent;
+
+    }
+
+
+    return false;
+  }
+
+
+
+  /* =========================================
+     CLASIFICACIÓN DE NODOS
+     ========================================= */
+
+  function nodeType(d) {
+
+    if (
+      structuralConcepts.has(d.label)
+    ) {
+      return "structural";
+    }
+
+
+    if (
+      belongsToBranch(d, "Problemas")
+    ) {
+      return "problem";
+    }
+
+
+    if (
+      belongsToBranch(d, "Actores")
+    ) {
+      return "actor";
+    }
+
+
+    if (
+      belongsToBranch(d, "Temas")
+    ) {
+      return "topic";
+    }
+
+
+    return "neutral";
+  }
+
+
+
+  /* =====================================
+     SVG
+     ===================================== */
 
   const svg =
     d3.select("#graph")
@@ -377,51 +605,91 @@ function drawGraph(
         "xMidYMid meet"
       );
 
+
+
+  /* =====================================
+     ZOOM
+     ===================================== */
+
   const zoomLayer =
     svg.append("g");
 
+
   svg.call(
+
     d3.zoom()
-      .scaleExtent([0.3, 4])
-      .on("zoom", event => {
 
-        zoomLayer.attr(
-          "transform",
-          event.transform
-        );
+      .scaleExtent([
+        0.3,
+        4
+      ])
 
-      })
+      .on(
+        "zoom",
+        event => {
+
+          zoomLayer.attr(
+            "transform",
+            event.transform
+          );
+
+        }
+      )
+
   );
+
+
+
+  /* =====================================
+     SIMULACIÓN
+     ===================================== */
 
   const simulation =
     d3.forceSimulation(nodes)
 
+
       .force(
         "link",
-        d3.forceLink(hierarchyLinks)
+
+        d3.forceLink(
+          hierarchyLinks
+        )
           .id(d => d.id)
           .distance(110)
           .strength(0.9)
       )
 
+
       .force(
         "charge",
+
         d3.forceManyBody()
           .strength(-420)
       )
 
+
       .force(
         "center",
+
         d3.forceCenter(
           width / 2,
           height / 2
         )
       )
 
+
       .force(
         "collision",
+
         d3.forceCollide(45)
       );
+
+
+
+  /* =====================================
+     RELATED
+     Línea punteada
+     ===================================== */
 
   const related =
     zoomLayer
@@ -429,7 +697,17 @@ function drawGraph(
       .selectAll("line")
       .data(relatedLinks)
       .join("line")
-      .attr("class", "related");
+      .attr(
+        "class",
+        "related"
+      );
+
+
+
+  /* =====================================
+     BROADER
+     Línea continua
+     ===================================== */
 
   const links =
     zoomLayer
@@ -437,7 +715,16 @@ function drawGraph(
       .selectAll("line")
       .data(hierarchyLinks)
       .join("line")
-      .attr("class", "link");
+      .attr(
+        "class",
+        "link"
+      );
+
+
+
+  /* =====================================
+     GRUPOS DE NODOS
+     ===================================== */
 
   const node =
     zoomLayer
@@ -445,111 +732,361 @@ function drawGraph(
       .selectAll("g")
       .data(nodes)
       .join("g")
-      .attr("class", "node")
-      .call(drag(simulation));
+      .attr(
+        "class",
+        "node"
+      )
+      .call(
+        drag(simulation)
+      );
 
 
-  /*
-   * NODOS NORMALES
-   * Se mantienen como círculos.
-   */
+
+  /* =========================================
+     ÁREA INVISIBLE DE CAPTURA PARA DRAG
+     Permite arrastrar TODOS los nodos
+     ========================================= */
 
   node
-    .filter(d => !negativeConcepts.has(d.label))
     .append("circle")
-    .attr("r", d => {
-      return d.label === "Social"
-        ? 18
-        : 11;
-    })
-    .attr("fill", (d, i) => {
-      return d.label === "Social"
-        ? "transparent"
-        : pastelColors[i % pastelColors.length];
-    });
+    .attr("r", 22)
+    .attr("fill", "transparent")
+    .attr("stroke", "none")
+    .style("pointer-events", "all")
+    .style("cursor", "grab");
 
 
-  /*
-   * CONCEPTOS CON CARGA SEMÁNTICA NEGATIVA
-   * Se representan mediante triángulos rojo pastel.
-   */
+
+  /* =========================================
+     1. ESTRUCTURALES
+
+     Social
+     Temas
+     Problemas
+     Actores
+
+     TRANSPARENTES
+     ========================================= */
 
   node
-    .filter(d => negativeConcepts.has(d.label))
+
+    .filter(
+      d => nodeType(d) === "structural"
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+      d =>
+        d.label === "Social"
+          ? 18
+          : 14
+    )
+
+    .attr(
+      "fill",
+      "none"
+    )
+
+    .attr(
+      "stroke",
+      transparentStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     2. PROBLEMAS
+
+     TODOS LOS DESCENDIENTES DE PROBLEMAS
+
+     TRIÁNGULO ROJO PASTEL
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "problem"
+    )
+
     .append("path")
+
     .attr(
       "d",
+
       d3.symbol()
         .type(d3.symbolTriangle)
         .size(360)
     )
-    .attr("fill", negativeColor)
-    .attr("stroke", negativeStroke)
-    .attr("stroke-width", 1.5);
 
+    .attr(
+      "fill",
+      problemColor
+    )
+
+    .attr(
+      "stroke",
+      problemStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     3. ACTORES
+
+     TODOS LOS DESCENDIENTES DE ACTORES
+
+     CUADRADO AZUL PASTEL
+     ========================================= */
 
   node
-    .append("text")
-    .attr("x", 16)
-    .attr("y", 4)
-    .text(d => d.label);
 
+    .filter(
+      d => nodeType(d) === "actor"
+    )
+
+    .append("rect")
+
+    .attr(
+      "x",
+      -11
+    )
+
+    .attr(
+      "y",
+      -11
+    )
+
+    .attr(
+      "width",
+      22
+    )
+
+    .attr(
+      "height",
+      22
+    )
+
+    .attr(
+      "rx",
+      2
+    )
+
+    .attr(
+      "fill",
+      actorColor
+    )
+
+    .attr(
+      "stroke",
+      actorStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     4. TEMAS
+
+     TODOS LOS DESCENDIENTES DE TEMAS
+
+     CÍRCULO AMARILLO PASTEL
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "topic"
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+      11
+    )
+
+    .attr(
+      "fill",
+      topicColor
+    )
+
+    .attr(
+      "stroke",
+      topicStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     5. RESPALDO
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "neutral"
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+      11
+    )
+
+    .attr(
+      "fill",
+      neutralColor
+    )
+
+    .attr(
+      "stroke",
+      neutralStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =====================================
+     ETIQUETAS
+     ===================================== */
+
+  node
+
+    .append("text")
+
+    .attr(
+      "x",
+      16
+    )
+
+    .attr(
+      "y",
+      4
+    )
+
+    .text(
+      d => d.label
+    );
+
+
+
+  /* =====================================
+     PANEL DE INFORMACIÓN
+     ===================================== */
 
   node.on(
+
     "click",
+
     (event, d) => {
-      showPanel(d, nodesMap);
+
+      showPanel(
+        d,
+        nodesMap
+      );
+
     }
+
   );
 
 
+
+  /* =====================================
+     ACTUALIZACIÓN DE POSICIONES
+     ===================================== */
+
   simulation.on(
+
     "tick",
+
     () => {
 
+
       links
+
         .attr(
           "x1",
           d => d.source.x
         )
+
         .attr(
           "y1",
           d => d.source.y
         )
+
         .attr(
           "x2",
           d => d.target.x
         )
+
         .attr(
           "y2",
           d => d.target.y
         );
 
+
+
       related
+
         .attr(
           "x1",
-          d => typeof d.source === "object"
-            ? d.source.x
-            : nodesMap.get(d.source)?.x
+          d =>
+            typeof d.source === "object"
+              ? d.source.x
+              : nodesMap.get(d.source)?.x
         )
+
         .attr(
           "y1",
-          d => typeof d.source === "object"
-            ? d.source.y
-            : nodesMap.get(d.source)?.y
+          d =>
+            typeof d.source === "object"
+              ? d.source.y
+              : nodesMap.get(d.source)?.y
         )
+
         .attr(
           "x2",
-          d => typeof d.target === "object"
-            ? d.target.x
-            : nodesMap.get(d.target)?.x
+          d =>
+            typeof d.target === "object"
+              ? d.target.x
+              : nodesMap.get(d.target)?.x
         )
+
         .attr(
           "y2",
-          d => typeof d.target === "object"
-            ? d.target.y
-            : nodesMap.get(d.target)?.y
+          d =>
+            typeof d.target === "object"
+              ? d.target.y
+              : nodesMap.get(d.target)?.y
         );
+
+
 
       node.attr(
         "transform",
@@ -557,35 +1094,67 @@ function drawGraph(
           `translate(${d.x},${d.y})`
       );
 
-    });
+    }
+
+  );
 
 
-  /* Adaptación automática al cambiar el tamaño de pantalla */
 
-  window.addEventListener("resize", () => {
+  /* =====================================
+     RESPONSIVE
+     ===================================== */
 
-    const newWidth = container.clientWidth;
-    const newHeight = container.clientHeight;
+  window.addEventListener(
 
-    svg.attr(
-      "viewBox",
-      [0, 0, newWidth, newHeight]
-    );
+    "resize",
 
-    simulation.force(
-      "center",
-      d3.forceCenter(
-        newWidth / 2,
-        newHeight / 2
-      )
-    );
+    () => {
 
-    simulation.alpha(0.3).restart();
 
-  });
+      const newWidth =
+        container.clientWidth;
+
+
+      const newHeight =
+        container.clientHeight;
+
+
+      svg.attr(
+        "viewBox",
+        [
+          0,
+          0,
+          newWidth,
+          newHeight
+        ]
+      );
+
+
+      simulation.force(
+        "center",
+
+        d3.forceCenter(
+          newWidth / 2,
+          newHeight / 2
+        )
+      );
+
+
+      simulation
+        .alpha(0.3)
+        .restart();
+
+    }
+
+  );
 
 }
 
+
+
+/* =========================================
+   PANEL LATERAL
+   ========================================= */
 
 function showPanel(
   concept,
@@ -593,32 +1162,51 @@ function showPanel(
 ) {
 
   const panel =
-    document.getElementById("panel");
+    document.getElementById(
+      "panel"
+    );
+
 
   const broader =
     concept.broader &&
-    nodesMap.get(concept.broader)
+    nodesMap.get(
+      concept.broader
+    )
+
       ? nodesMap.get(
           concept.broader
         ).label
+
       : "—";
+
 
   const related =
     concept.related
-      .map(uri =>
-        nodesMap.get(uri)?.label
+
+      .map(
+        uri =>
+          nodesMap.get(uri)?.label
       )
+
       .filter(Boolean);
+
+
 
   panel.innerHTML = `
 
-    <h2>${concept.label}</h2>
+    <h2>
+      ${concept.label}
+    </h2>
+
 
     <div class="label">
       Etiqueta preferida
     </div>
 
-    <div>${concept.label}</div>
+    <div>
+      ${concept.label}
+    </div>
+
 
     <div class="label">
       Etiquetas alternativas
@@ -632,11 +1220,15 @@ function showPanel(
       }
     </div>
 
+
     <div class="label">
       Concepto superior
     </div>
 
-    <div>${broader}</div>
+    <div>
+      ${broader}
+    </div>
+
 
     <div class="label">
       Conceptos relacionados
@@ -655,21 +1247,34 @@ function showPanel(
 }
 
 
+
+/* =========================================
+   DRAG DE LOS NODOS
+   ========================================= */
+
 function drag(simulation) {
+
 
   function dragstarted(
     event,
     d
   ) {
 
-    if (!event.active)
-      simulation.alphaTarget(0.3)
+    if (!event.active) {
+
+      simulation
+        .alphaTarget(0.3)
         .restart();
+
+    }
+
 
     d.fx = d.x;
     d.fy = d.y;
 
   }
+
+
 
   function dragged(
     event,
@@ -681,18 +1286,27 @@ function drag(simulation) {
 
   }
 
+
+
   function dragended(
     event,
     d
   ) {
 
-    if (!event.active)
-      simulation.alphaTarget(0);
+    if (!event.active) {
+
+      simulation
+        .alphaTarget(0);
+
+    }
+
 
     d.fx = null;
     d.fy = null;
 
   }
+
+
 
   return d3.drag()
 
