@@ -10,147 +10,156 @@ soc:Social
     skos:prefLabel "Social"@es ;
     skos:altLabel "Sociedad"@es .
 
+
 # =========================================
-# CONCEPTOS PRIMARIOS
+# CATEGORÍAS PRINCIPALES
+# =========================================
+
+soc:Temas
+    a skos:Concept ;
+    skos:prefLabel "Temas"@es ;
+    skos:broader soc:Social .
+
+soc:Actores
+    a skos:Concept ;
+    skos:prefLabel "Actores"@es ;
+    skos:broader soc:Social .
+
+soc:Problemas
+    a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader soc:Social .
+
+
+# =========================================
+# TEMAS
 # =========================================
 
 soc:Poblacion
     a skos:Concept ;
     skos:prefLabel "Población"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:GruposSociales .
-
-soc:MinoriasSociales
-    a skos:Concept ;
-    skos:prefLabel "Minorías sociales"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:GruposSociales .
-
-soc:GruposSociales
-    a skos:Concept ;
-    skos:prefLabel "Grupos sociales"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Poblacion, soc:MinoriasSociales, soc:SectoresSociales .
-
-soc:SectoresSociales
-    a skos:Concept ;
-    skos:prefLabel "Sectores sociales"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:GruposSociales .
+    skos:broader soc:Temas .
 
 soc:Identidad
     a skos:Concept ;
     skos:prefLabel "Identidad"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Cultura, soc:Patria .
-
-soc:Patria
-    a skos:Concept ;
-    skos:prefLabel "Patria"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Identidad .
-
-soc:Cultura
-    a skos:Concept ;
-    skos:prefLabel "Cultura"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Identidad, soc:Cosmopolitismo .
-
-soc:Cosmopolitismo
-    a skos:Concept ;
-    skos:prefLabel "Cosmopolitismo"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Cultura .
-
-soc:Entretenimiento
-    a skos:Concept ;
-    skos:prefLabel "Entretenimiento"@es ;
-    skos:broader soc:Social .
-
-soc:AsuntosGruposEtarios
-    a skos:Concept ;
-    skos:prefLabel "Asuntos de grupos etarios"@es ;
-    skos:broader soc:Social .
-
-soc:Pobreza
-    a skos:Concept ;
-    skos:prefLabel "Pobreza"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Empleo .
-
-soc:Empleo
-    a skos:Concept ;
-    skos:prefLabel "Empleo"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Pobreza .
-
-soc:Educacion
-    a skos:Concept ;
-    skos:prefLabel "Educación"@es ;
-    skos:broader soc:Social .
-
-soc:Salud
-    a skos:Concept ;
-    skos:prefLabel "Salud"@es ;
-    skos:broader soc:Social .
-
-soc:Urbanismo
-    a skos:Concept ;
-    skos:prefLabel "Urbanismo"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Infraestructura, soc:Vivienda .
+    skos:broader soc:Temas .
 
 soc:Infraestructura
     a skos:Concept ;
     skos:prefLabel "Infraestructura"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Urbanismo, soc:ServiciosPublicos, soc:Transporte .
+    skos:broader soc:Temas .
+
+
+# =========================================
+# NARROWER DE IDENTIDAD
+# =========================================
+
+soc:Cultura
+    a skos:Concept ;
+    skos:prefLabel "Cultura"@es ;
+    skos:broader soc:Identidad .
+
+
+# =========================================
+# NARROWER DE CULTURA
+# =========================================
+
+soc:Cosmopolitismo
+    a skos:Concept ;
+    skos:prefLabel "Cosmopolitismo"@es ;
+    skos:broader soc:Cultura .
+
+
+# =========================================
+# NARROWER DE INFRAESTRUCTURA
+# =========================================
+
+soc:Educacion
+    a skos:Concept ;
+    skos:prefLabel "Educación"@es ;
+    skos:broader soc:Infraestructura .
+
+soc:Salud
+    a skos:Concept ;
+    skos:prefLabel "Salud"@es ;
+    skos:broader soc:Infraestructura .
 
 soc:Vivienda
     a skos:Concept ;
     skos:prefLabel "Vivienda"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Urbanismo .
+    skos:broader soc:Infraestructura .
 
 soc:ServiciosPublicos
     a skos:Concept ;
     skos:prefLabel "Servicios públicos"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Infraestructura, soc:Discapacidad .
+    skos:broader soc:Infraestructura ;
+    skos:related soc:Discapacitados .
 
-soc:Transporte
+soc:Movilidad
     a skos:Concept ;
-    skos:prefLabel "Transporte"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:Infraestructura .
-
-soc:Discapacidad
-    a skos:Concept ;
-    skos:prefLabel "Discapacidad"@es ;
-    skos:broader soc:Social ;
-    skos:related soc:ServiciosPublicos .
+    skos:prefLabel "Movilidad"@es ;
+    skos:broader soc:Infraestructura .
 
 soc:Deportes
     a skos:Concept ;
     skos:prefLabel "Deportes"@es ;
-    skos:broader soc:Social .
+    skos:broader soc:Infraestructura .
+
+soc:Conectividad
+    a skos:Concept ;
+    skos:prefLabel "Conectividad"@es ;
+    skos:broader soc:Infraestructura .
+
+soc:Empleo
+    a skos:Concept ;
+    skos:prefLabel "Empleo"@es ;
+    skos:broader soc:Infraestructura ;
+    skos:related soc:Pobreza .
+
 
 # =========================================
-# CONCEPTOS DEPENDIENTES
-# ASUNTOS DE GRUPOS ETARIOS
+# NARROWER DE VIVIENDA
+# =========================================
+
+soc:Urbanismo
+    a skos:Concept ;
+    skos:prefLabel "Urbanismo"@es ;
+    skos:broader soc:Vivienda .
+
+
+# =========================================
+# ACTORES
 # =========================================
 
 soc:Ninez
     a skos:Concept ;
     skos:prefLabel "Niñez"@es ;
-    skos:broader soc:AsuntosGruposEtarios .
+    skos:broader soc:Actores .
 
 soc:Juventud
     a skos:Concept ;
     skos:prefLabel "Juventud"@es ;
-    skos:broader soc:AsuntosGruposEtarios .
+    skos:broader soc:Actores .
 
 soc:Ancianidad
     a skos:Concept ;
     skos:prefLabel "Ancianidad"@es ;
-    skos:broader soc:AsuntosGruposEtarios .
+    skos:broader soc:Actores .
+
+soc:Discapacitados
+    a skos:Concept ;
+    skos:prefLabel "Discapacitados"@es ;
+    skos:broader soc:Actores ;
+    skos:related soc:ServiciosPublicos .
+
+
+# =========================================
+# PROBLEMAS
+# =========================================
+
+soc:Pobreza
+    a skos:Concept ;
+    skos:prefLabel "Pobreza"@es ;
+    skos:broader soc:Problemas ;
+    skos:related soc:Empleo .
