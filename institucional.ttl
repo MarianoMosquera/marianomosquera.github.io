@@ -40,7 +40,8 @@ inst:Problemas
     a skos:Concept ;
     skos:prefLabel "Problemas"@es ;
     skos:broader inst:Institucional ;
-    skos:narrower inst:Seguridad .
+    skos:narrower inst:Seguridad ;
+    skos:narrower inst:Captura .
 
 # =========================================
 # TEMAS
@@ -114,4 +115,8 @@ inst:PoderJudicial
 inst:Seguridad
     a skos:Concept ;
     skos:prefLabel "Seguridad"@es ;
+    skos:broader inst:Problemas .
+
+inst:Captura a skos:Concept ;
+    skos:prefLabel "Captura"@es ;
     skos:broader inst:Problemas .
