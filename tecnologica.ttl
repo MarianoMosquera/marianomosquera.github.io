@@ -1,0 +1,154 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix tec: <https://marianomosquera.github.io/tecnologica/> .
+
+# =========================================
+# CONCEPTO PRINCIPAL
+# =========================================
+
+tec:Tecnologica
+    a skos:Concept ;
+    skos:prefLabel "Tecnológica"@es ;
+    skos:altLabel "Tecnología"@es ;
+    skos:narrower tec:Temas,
+                  tec:Tipos,
+                  tec:Actores,
+                  tec:Problemas .
+
+# =========================================
+# CATEGORÍAS PRINCIPALES
+# =========================================
+
+tec:Temas
+    a skos:Concept ;
+    skos:prefLabel "Temas"@es ;
+    skos:broader tec:Tecnologica ;
+    skos:narrower tec:Ciencia,
+                  tec:Innovacion .
+
+tec:Tipos
+    a skos:Concept ;
+    skos:prefLabel "Tipos"@es ;
+    skos:broader tec:Tecnologica ;
+    skos:narrower tec:IA,
+                  tec:Blockchain,
+                  tec:Metaverso,
+                  tec:RedesSociales,
+                  tec:Biotecnologia,
+                  tec:BigData .
+
+tec:Actores
+    a skos:Concept ;
+    skos:prefLabel "Actores"@es ;
+    skos:broader tec:Tecnologica ;
+    skos:narrower tec:Universidades,
+                  tec:CentrosInvestigacion .
+
+tec:Problemas
+    a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader tec:Tecnologica ;
+    skos:narrower tec:Ciberseguridad .
+
+# =========================================
+# TEMAS
+# =========================================
+
+tec:Ciencia
+    a skos:Concept ;
+    skos:prefLabel "Ciencia"@es ;
+    skos:broader tec:Temas ;
+    skos:narrower tec:Ingenieria .
+
+tec:Ingenieria
+    a skos:Concept ;
+    skos:prefLabel "Ingeniería"@es ;
+    skos:broader tec:Ciencia .
+
+tec:Innovacion
+    a skos:Concept ;
+    skos:prefLabel "Innovación"@es ;
+    skos:broader tec:Temas ;
+    skos:narrower tec:TransformacionDigital .
+
+tec:TransformacionDigital
+    a skos:Concept ;
+    skos:prefLabel "Transformación Digital"@es ;
+    skos:broader tec:Innovacion .
+
+# =========================================
+# TIPOS
+# =========================================
+
+tec:IA
+    a skos:Concept ;
+    skos:prefLabel "IA"@es ;
+    skos:altLabel "Inteligencia Artificial"@es ;
+    skos:broader tec:Tipos ;
+    skos:narrower tec:Automatizacion,
+                  tec:Robotica,
+                  tec:Algoritmo ;
+    skos:related tec:BigData .
+
+tec:Automatizacion
+    a skos:Concept ;
+    skos:prefLabel "Automatización"@es ;
+    skos:broader tec:IA .
+
+tec:Robotica
+    a skos:Concept ;
+    skos:prefLabel "Robótica"@es ;
+    skos:broader tec:IA .
+
+tec:Algoritmo
+    a skos:Concept ;
+    skos:prefLabel "Algoritmo"@es ;
+    skos:broader tec:IA .
+
+tec:Blockchain
+    a skos:Concept ;
+    skos:prefLabel "Blockchain"@es ;
+    skos:broader tec:Tipos .
+
+tec:Metaverso
+    a skos:Concept ;
+    skos:prefLabel "Metaverso"@es ;
+    skos:broader tec:Tipos .
+
+tec:RedesSociales
+    a skos:Concept ;
+    skos:prefLabel "Redes sociales"@es ;
+    skos:broader tec:Tipos .
+
+tec:Biotecnologia
+    a skos:Concept ;
+    skos:prefLabel "Biotecnología"@es ;
+    skos:broader tec:Tipos .
+
+tec:BigData
+    a skos:Concept ;
+    skos:prefLabel "Big Data"@es ;
+    skos:broader tec:Tipos ;
+    skos:related tec:IA .
+
+# =========================================
+# ACTORES
+# =========================================
+
+tec:Universidades
+    a skos:Concept ;
+    skos:prefLabel "Universidades"@es ;
+    skos:broader tec:Actores .
+
+tec:CentrosInvestigacion
+    a skos:Concept ;
+    skos:prefLabel "Centros de investigación"@es ;
+    skos:broader tec:Actores .
+
+# =========================================
+# PROBLEMAS
+# =========================================
+
+tec:Ciberseguridad
+    a skos:Concept ;
+    skos:prefLabel "Ciberseguridad"@es ;
+    skos:broader tec:Problemas .
