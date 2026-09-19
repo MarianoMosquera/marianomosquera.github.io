@@ -235,6 +235,8 @@ const mainConcepts = new Set([
 
 const structuralConcepts = new Set([
 
+  "Agenda",
+
   ...mainConcepts,
 
   "Temas",
@@ -293,7 +295,7 @@ Promise.all(
 
 
   /* =====================================
-     PARSEAR TODOS LOS TTL EN EL MISMO STORE
+     PARSEAR TODOS LOS TTL
      ===================================== */
 
   files.forEach(file => {
@@ -410,7 +412,6 @@ Promise.all(
       alternatives.map(x => x.value);
 
 
-
     /* BROADER */
 
     const broader =
@@ -430,7 +431,6 @@ Promise.all(
         broader.value;
 
     }
-
 
 
     /* RELATED */
@@ -456,12 +456,76 @@ Promise.all(
     Array.from(nodesMap.values());
 
 
+  /* =========================================
+     CREAR NODO CENTRAL AGENDA
+     ========================================= */
+
+  const agendaId =
+    "https://marianomosquera.github.io/agenda/#Agenda";
+
+
+  const agendaNode = {
+
+    id: agendaId,
+
+    label: "Agenda",
+
+    altLabels: [],
+
+    broader: null,
+
+    related: [],
+
+    ontology: "Agenda",
+
+    central: true
+
+  };
+
+
+  nodesMap.set(
+    agendaId,
+    agendaNode
+  );
+
+
+  nodes.push(
+    agendaNode
+  );
+
+
   /* =====================================
      ENLACES JERÁRQUICOS
      ===================================== */
 
   const hierarchyLinks = [];
 
+
+  /* =========================================
+     CONECTAR AGENDA CON LAS 6 ONTOLOGÍAS
+     ========================================= */
+
+  nodes.forEach(node => {
+
+    if (
+      mainConcepts.has(node.label)
+    ) {
+
+      hierarchyLinks.push({
+
+        source: agendaId,
+        target: node.id
+
+      });
+
+    }
+
+  });
+
+
+  /* =========================================
+     RESTO DE RELACIONES BROADER
+     ========================================= */
 
   nodes.forEach(node => {
 
@@ -536,7 +600,8 @@ Promise.all(
     nodes,
     hierarchyLinks,
     relatedLinks,
-    nodesMap
+    nodesMap,
+    agendaId
 
   );
 
@@ -568,27 +633,27 @@ function detectOntology(uri) {
     uri.toLowerCase();
 
 
-  if (value.includes("/institucional")) {
+  if (value.includes("institucional")) {
     return "Institucional";
   }
 
-  if (value.includes("/politica")) {
+  if (value.includes("politica")) {
     return "Política";
   }
 
-  if (value.includes("/social")) {
+  if (value.includes("social")) {
     return "Social";
   }
 
-  if (value.includes("/ambiental")) {
+  if (value.includes("ambiental")) {
     return "Ambiental";
   }
 
-  if (value.includes("/economica")) {
+  if (value.includes("economica")) {
     return "Económica";
   }
 
-  if (value.includes("/tecnologica")) {
+  if (value.includes("tecnologica")) {
     return "Tecnológica";
   }
 
@@ -607,7 +672,8 @@ function drawGraph(
   nodes,
   hierarchyLinks,
   relatedLinks,
-  nodesMap
+  nodesMap,
+  agendaId
 
 ) {
 
@@ -654,7 +720,7 @@ function drawGraph(
     "#c9aa45";
 
 
-  /* ESTRUCTURALES — transparentes */
+  /* ESTRUCTURALES */
 
   const transparentStroke =
     "#777";
@@ -881,6 +947,25 @@ function drawGraph(
   );
 
 
+  /* =========================================
+     FIJAR AGENDA EN EL CENTRO
+     ========================================= */
+
+  const agendaNode =
+    nodesMap.get(agendaId);
+
+
+  if (agendaNode) {
+
+    agendaNode.fx =
+      width / 2;
+
+    agendaNode.fy =
+      height / 2;
+
+  }
+
+
   /* =====================================
      SIMULACIÓN
      ===================================== */
@@ -899,9 +984,35 @@ function drawGraph(
 
           .id(d => d.id)
 
-          .distance(100)
+          .distance(d => {
 
-          .strength(0.8)
+            if (
+              d.source.id === agendaId ||
+              d.target.id === agendaId
+            ) {
+
+              return 170;
+
+            }
+
+            return 95;
+
+          })
+
+          .strength(d => {
+
+            if (
+              d.source.id === agendaId ||
+              d.target.id === agendaId
+            ) {
+
+              return 1;
+
+            }
+
+            return 0.8;
+
+          })
 
       )
 
@@ -910,7 +1021,7 @@ function drawGraph(
         "charge",
 
         d3.forceManyBody()
-          .strength(-300)
+          .strength(-330)
 
       )
 
@@ -929,14 +1040,13 @@ function drawGraph(
 
         "collision",
 
-        d3.forceCollide(38)
+        d3.forceCollide(40)
 
       );
 
 
   /* =====================================
      RELATED
-     Línea punteada
      ===================================== */
 
   const related =
@@ -959,7 +1069,6 @@ function drawGraph(
 
   /* =====================================
      BROADER
-     Línea continua
      ===================================== */
 
   const links =
@@ -1002,7 +1111,7 @@ function drawGraph(
       )
 
       .call(
-        drag(simulation)
+        drag(simulation, agendaId)
       );
 
 
@@ -1014,7 +1123,11 @@ function drawGraph(
 
     .append("circle")
 
-    .attr("r", 22)
+    .attr("r", d =>
+      d.id === agendaId
+        ? 30
+        : 22
+    )
 
     .attr("fill", "transparent")
 
@@ -1022,17 +1135,56 @@ function drawGraph(
 
     .style("pointer-events", "all")
 
-    .style("cursor", "grab");
+    .style("cursor", d =>
+      d.id === agendaId
+        ? "default"
+        : "grab"
+    );
 
 
   /* =========================================
-     1. ESTRUCTURALES
+     NODO CENTRAL AGENDA
      ========================================= */
 
   node
 
     .filter(
-      d => nodeType(d) === "structural"
+      d => d.id === agendaId
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+      23
+    )
+
+    .attr(
+      "fill",
+      "white"
+    )
+
+    .attr(
+      "stroke",
+      "#444"
+    )
+
+    .attr(
+      "stroke-width",
+      2.5
+    );
+
+
+  /* =========================================
+     RESTO DE ESTRUCTURALES
+     ========================================= */
+
+  node
+
+    .filter(
+      d =>
+        nodeType(d) === "structural" &&
+        d.id !== agendaId
     )
 
     .append("circle")
@@ -1059,13 +1211,15 @@ function drawGraph(
 
     .attr(
       "stroke-width",
-      1.5
+      d =>
+        mainConcepts.has(d.label)
+          ? 2
+          : 1.5
     );
 
 
   /* =========================================
-     2. PROBLEMAS
-     TRIÁNGULO ROJO PASTEL
+     PROBLEMAS
      ========================================= */
 
   node
@@ -1105,8 +1259,7 @@ function drawGraph(
 
 
   /* =========================================
-     3. ACTORES
-     CUADRADO AZUL PASTEL
+     ACTORES
      ========================================= */
 
   node
@@ -1144,8 +1297,7 @@ function drawGraph(
 
 
   /* =========================================
-     4. TEMAS / TIPOS / ACTIVIDAD
-     CÍRCULO AMARILLO PASTEL
+     TEMAS / TIPOS / ACTIVIDAD
      ========================================= */
 
   node
@@ -1156,7 +1308,10 @@ function drawGraph(
 
     .append("circle")
 
-    .attr("r", 11)
+    .attr(
+      "r",
+      11
+    )
 
     .attr(
       "fill",
@@ -1175,7 +1330,7 @@ function drawGraph(
 
 
   /* =========================================
-     5. RESPALDO
+     RESPALDO
      ========================================= */
 
   node
@@ -1186,7 +1341,10 @@ function drawGraph(
 
     .append("circle")
 
-    .attr("r", 11)
+    .attr(
+      "r",
+      11
+    )
 
     .attr(
       "fill",
@@ -1214,12 +1372,28 @@ function drawGraph(
 
     .attr(
       "x",
-      16
+
+      d =>
+        d.id === agendaId
+          ? 30
+          : 16
+
     )
 
     .attr(
       "y",
       4
+    )
+
+    .style(
+      "font-weight",
+
+      d =>
+        d.id === agendaId ||
+        mainConcepts.has(d.label)
+          ? "bold"
+          : "normal"
+
     )
 
     .text(
@@ -1375,6 +1549,21 @@ function drawGraph(
       );
 
 
+      const central =
+        nodesMap.get(agendaId);
+
+
+      if (central) {
+
+        central.fx =
+          newWidth / 2;
+
+        central.fy =
+          newHeight / 2;
+
+      }
+
+
       simulation.force(
 
         "center",
@@ -1525,13 +1714,30 @@ function showPanel(
    DRAG DE LOS NODOS
    ========================================= */
 
-function drag(simulation) {
+function drag(
+  simulation,
+  agendaId
+) {
 
 
   function dragstarted(
     event,
     d
   ) {
+
+    /*
+      Agenda permanece fija
+      en el centro.
+    */
+
+    if (
+      d.id === agendaId
+    ) {
+
+      return;
+
+    }
+
 
     if (!event.active) {
 
@@ -1556,9 +1762,20 @@ function drag(simulation) {
     d
   ) {
 
-    d.fx = event.x;
+    if (
+      d.id === agendaId
+    ) {
 
-    d.fy = event.y;
+      return;
+
+    }
+
+
+    d.fx =
+      event.x;
+
+    d.fy =
+      event.y;
 
   }
 
@@ -1567,6 +1784,15 @@ function drag(simulation) {
     event,
     d
   ) {
+
+    if (
+      d.id === agendaId
+    ) {
+
+      return;
+
+    }
+
 
     if (!event.active) {
 
