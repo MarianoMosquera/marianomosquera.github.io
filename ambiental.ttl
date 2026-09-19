@@ -85,7 +85,7 @@ amb:Residuos
 amb:Reciclado
     a skos:Concept ;
     skos:prefLabel "Reciclado"@es ;
-    skos:broader amb:Residuos .
+    skos:broader amb:Residuos ;
     skos:related amb:EconomiaCircular .
 
 amb:EconomiaCircular
