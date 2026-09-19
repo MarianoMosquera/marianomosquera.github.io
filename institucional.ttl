@@ -1,0 +1,117 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix inst: <https://marianomosquera.github.io/institucional/> .
+
+# =========================================
+# CONCEPTO PRINCIPAL
+# =========================================
+
+inst:Institucional
+    a skos:Concept ;
+    skos:prefLabel "Institucional"@es ;
+    skos:altLabel "Instituciones"@es ;
+    skos:narrower inst:Temas,
+                  inst:Actores,
+                  inst:Problemas .
+
+# =========================================
+# CATEGORÍAS PRINCIPALES
+# =========================================
+
+inst:Temas
+    a skos:Concept ;
+    skos:prefLabel "Temas"@es ;
+    skos:broader inst:Institucional ;
+    skos:narrower inst:DerechosHumanos,
+                  inst:Normas,
+                  inst:RelacionesInterjurisdiccionales .
+
+inst:Actores
+    a skos:Concept ;
+    skos:prefLabel "Actores"@es ;
+    skos:broader inst:Institucional ;
+    skos:narrower inst:Estado,
+                  inst:Gobierno,
+                  inst:OrganismosInternacionales,
+                  inst:OrganizacionesInternacionales,
+                  inst:PoderLegislativo,
+                  inst:PoderJudicial .
+
+inst:Problemas
+    a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader inst:Institucional ;
+    skos:narrower inst:Seguridad .
+
+# =========================================
+# TEMAS
+# =========================================
+
+inst:DerechosHumanos
+    a skos:Concept ;
+    skos:prefLabel "Derechos humanos"@es ;
+    skos:broader inst:Temas .
+
+inst:Normas
+    a skos:Concept ;
+    skos:prefLabel "Normas"@es ;
+    skos:broader inst:Temas ;
+    skos:narrower inst:Leyes,
+                  inst:ConvencionesInternacionales .
+
+inst:Leyes
+    a skos:Concept ;
+    skos:prefLabel "Leyes"@es ;
+    skos:broader inst:Normas .
+
+inst:ConvencionesInternacionales
+    a skos:Concept ;
+    skos:prefLabel "Convenciones internacionales"@es ;
+    skos:broader inst:Normas .
+
+inst:RelacionesInterjurisdiccionales
+    a skos:Concept ;
+    skos:prefLabel "Relaciones interjurisdiccionales"@es ;
+    skos:broader inst:Temas .
+
+# =========================================
+# ACTORES
+# =========================================
+
+inst:Estado
+    a skos:Concept ;
+    skos:prefLabel "Estado"@es ;
+    skos:broader inst:Actores .
+
+inst:Gobierno
+    a skos:Concept ;
+    skos:prefLabel "Gobierno"@es ;
+    skos:broader inst:Actores .
+
+inst:OrganismosInternacionales
+    a skos:Concept ;
+    skos:prefLabel "Organismos internacionales"@es ;
+    skos:broader inst:Actores .
+
+inst:OrganizacionesInternacionales
+    a skos:Concept ;
+    skos:prefLabel "Organizaciones internacionales"@es ;
+    skos:broader inst:Actores .
+
+inst:PoderLegislativo
+    a skos:Concept ;
+    skos:prefLabel "Poder legislativo"@es ;
+    skos:broader inst:Actores .
+
+inst:PoderJudicial
+    a skos:Concept ;
+    skos:prefLabel "Poder judicial"@es ;
+    skos:broader inst:Actores .
+
+# =========================================
+# PROBLEMAS
+# =========================================
+
+inst:Seguridad
+    a skos:Concept ;
+    skos:prefLabel "Seguridad"@es ;
+    skos:broader inst:Problemas .
