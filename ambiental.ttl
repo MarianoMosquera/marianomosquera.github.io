@@ -1,0 +1,119 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix amb: <https://marianomosquera.github.io/ambiental/> .
+
+# =========================================
+# CONCEPTO PRINCIPAL
+# =========================================
+
+amb:Ambiental
+    a skos:Concept ;
+    skos:prefLabel "Ambiental"@es ;
+    skos:altLabel "Ambiente"@es ;
+    skos:narrower amb:Problemas,
+                  amb:Temas,
+                  amb:Actores .
+
+# =========================================
+# PROBLEMAS
+# =========================================
+
+amb:Problemas
+    a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader amb:Ambiental ;
+    skos:narrower amb:CambioClimatico,
+                  amb:Deforestacion,
+                  amb:Contaminacion,
+                  amb:Degradacion .
+
+amb:CambioClimatico
+    a skos:Concept ;
+    skos:prefLabel "Cambio climático"@es ;
+    skos:broader amb:Problemas .
+
+amb:Deforestacion
+    a skos:Concept ;
+    skos:prefLabel "Deforestación"@es ;
+    skos:broader amb:Problemas .
+
+amb:Contaminacion
+    a skos:Concept ;
+    skos:prefLabel "Contaminación"@es ;
+    skos:broader amb:Problemas .
+
+amb:Degradacion
+    a skos:Concept ;
+    skos:prefLabel "Degradación"@es ;
+    skos:broader amb:Problemas .
+
+# =========================================
+# TEMAS
+# =========================================
+
+amb:Temas
+    a skos:Concept ;
+    skos:prefLabel "Temas"@es ;
+    skos:broader amb:Ambiental ;
+    skos:narrower amb:Recursos,
+                  amb:Biodiversidad,
+                  amb:Residuos,
+                  amb:ProduccionAnimal .
+
+amb:Recursos
+    a skos:Concept ;
+    skos:prefLabel "Recursos"@es ;
+    skos:broader amb:Temas ;
+    skos:narrower amb:Agua .
+
+amb:Agua
+    a skos:Concept ;
+    skos:prefLabel "Agua"@es ;
+    skos:broader amb:Recursos .
+
+amb:Biodiversidad
+    a skos:Concept ;
+    skos:prefLabel "Biodiversidad"@es ;
+    skos:broader amb:Temas .
+
+amb:Residuos
+    a skos:Concept ;
+    skos:prefLabel "Residuos"@es ;
+    skos:broader amb:Temas ;
+    skos:narrower amb:Reciclado,
+                  amb:EconomiaCircular .
+
+amb:Reciclado
+    a skos:Concept ;
+    skos:prefLabel "Reciclado"@es ;
+    skos:broader amb:Residuos .
+
+amb:EconomiaCircular
+    a skos:Concept ;
+    skos:prefLabel "Economía circular"@es ;
+    skos:broader amb:Residuos .
+
+amb:ProduccionAnimal
+    a skos:Concept ;
+    skos:prefLabel "Producción animal"@es ;
+    skos:broader amb:Temas .
+
+# =========================================
+# ACTORES
+# =========================================
+
+amb:Actores
+    a skos:Concept ;
+    skos:prefLabel "Actores"@es ;
+    skos:broader amb:Ambiental ;
+    skos:narrower amb:OrganizacionesAmbientales,
+                  amb:Comunidades .
+
+amb:OrganizacionesAmbientales
+    a skos:Concept ;
+    skos:prefLabel "Organizaciones ambientales"@es ;
+    skos:broader amb:Actores .
+
+amb:Comunidades
+    a skos:Concept ;
+    skos:prefLabel "Comunidades"@es ;
+    skos:broader amb:Actores .
