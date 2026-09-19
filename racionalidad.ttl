@@ -1,0 +1,276 @@
+@prefix rat: <https://marianomosquera.github.io/racionalidad/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# =========================================================
+# CONCEPT SCHEME
+# =========================================================
+
+rat:RacionalidadScheme a skos:ConceptScheme ;
+    skos:prefLabel "Ontología de Racionalidad"@es ;
+    skos:hasTopConcept rat:Racionalidad .
+
+# =========================================================
+# RACIONALIDAD
+# =========================================================
+
+rat:Racionalidad a skos:Concept ;
+    skos:prefLabel "Racionalidad"@es ;
+    skos:topConceptOf rat:RacionalidadScheme ;
+    skos:narrower rat:Teoria,
+                  rat:Teleologia,
+                  rat:Evidencia .
+
+# =========================================================
+# 1. TEORÍA
+# =========================================================
+
+rat:Teoria a skos:Concept ;
+    skos:prefLabel "Teoría"@es ;
+    skos:broader rat:Racionalidad ;
+    skos:narrower rat:Autores .
+
+rat:Autores a skos:Concept ;
+    skos:prefLabel "Autores"@es ;
+    skos:broader rat:Teoria .
+
+# =========================================================
+# 2. TELEOLOGÍA
+# =========================================================
+
+rat:Teleologia a skos:Concept ;
+    skos:prefLabel "Teleología"@es ;
+    skos:broader rat:Racionalidad ;
+    skos:narrower rat:AlternativasPreferencias,
+                  rat:ProblemaSolucion,
+                  rat:CostoBeneficio,
+                  rat:Incrementalismo,
+                  rat:Sinopsis,
+                  rat:Disrupcion .
+
+rat:AlternativasPreferencias a skos:Concept ;
+    skos:prefLabel "Alternativas-preferencias"@es ;
+    skos:broader rat:Teleologia ;
+    skos:definition "Elección entre alternativas, opciones o cursos de acción, a partir de preferencias, según valores, objetivos o criterios del decisor."@es .
+
+rat:ProblemaSolucion a skos:Concept ;
+    skos:prefLabel "Problema-solución"@es ;
+    skos:broader rat:Teleologia ;
+    skos:definition "Proceso de identificación, definición o diagnóstico de un problema y búsqueda, diseño, selección o implementación de una solución."@es .
+
+rat:CostoBeneficio a skos:Concept ;
+    skos:prefLabel "Costo-beneficio"@es ;
+    skos:broader rat:Teleologia ;
+    skos:definition "Comparación de consecuencias positivas y negativas de una alternativa. Incluye análisis de eficacia y eficiencia."@es .
+
+rat:Incrementalismo a skos:Concept ;
+    skos:prefLabel "Incrementalismo"@es ;
+    skos:broader rat:Teleologia ;
+    skos:definition "Ajustes graduales y sucesivos sobre una situación existente, con cambios parciales y por limitadas capacidades."@es .
+
+rat:Sinopsis a skos:Concept ;
+    skos:prefLabel "Sinopsis"@es ;
+    skos:broader rat:Teleologia ;
+    skos:definition "Selección de opción óptima con análisis integral y racional, con objetivos de largo alcance, y por contar con amplias capacidades."@es .
+
+rat:Disrupcion a skos:Concept ;
+    skos:prefLabel "Disrupción"@es ;
+    skos:broader rat:Teleologia ;
+    skos:definition "Ruptura significativa con el estado existente, mediante transformaciones radicales; puede ser científica-racional o no."@es .
+
+# =========================================================
+# 3. EVIDENCIA
+# =========================================================
+
+rat:Evidencia a skos:Concept ;
+    skos:prefLabel "Evidencia"@es ;
+    skos:broader rat:Racionalidad ;
+    skos:narrower rat:TipoEvidencia,
+                  rat:Metodo,
+                  rat:Revision,
+                  rat:Calidad,
+                  rat:Problemas .
+
+# =========================================================
+# 3.1 TIPO
+# =========================================================
+
+rat:TipoEvidencia a skos:Concept ;
+    skos:prefLabel "Tipo"@es ;
+    skos:broader rat:Evidencia ;
+    skos:narrower rat:Dato,
+                  rat:Estadistica,
+                  rat:Variable .
+
+rat:Dato a skos:Concept ;
+    skos:prefLabel "Dato"@es ;
+    skos:broader rat:TipoEvidencia .
+
+rat:Estadistica a skos:Concept ;
+    skos:prefLabel "Estadística"@es ;
+    skos:broader rat:TipoEvidencia .
+
+rat:Variable a skos:Concept ;
+    skos:prefLabel "Variable"@es ;
+    skos:broader rat:TipoEvidencia ;
+    skos:narrower rat:Indicador,
+                  rat:Metrica,
+                  rat:Indice .
+
+rat:Indicador a skos:Concept ;
+    skos:prefLabel "Indicador"@es ;
+    skos:broader rat:Variable .
+
+rat:Metrica a skos:Concept ;
+    skos:prefLabel "Métrica"@es ;
+    skos:broader rat:Variable .
+
+rat:Indice a skos:Concept ;
+    skos:prefLabel "Índice"@es ;
+    skos:broader rat:Variable .
+
+# =========================================================
+# 3.2 MÉTODO
+# =========================================================
+
+rat:Metodo a skos:Concept ;
+    skos:prefLabel "Método"@es ;
+    skos:broader rat:Evidencia .
+
+# =========================================================
+# 3.3 REVISIÓN
+# =========================================================
+
+rat:Revision a skos:Concept ;
+    skos:prefLabel "Revisión"@es ;
+    skos:broader rat:Evidencia ;
+    skos:narrower rat:Hallazgo,
+                  rat:Emergente .
+
+rat:Hallazgo a skos:Concept ;
+    skos:prefLabel "Hallazgo"@es ;
+    skos:broader rat:Revision .
+
+rat:Emergente a skos:Concept ;
+    skos:prefLabel "Emergente"@es ;
+    skos:broader rat:Revision .
+
+# =========================================================
+# 3.4 CALIDAD
+# =========================================================
+
+rat:Calidad a skos:Concept ;
+    skos:prefLabel "Calidad"@es ;
+    skos:broader rat:Evidencia ;
+    skos:narrower rat:TipoCalidad,
+                  rat:Proceso .
+
+# --- Tipo de calidad ---
+
+rat:TipoCalidad a skos:Concept ;
+    skos:prefLabel "Tipo"@es ;
+    skos:broader rat:Calidad ;
+    skos:narrower rat:Confiabilidad,
+                  rat:Relevancia,
+                  rat:Validez,
+                  rat:Robustez,
+                  rat:Fiabilidad,
+                  rat:Pertinencia,
+                  rat:Consistencia,
+                  rat:Representatividad,
+                  rat:Significancia .
+
+rat:Confiabilidad a skos:Concept ;
+    skos:prefLabel "Confiabilidad"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Relevancia a skos:Concept ;
+    skos:prefLabel "Relevancia"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Validez a skos:Concept ;
+    skos:prefLabel "Validez"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Robustez a skos:Concept ;
+    skos:prefLabel "Robustez"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Fiabilidad a skos:Concept ;
+    skos:prefLabel "Fiabilidad"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Pertinencia a skos:Concept ;
+    skos:prefLabel "Pertinencia"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Consistencia a skos:Concept ;
+    skos:prefLabel "Consistencia"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Representatividad a skos:Concept ;
+    skos:prefLabel "Representatividad"@es ;
+    skos:broader rat:TipoCalidad .
+
+rat:Significancia a skos:Concept ;
+    skos:prefLabel "Significancia"@es ;
+    skos:broader rat:TipoCalidad .
+
+# --- Proceso ---
+
+rat:Proceso a skos:Concept ;
+    skos:prefLabel "Proceso"@es ;
+    skos:broader rat:Calidad ;
+    skos:narrower rat:Trazabilidad,
+                  rat:Verificabilidad,
+                  rat:Reproducibilidad .
+
+rat:Trazabilidad a skos:Concept ;
+    skos:prefLabel "Trazabilidad"@es ;
+    skos:broader rat:Proceso .
+
+rat:Verificabilidad a skos:Concept ;
+    skos:prefLabel "Verificabilidad"@es ;
+    skos:broader rat:Proceso .
+
+rat:Reproducibilidad a skos:Concept ;
+    skos:prefLabel "Reproducibilidad"@es ;
+    skos:broader rat:Proceso ;
+    skos:narrower rat:Replicabilidad .
+
+rat:Replicabilidad a skos:Concept ;
+    skos:prefLabel "Replicabilidad"@es ;
+    skos:broader rat:Reproducibilidad .
+
+# =========================================================
+# 3.5 PROBLEMAS
+# =========================================================
+
+rat:Problemas a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader rat:Evidencia ;
+    skos:narrower rat:HARKing,
+                  rat:Selectividad .
+
+rat:HARKing a skos:Concept ;
+    skos:prefLabel "HARKing"@es ;
+    skos:broader rat:Problemas .
+
+rat:Selectividad a skos:Concept ;
+    skos:prefLabel "Selectividad"@es ;
+    skos:broader rat:Problemas ;
+    skos:narrower rat:CherryPicking,
+                  rat:SesgoConfirmacion,
+                  rat:Sobreinterpretacion .
+
+rat:CherryPicking a skos:Concept ;
+    skos:prefLabel "Cherry-picking"@es ;
+    skos:broader rat:Selectividad .
+
+rat:SesgoConfirmacion a skos:Concept ;
+    skos:prefLabel "Sesgo de confirmación"@es ;
+    skos:broader rat:Selectividad .
+
+rat:Sobreinterpretacion a skos:Concept ;
+    skos:prefLabel "Sobreinterpretación"@es ;
+    skos:broader rat:Selectividad .
