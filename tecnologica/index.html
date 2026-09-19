@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ontología Tecnológica</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/rdflib@2.2.36/dist/rdflib.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fa;
+      color: #222;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #ddd;
+      padding: 22px 30px;
+    }
+
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 0;
+      color: #666;
+    }
+
+    #container {
+      display: flex;
+      height: calc(100vh - 95px);
+    }
+
+    #graph {
+      flex: 1;
+      background: white;
+      min-width: 0;
+    }
+
+    #graph svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    #panel {
+      width: 320px;
+      padding: 24px;
+      background: #fafafa;
+      border-left: 1px solid #ddd;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    #panel h2 {
+      margin-top: 0;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-top: 18px;
+    }
+
+    .node circle,
+    .node rect,
+    .node path {
+      cursor: pointer;
+    }
+
+    .node text {
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .link {
+      stroke: #aaa;
+      stroke-width: 1.5px;
+    }
+
+    .related {
+      stroke: #bbb;
+      stroke-width: 1px;
+      stroke-dasharray: 5,5;
+    }
+
+    #status {
+      padding: 30px;
+      font-size: 16px;
+    }
+
+    /* =========================================
+       RESPONSIVE PARA CELULAR
+       ========================================= */
+
+    @media (max-width: 700px) {
+
+      header {
+        padding: 16px 18px;
+      }
+
+      header h1 {
+        font-size: 21px;
+      }
+
+      header p {
+        font-size: 13px;
+      }
+
+      #container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #graph {
+        width: 100%;
+        height: 70vh;
+        min-height: 480px;
+      }
+
+      #panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #ddd;
+        padding: 20px;
+        overflow-y: visible;
+      }
+
+      .node text {
+        font-size: 12px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header>
+
+  <h1>Ontología Tecnológica</h1>
+
+  <p>Visualización SKOS — Mariano Mosquera</p>
+
+</header>
+
+<div id="container">
+
+  <div id="graph">
+
+    <div id="status">Cargando ontología...</div>
+
+  </div>
+
+  <aside id="panel">
+
+    <h2>Concepto</h2>
+
+    <p>Selecciona un concepto del grafo para consultar su información.</p>
+
+  </aside>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   ARCHIVO TTL
+   ========================================= */
+
+const ttlURL = "../tecnologica.ttl";
+
+
+/* =========================================
+   VOCABULARIO SKOS
+   ========================================= */
+
+const SKOS = {
+
+  Concept:
+    "http://www.w3.org/2004/02/skos/core#Concept",
+
+  prefLabel:
+    "http://www.w3.org/2004/02/skos/core#prefLabel",
+
+  altLabel:
+    "http://www.w3.org/2004/02/skos/core#altLabel",
+
+  broader:
+    "http://www.w3.org/2004/02/skos/core#broader",
+
+  related:
+    "http://www.w3.org/2004/02/skos/core#related"
+
+};
+
+
+/* =========================================
+   CONCEPTOS ESTRUCTURALES TRANSPARENTES
+   ========================================= */
+
+const structuralConcepts = new Set([
+
+  "Tecnológica",
+
+  "Temas",
+
+  "Tipos",
+
+  "Problemas",
+
+  "Actores"
+
+]);
+
+
+/* =========================================
+   CARGA DEL TTL
+   ========================================= */
+
+fetch(ttlURL)
+
+  .then(response => {
+
+    if (!response.ok) {
+
+      throw new Error("No se pudo cargar tecnologica.ttl");
+
+    }
+
+    return response.text();
+
+  })
+
+  .then(ttl => {
+
+    const store = $rdf.graph();
+
+    $rdf.parse(
+      ttl,
+      store,
+      window.location.origin + "/",
+      "text/turtle"
+    );
+
+    document
+      .getElementById("status")
+      .remove();
+
+
+    /* =====================================
+       EXTRAER CONCEPTOS
+       ===================================== */
+
+    const conceptStatements =
+      store.match(
+        null,
+        $rdf.sym(
+          "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        ),
+        $rdf.sym(SKOS.Concept)
+      );
+
+
+    const nodesMap = new Map();
+
+
+    conceptStatements.forEach(statement => {
+
+      const uri = statement.subject.value;
+
+      const pref =
+        store.any(
+          statement.subject,
+          $rdf.sym(SKOS.prefLabel)
+        );
+
+
+      nodesMap.set(uri, {
+
+        id: uri,
+
+        label:
+          pref
+            ? pref.value
+            : uri.split("/").pop(),
+
+        altLabels: [],
+
+        broader: null,
+
+        related: []
+
+      });
+
+    });
+
+
+    /* =====================================
+       EXTRAER PROPIEDADES SKOS
+       ===================================== */
+
+    nodesMap.forEach(node => {
+
+      const subject =
+        $rdf.sym(node.id);
+
+
+      /* ALT LABELS */
+
+      const alternatives =
+        store.each(
+          subject,
+          $rdf.sym(SKOS.altLabel)
+        );
+
+      node.altLabels =
+        alternatives.map(x => x.value);
+
+
+      /* BROADER */
+
+      const broader =
+        store.any(
+          subject,
+          $rdf.sym(SKOS.broader)
+        );
+
+      if (broader) {
+
+        node.broader = broader.value;
+
+      }
+
+
+      /* RELATED */
+
+      const related =
+        store.each(
+          subject,
+          $rdf.sym(SKOS.related)
+        );
+
+      node.related =
+        related.map(x => x.value);
+
+    });
+
+
+    const nodes =
+      Array.from(nodesMap.values());
+
+
+    /* =====================================
+       ENLACES JERÁRQUICOS
+       ===================================== */
+
+    const hierarchyLinks = [];
+
+
+    nodes.forEach(node => {
+
+      if (
+        node.broader &&
+        nodesMap.has(node.broader)
+      ) {
+
+        hierarchyLinks.push({
+
+          source: node.broader,
+
+          target: node.id
+
+        });
+
+      }
+
+    });
+
+
+    /* =====================================
+       ENLACES RELATED
+       ===================================== */
+
+    const relatedLinks = [];
+
+    const relatedKeys =
+      new Set();
+
+
+    nodes.forEach(node => {
+
+      node.related.forEach(target => {
+
+        if (!nodesMap.has(target)) {
+
+          return;
+
+        }
+
+
+        const key =
+          [node.id, target]
+            .sort()
+            .join("|");
+
+
+        if (!relatedKeys.has(key)) {
+
+          relatedKeys.add(key);
+
+          relatedLinks.push({
+
+            source: node.id,
+
+            target: target
+
+          });
+
+        }
+
+      });
+
+    });
+
+
+    drawGraph(
+      nodes,
+      hierarchyLinks,
+      relatedLinks,
+      nodesMap
+    );
+
+  })
+
+
+  .catch(error => {
+
+    document
+      .getElementById("status")
+      .innerHTML =
+      "<strong>Error:</strong> " +
+      error.message;
+
+    console.error(error);
+
+  });
+
+
+
+/* =========================================
+   DIBUJAR GRAFO
+   ========================================= */
+
+function drawGraph(
+  nodes,
+  hierarchyLinks,
+  relatedLinks,
+  nodesMap
+) {
+
+  const container =
+    document.getElementById("graph");
+
+
+  const width =
+    container.clientWidth;
+
+
+  const height =
+    container.clientHeight;
+
+
+
+  /* =====================================
+     COLORES
+     ===================================== */
+
+  /* PROBLEMAS — rojo pastel */
+
+  const problemColor =
+    "#e8a0a0";
+
+  const problemStroke =
+    "#b94a4a";
+
+
+  /* ACTORES — azul pastel */
+
+  const actorColor =
+    "#cfe3f4";
+
+  const actorStroke =
+    "#6f9fc4";
+
+
+  /* TEMAS — amarillo pastel */
+
+  const topicColor =
+    "#f7e7a9";
+
+  const topicStroke =
+    "#c9aa45";
+
+
+  /* ESTRUCTURALES — transparentes */
+
+  const transparentStroke =
+    "#777";
+
+
+  /* RESPALDO */
+
+  const neutralColor =
+    "#eeeeee";
+
+  const neutralStroke =
+    "#888";
+
+
+
+  /* =========================================
+     DETERMINAR PERTENENCIA A UNA RAMA
+     ========================================= */
+
+  function belongsToBranch(concept, branchLabel) {
+
+    let current = concept;
+
+    const visited =
+      new Set();
+
+
+    while (
+      current &&
+      current.broader
+    ) {
+
+      if (
+        visited.has(current.id)
+      ) {
+
+        break;
+
+      }
+
+
+      visited.add(current.id);
+
+
+      const parent =
+        nodesMap.get(current.broader);
+
+
+      if (!parent) {
+
+        break;
+
+      }
+
+
+      if (
+        parent.label === branchLabel
+      ) {
+
+        return true;
+
+      }
+
+
+      current = parent;
+
+    }
+
+
+    return false;
+
+  }
+
+
+
+  /* =========================================
+     CLASIFICACIÓN DE NODOS
+     ========================================= */
+
+  function nodeType(d) {
+
+    if (
+      structuralConcepts.has(d.label)
+    ) {
+
+      return "structural";
+
+    }
+
+
+    if (
+      belongsToBranch(d, "Problemas")
+    ) {
+
+      return "problem";
+
+    }
+
+
+    if (
+      belongsToBranch(d, "Actores")
+    ) {
+
+      return "actor";
+
+    }
+
+
+    if (
+      belongsToBranch(d, "Temas")
+    ) {
+
+      return "topic";
+
+    }
+
+
+    return "neutral";
+
+  }
+
+
+
+  /* =====================================
+     SVG
+     ===================================== */
+
+  const svg =
+    d3.select("#graph")
+
+      .append("svg")
+
+      .attr("width", "100%")
+
+      .attr("height", "100%")
+
+      .attr(
+        "viewBox",
+        [0, 0, width, height]
+      )
+
+      .attr(
+        "preserveAspectRatio",
+        "xMidYMid meet"
+      );
+
+
+
+  /* =====================================
+     ZOOM
+     ===================================== */
+
+  const zoomLayer =
+    svg.append("g");
+
+
+  svg.call(
+
+    d3.zoom()
+
+      .scaleExtent([
+        0.3,
+        4
+      ])
+
+      .on(
+        "zoom",
+        event => {
+
+          zoomLayer.attr(
+            "transform",
+            event.transform
+          );
+
+        }
+      )
+
+  );
+
+
+
+  /* =====================================
+     SIMULACIÓN
+     ===================================== */
+
+  const simulation =
+    d3.forceSimulation(nodes)
+
+      .force(
+        "link",
+
+        d3.forceLink(
+          hierarchyLinks
+        )
+          .id(d => d.id)
+          .distance(110)
+          .strength(0.9)
+
+      )
+
+      .force(
+        "charge",
+
+        d3.forceManyBody()
+          .strength(-420)
+
+      )
+
+      .force(
+        "center",
+
+        d3.forceCenter(
+          width / 2,
+          height / 2
+        )
+
+      )
+
+      .force(
+        "collision",
+
+        d3.forceCollide(45)
+
+      );
+
+
+
+  /* =====================================
+     RELATED
+     Línea punteada
+     ===================================== */
+
+  const related =
+    zoomLayer
+
+      .append("g")
+
+      .selectAll("line")
+
+      .data(relatedLinks)
+
+      .join("line")
+
+      .attr(
+        "class",
+        "related"
+      );
+
+
+
+  /* =====================================
+     BROADER
+     Línea continua
+     ===================================== */
+
+  const links =
+    zoomLayer
+
+      .append("g")
+
+      .selectAll("line")
+
+      .data(hierarchyLinks)
+
+      .join("line")
+
+      .attr(
+        "class",
+        "link"
+      );
+
+
+
+  /* =====================================
+     GRUPOS DE NODOS
+     ===================================== */
+
+  const node =
+    zoomLayer
+
+      .append("g")
+
+      .selectAll("g")
+
+      .data(nodes)
+
+      .join("g")
+
+      .attr(
+        "class",
+        "node"
+      )
+
+      .call(
+        drag(simulation)
+      );
+
+
+
+  /* =========================================
+     ÁREA INVISIBLE DE CAPTURA PARA DRAG
+     ========================================= */
+
+  node
+
+    .append("circle")
+
+    .attr("r", 22)
+
+    .attr("fill", "transparent")
+
+    .attr("stroke", "none")
+
+    .style("pointer-events", "all")
+
+    .style("cursor", "grab");
+
+
+
+  /* =========================================
+     1. ESTRUCTURALES
+
+     Tecnológica
+     Temas
+     Tipos
+     Problemas
+     Actores
+
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "structural"
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+
+      d =>
+        d.label === "Tecnológica"
+          ? 18
+          : 14
+
+    )
+
+    .attr(
+      "fill",
+      "none"
+    )
+
+    .attr(
+      "stroke",
+      transparentStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     2. PROBLEMAS
+     TRIÁNGULO ROJO PASTEL
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "problem"
+    )
+
+    .append("path")
+
+    .attr(
+      "d",
+
+      d3.symbol()
+        .type(d3.symbolTriangle)
+        .size(360)
+
+    )
+
+    .attr(
+      "fill",
+      problemColor
+    )
+
+    .attr(
+      "stroke",
+      problemStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     3. ACTORES
+     CUADRADO AZUL PASTEL
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "actor"
+    )
+
+    .append("rect")
+
+    .attr("x", -11)
+
+    .attr("y", -11)
+
+    .attr("width", 22)
+
+    .attr("height", 22)
+
+    .attr("rx", 2)
+
+    .attr(
+      "fill",
+      actorColor
+    )
+
+    .attr(
+      "stroke",
+      actorStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     4. TEMAS
+     CÍRCULO AMARILLO PASTEL
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "topic"
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+      11
+    )
+
+    .attr(
+      "fill",
+      topicColor
+    )
+
+    .attr(
+      "stroke",
+      topicStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =========================================
+     5. RESPALDO
+     ========================================= */
+
+  node
+
+    .filter(
+      d => nodeType(d) === "neutral"
+    )
+
+    .append("circle")
+
+    .attr(
+      "r",
+      11
+    )
+
+    .attr(
+      "fill",
+      neutralColor
+    )
+
+    .attr(
+      "stroke",
+      neutralStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =====================================
+     ETIQUETAS
+     ===================================== */
+
+  node
+
+    .append("text")
+
+    .attr(
+      "x",
+      16
+    )
+
+    .attr(
+      "y",
+      4
+    )
+
+    .text(
+      d => d.label
+    );
+
+
+
+  /* =====================================
+     PANEL DE INFORMACIÓN
+     ===================================== */
+
+  node.on(
+
+    "click",
+
+    (event, d) => {
+
+      showPanel(
+        d,
+        nodesMap
+      );
+
+    }
+
+  );
+
+
+
+  /* =====================================
+     ACTUALIZACIÓN DE POSICIONES
+     ===================================== */
+
+  simulation.on(
+
+    "tick",
+
+    () => {
+
+
+      links
+
+        .attr(
+          "x1",
+          d => d.source.x
+        )
+
+        .attr(
+          "y1",
+          d => d.source.y
+        )
+
+        .attr(
+          "x2",
+          d => d.target.x
+        )
+
+        .attr(
+          "y2",
+          d => d.target.y
+        );
+
+
+      related
+
+        .attr(
+          "x1",
+
+          d =>
+            typeof d.source === "object"
+              ? d.source.x
+              : nodesMap.get(d.source)?.x
+
+        )
+
+        .attr(
+          "y1",
+
+          d =>
+            typeof d.source === "object"
+              ? d.source.y
+              : nodesMap.get(d.source)?.y
+
+        )
+
+        .attr(
+          "x2",
+
+          d =>
+            typeof d.target === "object"
+              ? d.target.x
+              : nodesMap.get(d.target)?.x
+
+        )
+
+        .attr(
+          "y2",
+
+          d =>
+            typeof d.target === "object"
+              ? d.target.y
+              : nodesMap.get(d.target)?.y
+
+        );
+
+
+      node.attr(
+
+        "transform",
+
+        d =>
+          `translate(${d.x},${d.y})`
+
+      );
+
+    }
+
+  );
+
+
+
+  /* =====================================
+     RESPONSIVE
+     ===================================== */
+
+  window.addEventListener(
+
+    "resize",
+
+    () => {
+
+
+      const newWidth =
+        container.clientWidth;
+
+
+      const newHeight =
+        container.clientHeight;
+
+
+      svg.attr(
+
+        "viewBox",
+
+        [
+          0,
+          0,
+          newWidth,
+          newHeight
+        ]
+
+      );
+
+
+      simulation.force(
+
+        "center",
+
+        d3.forceCenter(
+          newWidth / 2,
+          newHeight / 2
+        )
+
+      );
+
+
+      simulation
+
+        .alpha(0.3)
+
+        .restart();
+
+    }
+
+  );
+
+}
+
+
+
+/* =========================================
+   PANEL LATERAL
+   ========================================= */
+
+function showPanel(
+  concept,
+  nodesMap
+) {
+
+  const panel =
+    document.getElementById(
+      "panel"
+    );
+
+
+  const broader =
+    concept.broader &&
+    nodesMap.get(
+      concept.broader
+    )
+
+      ? nodesMap.get(
+          concept.broader
+        ).label
+
+      : "—";
+
+
+  const related =
+    concept.related
+
+      .map(
+        uri =>
+          nodesMap.get(uri)?.label
+      )
+
+      .filter(Boolean);
+
+
+
+  panel.innerHTML = `
+
+    <h2>
+      ${concept.label}
+    </h2>
+
+    <div class="label">
+      Etiqueta preferida
+    </div>
+
+    <div>
+      ${concept.label}
+    </div>
+
+    <div class="label">
+      Etiquetas alternativas
+    </div>
+
+    <div>
+      ${
+        concept.altLabels.length
+          ? concept.altLabels.join(", ")
+          : "—"
+      }
+    </div>
+
+    <div class="label">
+      Concepto superior
+    </div>
+
+    <div>
+      ${broader}
+    </div>
+
+    <div class="label">
+      Conceptos relacionados
+    </div>
+
+    <div>
+      ${
+        related.length
+          ? related.join(", ")
+          : "—"
+      }
+    </div>
+
+  `;
+
+}
+
+
+
+/* =========================================
+   DRAG DE LOS NODOS
+   ========================================= */
+
+function drag(simulation) {
+
+
+  function dragstarted(
+    event,
+    d
+  ) {
+
+    if (!event.active) {
+
+      simulation
+        .alphaTarget(0.3)
+        .restart();
+
+    }
+
+
+    d.fx = d.x;
+
+    d.fy = d.y;
+
+  }
+
+
+
+  function dragged(
+    event,
+    d
+  ) {
+
+    d.fx = event.x;
+
+    d.fy = event.y;
+
+  }
+
+
+
+  function dragended(
+    event,
+    d
+  ) {
+
+    if (!event.active) {
+
+      simulation
+        .alphaTarget(0);
+
+    }
+
+
+    d.fx = null;
+
+    d.fy = null;
+
+  }
+
+
+
+  return d3.drag()
+
+    .on(
+      "start",
+      dragstarted
+    )
+
+    .on(
+      "drag",
+      dragged
+    )
+
+    .on(
+      "end",
+      dragended
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
