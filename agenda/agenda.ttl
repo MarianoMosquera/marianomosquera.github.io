@@ -1,0 +1,19 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+# =========================================
+# ONTOLOGÍA MAESTRA: AGENDA
+# =========================================
+
+<https://marianomosquera.github.io/agenda/agenda.ttl>
+    a owl:Ontology ;
+    dct:title "Agenda"@es ;
+    dct:description "Ontología maestra que integra las dimensiones institucional, política, social, ambiental, económica y tecnológica."@es ;
+
+    owl:imports
+        <https://marianomosquera.github.io/institucional.ttl>,
+        <https://marianomosquera.github.io/politica.ttl>,
+        <https://marianomosquera.github.io/social.ttl>,
+        <https://marianomosquera.github.io/ambiental.ttl>,
+        <https://marianomosquera.github.io/economica.ttl>,
+        <https://marianomosquera.github.io/tecnologica.ttl> .
