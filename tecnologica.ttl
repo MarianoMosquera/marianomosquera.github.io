@@ -124,6 +124,12 @@ tec:Biotecnologia
     skos:prefLabel "Biotecnología"@es ;
     skos:broader tec:Tipos .
 
+tec:Neurotecnologia
+    a skos:Concept ;
+    skos:prefLabel "Neurotecnología"@es ;
+    skos:broader tec:Tipos ;
+    skos:related tec:Biotecnologia .
+
 tec:BigData
     a skos:Concept ;
     skos:prefLabel "Big Data"@es ;
