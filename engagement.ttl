@@ -46,6 +46,10 @@ eng:Horizontalidad a skos:Concept ;
     skos:prefLabel "Horizontalidad"@es ;
     skos:broader eng:Pluralidad .
 
+eng:Ponderacion a skos:Concept ;
+    skos:prefLabel "Ponderación"@es ;
+    skos:broader eng:Pluralidad .
+
 # --- Tipo ---
 
 eng:TipoColaboracion a skos:Concept ;
