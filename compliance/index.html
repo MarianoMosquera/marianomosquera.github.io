@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ontología de Compliance</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/rdflib@2.2.36/dist/rdflib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fa;
+      color: #222;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #ddd;
+      padding: 22px 30px;
+    }
+
+    header h1 {
+      margin: 0 0 6px 0;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 0;
+      color: #666;
+    }
+
+    #container {
+      display: flex;
+      height: calc(100vh - 95px);
+    }
+
+    #graph {
+      flex: 1;
+      background: white;
+      min-width: 0;
+    }
+
+    #graph svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    #panel {
+      width: 320px;
+      padding: 24px;
+      background: #fafafa;
+      border-left: 1px solid #ddd;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    #panel h2 {
+      margin-top: 0;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-top: 18px;
+    }
+
+    .node circle {
+      stroke: #666;
+      stroke-width: 1.5px;
+      cursor: grab;
+    }
+
+    .node circle:active {
+      cursor: grabbing;
+    }
+
+    .node polygon {
+      stroke: #b76e6e;
+      stroke-width: 1.5px;
+      cursor: grab;
+    }
+
+    .node polygon:active {
+      cursor: grabbing;
+    }
+
+    .node text {
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .link {
+      stroke: #aaa;
+      stroke-width: 1.5px;
+    }
+
+    .related {
+      stroke: #bbb;
+      stroke-width: 1px;
+      stroke-dasharray: 5, 5;
+    }
+
+    #status {
+      padding: 30px;
+      font-size: 16px;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @media (max-width: 700px) {
+
+      header {
+        padding: 16px 18px;
+      }
+
+      header h1 {
+        font-size: 21px;
+      }
+
+      header p {
+        font-size: 13px;
+      }
+
+      #container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #graph {
+        width: 100%;
+        height: 70vh;
+        min-height: 480px;
+      }
+
+      #panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #ddd;
+        padding: 20px;
+        overflow-y: visible;
+      }
+
+      .node text {
+        font-size: 12px;
+      }
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+<header>
+  <h1>Ontología de Compliance</h1>
+  <p>Visualización SKOS — Mariano Mosquera</p>
+</header>
+
+
+<div id="container">
+
+  <div id="graph">
+    <div id="status">Cargando ontología...</div>
+  </div>
+
+  <aside id="panel">
+    <h2>Concepto</h2>
+    <p>Selecciona un concepto del grafo para consultar su información.</p>
+  </aside>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN
+   ========================================================= */
+
+const ttlURL = "../compliance.ttl";
+
+const SKOS = {
+
+  Concept:
+    "http://www.w3.org/2004/02/skos/core#Concept",
+
+  prefLabel:
+    "http://www.w3.org/2004/02/skos/core#prefLabel",
+
+  altLabel:
+    "http://www.w3.org/2004/02/skos/core#altLabel",
+
+  broader:
+    "http://www.w3.org/2004/02/skos/core#broader",
+
+  related:
+    "http://www.w3.org/2004/02/skos/core#related",
+
+  definition:
+    "http://www.w3.org/2004/02/skos/core#definition"
+
+};
+
+
+/* =========================================================
+   CARGA DEL TTL
+   ========================================================= */
+
+fetch(ttlURL)
+
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error("No se pudo cargar compliance.ttl");
+    }
+
+    return response.text();
+
+  })
+
+  .then(ttl => {
+
+    const store = $rdf.graph();
+
+    $rdf.parse(
+      ttl,
+      store,
+      window.location.origin + "/",
+      "text/turtle"
+    );
+
+    document.getElementById("status").remove();
+
+
+    /* =====================================================
+       CONCEPTOS
+       ===================================================== */
+
+    const conceptStatements = store.match(
+
+      null,
+
+      $rdf.sym(
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      ),
+
+      $rdf.sym(SKOS.Concept)
+
+    );
+
+
+    const nodesMap = new Map();
+
+
+    conceptStatements.forEach(statement => {
+
+      const uri = statement.subject.value;
+
+      const pref = store.any(
+        statement.subject,
+        $rdf.sym(SKOS.prefLabel)
+      );
+
+
+      nodesMap.set(uri, {
+
+        id: uri,
+
+        label:
+          pref
+            ? pref.value
+            : uri.split("/").pop(),
+
+        altLabels: [],
+
+        definition: null,
+
+        broader: null,
+
+        related: []
+
+      });
+
+    });
+
+
+    /* =====================================================
+       PROPIEDADES SKOS
+       ===================================================== */
+
+    nodesMap.forEach(node => {
+
+      const subject = $rdf.sym(node.id);
+
+
+      /* ALT LABEL */
+
+      const alternatives = store.each(
+        subject,
+        $rdf.sym(SKOS.altLabel)
+      );
+
+      node.altLabels =
+        alternatives.map(x => x.value);
+
+
+      /* DEFINITION */
+
+      const definition = store.any(
+        subject,
+        $rdf.sym(SKOS.definition)
+      );
+
+      if (definition) {
+        node.definition = definition.value;
+      }
+
+
+      /* BROADER */
+
+      const broader = store.any(
+        subject,
+        $rdf.sym(SKOS.broader)
+      );
+
+      if (broader) {
+        node.broader = broader.value;
+      }
+
+
+      /* RELATED */
+
+      const related = store.each(
+        subject,
+        $rdf.sym(SKOS.related)
+      );
+
+      node.related =
+        related.map(x => x.value);
+
+    });
+
+
+    const nodes =
+      Array.from(nodesMap.values());
+
+
+    /* =====================================================
+       RELACIONES JERÁRQUICAS
+       ===================================================== */
+
+    const hierarchyLinks = [];
+
+
+    nodes.forEach(node => {
+
+      if (
+        node.broader &&
+        nodesMap.has(node.broader)
+      ) {
+
+        hierarchyLinks.push({
+
+          source: node.broader,
+          target: node.id
+
+        });
+
+      }
+
+    });
+
+
+    /* =====================================================
+       RELACIONES RELATED
+       ===================================================== */
+
+    const relatedLinks = [];
+
+    const relatedKeys = new Set();
+
+
+    nodes.forEach(node => {
+
+      node.related.forEach(target => {
+
+        if (!nodesMap.has(target)) return;
+
+
+        const key =
+          [node.id, target]
+            .sort()
+            .join("|");
+
+
+        if (!relatedKeys.has(key)) {
+
+          relatedKeys.add(key);
+
+          relatedLinks.push({
+
+            source: node.id,
+            target: target
+
+          });
+
+        }
+
+      });
+
+    });
+
+
+    drawGraph(
+      nodes,
+      hierarchyLinks,
+      relatedLinks,
+      nodesMap
+    );
+
+  })
+
+
+  .catch(error => {
+
+    document.getElementById("status").innerHTML =
+      "<strong>Error:</strong> " + error.message;
+
+    console.error(error);
+
+  });
+
+
+
+/* =========================================================
+   GRAFO
+   ========================================================= */
+
+function drawGraph(
+  nodes,
+  hierarchyLinks,
+  relatedLinks,
+  nodesMap
+) {
+
+  const container =
+    document.getElementById("graph");
+
+
+  const width =
+    container.clientWidth;
+
+
+  const height =
+    container.clientHeight;
+
+
+
+  /* =====================================================
+     COLORES PASTEL
+     ===================================================== */
+
+  const pastelColors = [
+
+    "#dceaf7",
+    "#e4f1e8",
+    "#f8e7dc",
+    "#eee4f5",
+    "#f7efcf",
+    "#dff1ef",
+    "#f5e1e8",
+    "#e8e4f4"
+
+  ];
+
+
+
+  /* =====================================================
+     PROBLEMAS
+     Todo el subárbol se representa como triángulo rojo pastel
+     ===================================================== */
+
+  const problemLabels = new Set([
+
+    "Problemas",
+    "Corrupción",
+    "Abuso de poder",
+    "Maladministration",
+    "Negligencia"
+
+  ]);
+
+
+
+  /* =====================================================
+     SVG
+     ===================================================== */
+
+  const svg =
+
+    d3.select("#graph")
+
+      .append("svg")
+
+      .attr("width", "100%")
+
+      .attr("height", "100%")
+
+      .attr(
+        "viewBox",
+        [0, 0, width, height]
+      )
+
+      .attr(
+        "preserveAspectRatio",
+        "xMidYMid meet"
+      );
+
+
+
+  /* =====================================================
+     ZOOM
+     ===================================================== */
+
+  const zoomLayer =
+    svg.append("g");
+
+
+  svg.call(
+
+    d3.zoom()
+
+      .scaleExtent([0.3, 4])
+
+      .on("zoom", event => {
+
+        zoomLayer.attr(
+          "transform",
+          event.transform
+        );
+
+      })
+
+  );
+
+
+
+  /* =====================================================
+     SIMULACIÓN
+     ===================================================== */
+
+  const simulation =
+
+    d3.forceSimulation(nodes)
+
+      .force(
+
+        "link",
+
+        d3.forceLink(hierarchyLinks)
+
+          .id(d => d.id)
+
+          .distance(120)
+
+          .strength(0.9)
+
+      )
+
+      .force(
+
+        "charge",
+
+        d3.forceManyBody()
+
+          .strength(-480)
+
+      )
+
+      .force(
+
+        "center",
+
+        d3.forceCenter(
+          width / 2,
+          height / 2
+        )
+
+      )
+
+      .force(
+
+        "collision",
+
+        d3.forceCollide(52)
+
+      );
+
+
+
+  /* =====================================================
+     RELATED
+     ===================================================== */
+
+  const related =
+
+    zoomLayer
+
+      .append("g")
+
+      .selectAll("line")
+
+      .data(relatedLinks)
+
+      .join("line")
+
+      .attr("class", "related");
+
+
+
+  /* =====================================================
+     JERARQUÍA
+     ===================================================== */
+
+  const links =
+
+    zoomLayer
+
+      .append("g")
+
+      .selectAll("line")
+
+      .data(hierarchyLinks)
+
+      .join("line")
+
+      .attr("class", "link");
+
+
+
+  /* =====================================================
+     NODOS
+     ===================================================== */
+
+  const node =
+
+    zoomLayer
+
+      .append("g")
+
+      .selectAll("g")
+
+      .data(nodes)
+
+      .join("g")
+
+      .attr("class", "node")
+
+      .call(drag(simulation));
+
+
+
+  /* =====================================================
+     CÍRCULOS
+     Todos los conceptos excepto Problemas y descendientes
+     ===================================================== */
+
+  node
+
+    .filter(d =>
+      !problemLabels.has(d.label)
+    )
+
+    .append("circle")
+
+    .attr("r", d =>
+
+      d.label === "Compliance"
+        ? 19
+        : 11
+
+    )
+
+    .attr("fill", (d, i) => {
+
+      /*
+        Compliance:
+        círculo central transparente
+      */
+
+      if (d.label === "Compliance") {
+        return "transparent";
+      }
+
+      return pastelColors[
+        i % pastelColors.length
+      ];
+
+    })
+
+    .attr("stroke", d =>
+
+      d.label === "Compliance"
+        ? "#555"
+        : "#666"
+
+    )
+
+    .attr(
+      "stroke-width",
+      d =>
+        d.label === "Compliance"
+          ? 2
+          : 1.5
+    );
+
+
+
+  /* =====================================================
+     TRIÁNGULOS
+
+     Problemas
+       ├── Corrupción
+       │     └── Abuso de poder
+       └── Maladministration
+             └── Negligencia
+     ===================================================== */
+
+  node
+
+    .filter(d =>
+      problemLabels.has(d.label)
+    )
+
+    .append("polygon")
+
+    .attr(
+      "points",
+      "0,-14 13,10 -13,10"
+    )
+
+    .attr(
+      "fill",
+      "#f4b6b6"
+    )
+
+    .attr(
+      "stroke",
+      "#b76e6e"
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
+
+
+
+  /* =====================================================
+     ETIQUETAS
+     ===================================================== */
+
+  node
+
+    .append("text")
+
+    .attr("x", d =>
+
+      problemLabels.has(d.label)
+        ? 18
+        : 16
+
+    )
+
+    .attr("y", 4)
+
+    .text(d => d.label);
+
+
+
+  /* =====================================================
+     CLICK
+     ===================================================== */
+
+  node.on(
+
+    "click",
+
+    (event, d) => {
+
+      showPanel(
+        d,
+        nodesMap
+      );
+
+    }
+
+  );
+
+
+
+  /* =====================================================
+     ACTUALIZACIÓN DE POSICIONES
+     ===================================================== */
+
+  simulation.on(
+
+    "tick",
+
+    () => {
+
+
+      /* JERARQUÍA */
+
+      links
+
+        .attr(
+          "x1",
+          d => d.source.x
+        )
+
+        .attr(
+          "y1",
+          d => d.source.y
+        )
+
+        .attr(
+          "x2",
+          d => d.target.x
+        )
+
+        .attr(
+          "y2",
+          d => d.target.y
+        );
+
+
+
+      /* RELATED */
+
+      related
+
+        .attr(
+
+          "x1",
+
+          d =>
+
+            typeof d.source === "object"
+              ? d.source.x
+              : nodesMap.get(d.source)?.x
+
+        )
+
+        .attr(
+
+          "y1",
+
+          d =>
+
+            typeof d.source === "object"
+              ? d.source.y
+              : nodesMap.get(d.source)?.y
+
+        )
+
+        .attr(
+
+          "x2",
+
+          d =>
+
+            typeof d.target === "object"
+              ? d.target.x
+              : nodesMap.get(d.target)?.x
+
+        )
+
+        .attr(
+
+          "y2",
+
+          d =>
+
+            typeof d.target === "object"
+              ? d.target.y
+              : nodesMap.get(d.target)?.y
+
+        );
+
+
+
+      /* NODOS */
+
+      node.attr(
+
+        "transform",
+
+        d =>
+          `translate(${d.x},${d.y})`
+
+      );
+
+    }
+
+  );
+
+
+
+  /* =====================================================
+     RESPONSIVE
+     ===================================================== */
+
+  window.addEventListener(
+
+    "resize",
+
+    () => {
+
+      const newWidth =
+        container.clientWidth;
+
+      const newHeight =
+        container.clientHeight;
+
+
+      svg.attr(
+
+        "viewBox",
+
+        [0, 0, newWidth, newHeight]
+
+      );
+
+
+      simulation.force(
+
+        "center",
+
+        d3.forceCenter(
+          newWidth / 2,
+          newHeight / 2
+        )
+
+      );
+
+
+      simulation
+
+        .alpha(0.3)
+
+        .restart();
+
+    }
+
+  );
+
+}
+
+
+
+/* =========================================================
+   PANEL DE INFORMACIÓN
+   ========================================================= */
+
+function showPanel(
+  concept,
+  nodesMap
+) {
+
+  const panel =
+    document.getElementById("panel");
+
+
+  const broader =
+
+    concept.broader &&
+    nodesMap.get(concept.broader)
+
+      ? nodesMap.get(
+          concept.broader
+        ).label
+
+      : "—";
+
+
+
+  const related =
+
+    concept.related
+
+      .map(uri =>
+        nodesMap.get(uri)?.label
+      )
+
+      .filter(Boolean);
+
+
+
+  panel.innerHTML = `
+
+    <h2>${concept.label}</h2>
+
+
+    <div class="label">
+      Etiqueta preferida
+    </div>
+
+    <div>
+      ${concept.label}
+    </div>
+
+
+    <div class="label">
+      Definición
+    </div>
+
+    <div>
+
+      ${
+        concept.definition
+          ? concept.definition
+          : "—"
+      }
+
+    </div>
+
+
+    <div class="label">
+      Etiquetas alternativas
+    </div>
+
+    <div>
+
+      ${
+        concept.altLabels.length
+          ? concept.altLabels.join(", ")
+          : "—"
+      }
+
+    </div>
+
+
+    <div class="label">
+      Concepto superior
+    </div>
+
+    <div>
+      ${broader}
+    </div>
+
+
+    <div class="label">
+      Conceptos relacionados
+    </div>
+
+    <div>
+
+      ${
+        related.length
+          ? related.join(", ")
+          : "—"
+      }
+
+    </div>
+
+  `;
+
+}
+
+
+
+/* =========================================================
+   ARRASTRE DE NODOS
+   ========================================================= */
+
+function drag(simulation) {
+
+
+  function dragstarted(
+    event,
+    d
+  ) {
+
+    if (!event.active) {
+
+      simulation
+
+        .alphaTarget(0.3)
+
+        .restart();
+
+    }
+
+
+    d.fx = d.x;
+    d.fy = d.y;
+
+  }
+
+
+
+  function dragged(
+    event,
+    d
+  ) {
+
+    d.fx = event.x;
+    d.fy = event.y;
+
+  }
+
+
+
+  function dragended(
+    event,
+    d
+  ) {
+
+    if (!event.active) {
+
+      simulation
+        .alphaTarget(0);
+
+    }
+
+
+    /*
+      Al soltar el nodo vuelve a quedar
+      sujeto a las fuerzas del grafo.
+    */
+
+    d.fx = null;
+    d.fy = null;
+
+  }
+
+
+
+  return d3.drag()
+
+    .on(
+      "start",
+      dragstarted
+    )
+
+    .on(
+      "drag",
+      dragged
+    )
+
+    .on(
+      "end",
+      dragended
+    );
+
+}
+
+</script>
+
+</body>
+</html>
