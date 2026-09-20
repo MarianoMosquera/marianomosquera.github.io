@@ -1,0 +1,77 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+@prefix gov:  <https://marianomosquera.github.io/Gobernanza/gobernanza#> .
+@prefix comp: <https://marianomosquera.github.io/compliance#> .
+@prefix acc:  <https://marianomosquera.github.io/accountability#> .
+@prefix eng:  <https://marianomosquera.github.io/engagement#> .
+
+
+# ============================================================
+# ONTOLOGÍA MAESTRA
+# GOBERNANZA
+# ============================================================
+
+<https://marianomosquera.github.io/Gobernanza/gobernanza.ttl>
+    a owl:Ontology ;
+
+    dct:title
+        "Ontología de Gobernanza"@es ;
+
+    dct:description
+        "Ontología integradora de Compliance, Accountability y Engagement."@es ;
+
+    owl:imports
+        <https://marianomosquera.github.io/compliance.ttl> ,
+        <https://marianomosquera.github.io/accountability.ttl> ,
+        <https://marianomosquera.github.io/engagement.ttl> .
+
+
+# ============================================================
+# CONCEPTO PRINCIPAL
+# GOBERNANZA
+# ============================================================
+
+gov:Gobernanza
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Gobernanza"@es ;
+
+    skos:narrower
+        comp:Compliance ,
+        acc:Accountability ,
+        eng:Engagement .
+
+
+# ============================================================
+# COMPLIANCE
+# Narrower de Gobernanza
+# ============================================================
+
+comp:Compliance
+    skos:broader
+        gov:Gobernanza .
+
+
+# ============================================================
+# ACCOUNTABILITY
+# Narrower de Gobernanza
+# ============================================================
+
+acc:Accountability
+    skos:broader
+        gov:Gobernanza .
+
+
+# ============================================================
+# ENGAGEMENT
+# Narrower de Gobernanza
+# ============================================================
+
+eng:Engagement
+    skos:broader
+        gov:Gobernanza .
