@@ -188,21 +188,23 @@
 /* =========================================================
    CONFIGURACIÓN
 
-   Estructura:
+   Estructura esperada:
 
    /
    ├── valores.ttl
+   ├── institucional.ttl
+   ├── politica.ttl
+   ├── social.ttl
+   ├── ambiental.ttl
+   ├── economica.ttl
+   ├── tecnologica.ttl
    │
-   ├── agenda/
-   │   └── agenda.ttl
-   │
-   └── Atencion/
+   └── atencion/
        ├── atencion.ttl
        └── index.html
 
-   IMPORTANTE:
-   agenda está en MINÚSCULA
    ========================================================= */
+
 
 const ttlURLs = [
 
@@ -210,9 +212,23 @@ const ttlURLs = [
 
   "../valores.ttl",
 
-  "../agenda/agenda.ttl"
+  "../institucional.ttl",
+
+  "../politica.ttl",
+
+  "../social.ttl",
+
+  "../ambiental.ttl",
+
+  "../economica.ttl",
+
+  "../tecnologica.ttl"
 
 ];
+
+
+const RDF_TYPE =
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 
 
 const SKOS = {
@@ -241,8 +257,9 @@ const SKOS = {
 };
 
 
+
 /* =========================================================
-   CARGA DE LAS ONTOLOGÍAS
+   CARGA DE TODOS LOS TTL
    ========================================================= */
 
 Promise.all(
@@ -265,11 +282,10 @@ Promise.all(
 
       })
 
-      .then(text => ({
+      .then(ttl => ({
 
         url: url,
-
-        ttl: text
+        ttl: ttl
 
       }))
 
@@ -280,14 +296,14 @@ Promise.all(
 .then(files => {
 
 
-  /*
-     Todos los TTL se cargan
-     en el mismo store RDF.
-  */
-
   const store =
     $rdf.graph();
 
+
+  /*
+     Cada archivo se parsea utilizando
+     su propia URL como URI base.
+  */
 
   files.forEach(file => {
 
@@ -316,9 +332,7 @@ Promise.all(
 
 
   const status =
-    document.getElementById(
-      "status"
-    );
+    document.getElementById("status");
 
 
   if (status) {
@@ -328,8 +342,9 @@ Promise.all(
   }
 
 
+
   /* =====================================================
-     CONCEPTOS
+     CONCEPTOS SKOS
      ===================================================== */
 
   const conceptStatements =
@@ -339,7 +354,7 @@ Promise.all(
       null,
 
       $rdf.sym(
-        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        RDF_TYPE
       ),
 
       $rdf.sym(
@@ -353,175 +368,301 @@ Promise.all(
     new Map();
 
 
-  conceptStatements.forEach(
-    statement => {
+  conceptStatements.forEach(statement => {
 
 
-      const uri =
-        statement.subject.value;
+    const uri =
+      statement.subject.value;
 
 
-      const pref =
+    const pref =
 
-        store.any(
+      store.any(
 
-          statement.subject,
+        statement.subject,
 
-          $rdf.sym(
-            SKOS.prefLabel
-          )
-
-        );
-
-
-      nodesMap.set(
-
-        uri,
-
-        {
-
-          id: uri,
-
-          label:
-
-            pref
-
-              ? pref.value
-
-              : uri
-                  .split(/[\/#]/)
-                  .pop(),
-
-          altLabels: [],
-
-          definition: null,
-
-          broader: null,
-
-          related: []
-
-        }
+        $rdf.sym(
+          SKOS.prefLabel
+        )
 
       );
 
-    }
 
-  );
+    nodesMap.set(
+
+      uri,
+
+      {
+
+        id: uri,
+
+        label:
+
+          pref
+
+            ? pref.value
+
+            : uri
+                .split(/[\/#]/)
+                .pop(),
+
+        altLabels: [],
+
+        definition: null,
+
+        broader: null,
+
+        related: []
+
+      }
+
+    );
+
+  });
+
 
 
   /* =====================================================
      PROPIEDADES SKOS
      ===================================================== */
 
-  nodesMap.forEach(
-    node => {
+  nodesMap.forEach(node => {
 
 
-      const subject =
+    const subject =
+      $rdf.sym(
+        node.id
+      );
+
+
+    /* ALT LABEL */
+
+    const alternatives =
+
+      store.each(
+
+        subject,
+
         $rdf.sym(
-          node.id
-        );
+          SKOS.altLabel
+        )
+
+      );
 
 
-      /* ALT LABEL */
+    node.altLabels =
 
-      const alternatives =
-
-        store.each(
-
-          subject,
-
-          $rdf.sym(
-            SKOS.altLabel
-          )
-
-        );
+      alternatives.map(
+        x => x.value
+      );
 
 
-      node.altLabels =
+    /* DEFINITION */
 
-        alternatives.map(
-          x => x.value
-        );
+    const definition =
 
+      store.any(
 
-      /* DEFINITION */
+        subject,
 
-      const definition =
+        $rdf.sym(
+          SKOS.definition
+        )
 
-        store.any(
-
-          subject,
-
-          $rdf.sym(
-            SKOS.definition
-          )
-
-        );
+      );
 
 
-      if (definition) {
+    if (definition) {
 
-        node.definition =
-          definition.value;
-
-      }
-
-
-      /* BROADER */
-
-      const broader =
-
-        store.any(
-
-          subject,
-
-          $rdf.sym(
-            SKOS.broader
-          )
-
-        );
-
-
-      if (broader) {
-
-        node.broader =
-          broader.value;
-
-      }
-
-
-      /* RELATED */
-
-      const related =
-
-        store.each(
-
-          subject,
-
-          $rdf.sym(
-            SKOS.related
-          )
-
-        );
-
-
-      node.related =
-
-        related.map(
-          x => x.value
-        );
+      node.definition =
+        definition.value;
 
     }
 
-  );
+
+    /* BROADER */
+
+    const broader =
+
+      store.any(
+
+        subject,
+
+        $rdf.sym(
+          SKOS.broader
+        )
+
+      );
+
+
+    if (broader) {
+
+      node.broader =
+        broader.value;
+
+    }
+
+
+    /* RELATED */
+
+    const related =
+
+      store.each(
+
+        subject,
+
+        $rdf.sym(
+          SKOS.related
+        )
+
+      );
+
+
+    node.related =
+
+      related.map(
+        x => x.value
+      );
+
+  });
+
 
 
   const nodes =
-
     Array.from(
       nodesMap.values()
     );
+
+
+
+  /* =====================================================
+     BUSCAR NODOS ESTRUCTURALES POR PREFLABEL
+
+     Esto evita depender del namespace exacto.
+     ===================================================== */
+
+  function normalizeLabel(text) {
+
+    return text
+
+      .normalize("NFD")
+
+      .replace(
+        /[\u0300-\u036f]/g,
+        ""
+      )
+
+      .trim()
+
+      .toLowerCase();
+
+  }
+
+
+  function findByLabel(label) {
+
+    const normalized =
+      normalizeLabel(label);
+
+
+    return nodes.find(
+
+      node =>
+        normalizeLabel(
+          node.label
+        ) === normalized
+
+    );
+
+  }
+
+
+
+  const atencionNode =
+    findByLabel(
+      "Atención"
+    );
+
+
+  const valoresNode =
+    findByLabel(
+      "Valores"
+    );
+
+
+  const agendaNode =
+    findByLabel(
+      "Agenda"
+    );
+
+
+  const institucionalNode =
+    findByLabel(
+      "Institucional"
+    );
+
+
+  const politicaNode =
+    findByLabel(
+      "Política"
+    );
+
+
+  const socialNode =
+    findByLabel(
+      "Social"
+    );
+
+
+  const ambientalNode =
+    findByLabel(
+      "Ambiental"
+    );
+
+
+  const economicaNode =
+    findByLabel(
+      "Económica"
+    );
+
+
+  const tecnologicaNode =
+    findByLabel(
+      "Tecnológica"
+    );
+
+
+
+  /* =====================================================
+     VERIFICACIÓN DE NODOS ESENCIALES
+     ===================================================== */
+
+  if (!atencionNode) {
+
+    throw new Error(
+      'No se encontró el nodo "Atención".'
+    );
+
+  }
+
+
+  if (!valoresNode) {
+
+    throw new Error(
+      'No se encontró el nodo "Valores".'
+    );
+
+  }
+
+
+  if (!agendaNode) {
+
+    throw new Error(
+      'No se encontró el nodo "Agenda".'
+    );
+
+  }
+
 
 
   /* =====================================================
@@ -534,153 +675,236 @@ Promise.all(
     new Set();
 
 
-  /* -----------------------------------------------------
-     BROADER
-     ----------------------------------------------------- */
 
-  nodes.forEach(
-    node => {
-
-
-      if (
-
-        node.broader &&
-
-        nodesMap.has(
-          node.broader
-        )
-
-      ) {
+  function addHierarchy(
+    source,
+    target
+  ) {
 
 
-        const key =
+    if (
+      !source ||
+      !target ||
+      source === target
+    ) {
 
-          node.broader +
-          "|" +
-          node.id;
-
-
-        if (
-          !hierarchyKeys.has(
-            key
-          )
-        ) {
-
-
-          hierarchyKeys.add(
-            key
-          );
-
-
-          hierarchyLinks.push({
-
-            source:
-              node.broader,
-
-            target:
-              node.id
-
-          });
-
-        }
-
-      }
+      return;
 
     }
 
-  );
+
+    const key =
+
+      source +
+      "|" +
+      target;
 
 
-  /* -----------------------------------------------------
-     NARROWER
+    if (
+      hierarchyKeys.has(
+        key
+      )
+    ) {
 
-     Fundamental para:
+      return;
 
-           ATENCIÓN
-             /   \
-        Valores  Agenda
-     ----------------------------------------------------- */
-
-  nodes.forEach(
-    node => {
+    }
 
 
-      const subject =
-        $rdf.sym(
-          node.id
-        );
+    hierarchyKeys.add(
+      key
+    );
 
 
-      const narrowers =
+    hierarchyLinks.push({
 
-        store.each(
+      source: source,
 
-          subject,
+      target: target
 
-          $rdf.sym(
-            SKOS.narrower
-          )
+    });
 
-        );
+  }
 
 
-      narrowers.forEach(
-        target => {
+
+  /* =====================================================
+     BROADER EXISTENTES
+     ===================================================== */
+
+  nodes.forEach(node => {
 
 
-          if (
-            !nodesMap.has(
-              target.value
-            )
-          ) {
+    if (
 
-            return;
+      node.broader &&
 
-          }
+      nodesMap.has(
+        node.broader
+      )
 
-
-          const key =
-
-            node.id +
-            "|" +
-            target.value;
+    ) {
 
 
-          if (
-            !hierarchyKeys.has(
-              key
-            )
-          ) {
+      addHierarchy(
 
+        node.broader,
 
-            hierarchyKeys.add(
-              key
-            );
-
-
-            hierarchyLinks.push({
-
-              source:
-                node.id,
-
-              target:
-                target.value
-
-            });
-
-          }
-
-        }
+        node.id
 
       );
 
     }
 
-  );
+  });
+
 
 
   /* =====================================================
-     RELACIONES RELATED
+     NARROWER EXISTENTES
+     ===================================================== */
+
+  nodes.forEach(node => {
+
+
+    const subject =
+      $rdf.sym(
+        node.id
+      );
+
+
+    const narrowers =
+
+      store.each(
+
+        subject,
+
+        $rdf.sym(
+          SKOS.narrower
+        )
+
+      );
+
+
+    narrowers.forEach(target => {
+
+
+      if (
+
+        nodesMap.has(
+          target.value
+        )
+
+      ) {
+
+
+        addHierarchy(
+
+          node.id,
+
+          target.value
+
+        );
+
+      }
+
+    });
+
+  });
+
+
+
+  /* =====================================================
+     ESTRUCTURA MAESTRA DE ATENCIÓN
+
+                  ATENCIÓN
+                 /       \
+            VALORES      AGENDA
+                           |
+        -----------------------------------------
+        |       |      |       |       |       |
+       Inst.  Política Social Ambiental Econ. Tecnol.
+
+     Se agregan explícitamente por los nodos reales
+     encontrados por prefLabel.
+     ===================================================== */
+
+
+  addHierarchy(
+
+    atencionNode.id,
+
+    valoresNode.id
+
+  );
+
+
+  addHierarchy(
+
+    atencionNode.id,
+
+    agendaNode.id
+
+  );
+
+
+
+  const agendaRoots = [
+
+    institucionalNode,
+
+    politicaNode,
+
+    socialNode,
+
+    ambientalNode,
+
+    economicaNode,
+
+    tecnologicaNode
+
+  ];
+
+
+  agendaRoots.forEach(root => {
+
+    if (root) {
+
+      addHierarchy(
+
+        agendaNode.id,
+
+        root.id
+
+      );
+
+
+      /*
+         Actualizamos broader para
+         mostrarlo correctamente
+         en el panel.
+      */
+
+      root.broader =
+        agendaNode.id;
+
+    }
+
+  });
+
+
+
+  valoresNode.broader =
+    atencionNode.id;
+
+
+  agendaNode.broader =
+    atencionNode.id;
+
+
+
+  /* =====================================================
+     RELATED
      ===================================================== */
 
   const relatedLinks = [];
@@ -689,116 +913,103 @@ Promise.all(
     new Set();
 
 
-  nodes.forEach(
-    node => {
+  nodes.forEach(node => {
 
 
-      node.related.forEach(
-        target => {
+    node.related.forEach(target => {
 
 
-          if (
-            !nodesMap.has(
-              target
-            )
-          ) {
+      if (
+        !nodesMap.has(
+          target
+        )
+      ) {
 
-            return;
+        return;
 
-          }
-
-
-          const key =
-
-            [
-              node.id,
-              target
-            ]
-
-              .sort()
-
-              .join("|");
+      }
 
 
-          if (
-            !relatedKeys.has(
-              key
-            )
-          ) {
+      const key =
+
+        [
+          node.id,
+          target
+        ]
+
+          .sort()
+
+          .join("|");
 
 
-            relatedKeys.add(
-              key
-            );
+      if (
+        relatedKeys.has(
+          key
+        )
+      ) {
+
+        return;
+
+      }
 
 
-            relatedLinks.push({
-
-              source:
-                node.id,
-
-              target:
-                target
-
-            });
-
-          }
-
-        }
-
+      relatedKeys.add(
+        key
       );
 
-    }
 
-  );
+      relatedLinks.push({
+
+        source:
+          node.id,
+
+        target:
+          target
+
+      });
+
+    });
+
+  });
+
 
 
   /* =====================================================
      DETECCIÓN AUTOMÁTICA DE PROBLEMAS
+
+     Todo nodo "Problemas" y todos
+     sus descendientes serán triángulos.
      ===================================================== */
 
   const problemNodeIDs =
     new Set();
 
 
-  /*
-     Detecta todos los nodos
-     cuyo prefLabel sea Problemas.
-  */
-
-  nodes.forEach(
-    node => {
+  nodes.forEach(node => {
 
 
-      if (
+    if (
 
+      normalizeLabel(
         node.label
-          .trim()
-          .toLowerCase()
+      )
 
-        ===
+      ===
 
-        "problemas"
+      "problemas"
 
-      ) {
+    ) {
 
 
-        problemNodeIDs.add(
-          node.id
-        );
-
-      }
+      problemNodeIDs.add(
+        node.id
+      );
 
     }
 
-  );
+  });
 
 
-  /*
-     Todos los descendientes
-     de Problemas también
-     serán problemas.
-  */
 
   let changed = true;
 
@@ -809,63 +1020,59 @@ Promise.all(
     changed = false;
 
 
-    hierarchyLinks.forEach(
-      link => {
+    hierarchyLinks.forEach(link => {
 
 
-        const sourceID =
+      const sourceID =
 
-          typeof link.source ===
-          "object"
+        typeof link.source === "object"
 
-            ? link.source.id
+          ? link.source.id
 
-            : link.source;
-
-
-        const targetID =
-
-          typeof link.target ===
-          "object"
-
-            ? link.target.id
-
-            : link.target;
+          : link.source;
 
 
-        if (
+      const targetID =
 
-          problemNodeIDs.has(
-            sourceID
-          )
+        typeof link.target === "object"
 
-          &&
+          ? link.target.id
 
-          !problemNodeIDs.has(
-            targetID
-          )
-
-        ) {
+          : link.target;
 
 
-          problemNodeIDs.add(
-            targetID
-          );
+      if (
+
+        problemNodeIDs.has(
+          sourceID
+        )
+
+        &&
+
+        !problemNodeIDs.has(
+          targetID
+        )
+
+      ) {
 
 
-          changed = true;
+        problemNodeIDs.add(
+          targetID
+        );
 
-        }
+
+        changed = true;
 
       }
 
-    );
+    });
 
   }
 
 
+
   /* =====================================================
-     DIBUJAR GRAFO
+     DIBUJAR
      ===================================================== */
 
   drawGraph(
@@ -878,32 +1085,47 @@ Promise.all(
 
     nodesMap,
 
-    problemNodeIDs
+    problemNodeIDs,
+
+    atencionNode,
+
+    valoresNode,
+
+    agendaNode,
+
+    agendaRoots.filter(Boolean)
 
   );
+
+
 
 })
 
 
-.catch(
-  error => {
+.catch(error => {
 
 
+  const status =
     document.getElementById(
       "status"
-    ).innerHTML =
+    );
+
+
+  if (status) {
+
+    status.innerHTML =
 
       "<strong>Error:</strong> " +
       error.message;
 
-
-    console.error(
-      error
-    );
-
   }
 
-);
+
+  console.error(
+    error
+  );
+
+});
 
 
 
@@ -921,26 +1143,32 @@ function drawGraph(
 
   nodesMap,
 
-  problemNodeIDs
+  problemNodeIDs,
+
+  atencionNode,
+
+  valoresNode,
+
+  agendaNode,
+
+  agendaRoots
 
 ) {
 
 
   const container =
-
     document.getElementById(
       "graph"
     );
 
 
   const width =
-
     container.clientWidth;
 
 
   const height =
-
     container.clientHeight;
+
 
 
   /* =====================================================
@@ -968,21 +1196,33 @@ function drawGraph(
   ];
 
 
+
   /* =====================================================
-     NODOS PRINCIPALES
+     NODOS ESTRUCTURALES
      ===================================================== */
 
-  const mainLabels =
-
+  const transparentIDs =
     new Set([
 
-      "Atención",
+      atencionNode.id,
 
-      "Valores",
+      agendaNode.id,
 
-      "Agenda"
+      valoresNode.id
 
     ]);
+
+
+
+  const agendaRootIDs =
+    new Set(
+
+      agendaRoots.map(
+        node => node.id
+      )
+
+    );
+
 
 
   /* =====================================================
@@ -1031,6 +1271,7 @@ function drawGraph(
       );
 
 
+
   /* =====================================================
      ZOOM
      ===================================================== */
@@ -1047,7 +1288,7 @@ function drawGraph(
     d3.zoom()
 
       .scaleExtent([
-        0.2,
+        0.15,
         5
       ])
 
@@ -1073,6 +1314,40 @@ function drawGraph(
   );
 
 
+
+  /* =====================================================
+     POSICIONES INICIALES
+
+     Atención en el centro.
+     Valores hacia un lado.
+     Agenda hacia el otro.
+     ===================================================== */
+
+  atencionNode.x =
+    width / 2;
+
+
+  atencionNode.y =
+    height / 2;
+
+
+  valoresNode.x =
+    width / 2 - 230;
+
+
+  valoresNode.y =
+    height / 2;
+
+
+  agendaNode.x =
+    width / 2 + 230;
+
+
+  agendaNode.y =
+    height / 2;
+
+
+
   /* =====================================================
      SIMULACIÓN
      ===================================================== */
@@ -1083,10 +1358,6 @@ function drawGraph(
       nodes
     )
 
-
-      /* ---------------------------------------------------
-         LINKS
-         --------------------------------------------------- */
 
       .force(
 
@@ -1100,71 +1371,89 @@ function drawGraph(
             d => d.id
           )
 
-          .distance(
-            d => {
+          .distance(d => {
 
 
-              /*
-                 Más distancia entre
-                 Atención y las dos
-                 ontologías principales.
-              */
+            /*
+               Atención → Valores
+               Atención → Agenda
+            */
 
-              if (
+            if (
 
-                d.source.label ===
-                "Atención"
+              d.source.id ===
+              atencionNode.id
 
-                ||
+              ||
 
-                d.target.label ===
-                "Atención"
+              d.target.id ===
+              atencionNode.id
 
-              ) {
+            ) {
 
-                return 200;
-
-              }
-
-
-              /*
-                 Separación adicional
-                 alrededor de Agenda
-                 y Valores.
-              */
-
-              if (
-
-                d.source.label ===
-                "Valores"
-
-                ||
-
-                d.target.label ===
-                "Valores"
-
-                ||
-
-                d.source.label ===
-                "Agenda"
-
-                ||
-
-                d.target.label ===
-                "Agenda"
-
-              ) {
-
-                return 140;
-
-              }
-
-
-              return 115;
+              return 230;
 
             }
 
-          )
+
+            /*
+               Agenda → seis dimensiones
+            */
+
+            if (
+
+              d.source.id ===
+              agendaNode.id
+
+              ||
+
+              d.target.id ===
+              agendaNode.id
+
+            ) {
+
+              return 170;
+
+            }
+
+
+            /*
+               Valores y raíces de Agenda
+               respecto de sus descendientes.
+            */
+
+            if (
+
+              d.source.id ===
+              valoresNode.id
+
+              ||
+
+              d.target.id ===
+              valoresNode.id
+
+              ||
+
+              agendaRootIDs.has(
+                d.source.id
+              )
+
+              ||
+
+              agendaRootIDs.has(
+                d.target.id
+              )
+
+            ) {
+
+              return 135;
+
+            }
+
+
+            return 110;
+
+          })
 
           .strength(
             0.9
@@ -1172,10 +1461,6 @@ function drawGraph(
 
       )
 
-
-      /* ---------------------------------------------------
-         REPULSIÓN
-         --------------------------------------------------- */
 
       .force(
 
@@ -1189,10 +1474,6 @@ function drawGraph(
 
       )
 
-
-      /* ---------------------------------------------------
-         CENTRO
-         --------------------------------------------------- */
 
       .force(
 
@@ -1209,10 +1490,6 @@ function drawGraph(
       )
 
 
-      /* ---------------------------------------------------
-         COLISIÓN
-         --------------------------------------------------- */
-
       .force(
 
         "collision",
@@ -1223,33 +1500,54 @@ function drawGraph(
 
 
             if (
-              d.label ===
-              "Atención"
+              d.id ===
+              atencionNode.id
             ) {
 
-              return 70;
+              return 75;
 
             }
 
 
             if (
-              mainLabels.has(
-                d.label
-              )
+              d.id ===
+              agendaNode.id
             ) {
 
-              return 55;
+              return 65;
 
             }
 
 
-            return 40;
+            if (
+              d.id ===
+              valoresNode.id
+            ) {
+
+              return 60;
+
+            }
+
+
+            if (
+              agendaRootIDs.has(
+                d.id
+              )
+            ) {
+
+              return 52;
+
+            }
+
+
+            return 42;
 
           }
 
         )
 
       );
+
 
 
   /* =====================================================
@@ -1260,20 +1558,27 @@ function drawGraph(
 
     zoomLayer
 
-      .append("g")
+      .append(
+        "g"
+      )
 
-      .selectAll("line")
+      .selectAll(
+        "line"
+      )
 
       .data(
         relatedLinks
       )
 
-      .join("line")
+      .join(
+        "line"
+      )
 
       .attr(
         "class",
         "related"
       );
+
 
 
   /* =====================================================
@@ -1284,20 +1589,27 @@ function drawGraph(
 
     zoomLayer
 
-      .append("g")
+      .append(
+        "g"
+      )
 
-      .selectAll("line")
+      .selectAll(
+        "line"
+      )
 
       .data(
         hierarchyLinks
       )
 
-      .join("line")
+      .join(
+        "line"
+      )
 
       .attr(
         "class",
         "link"
       );
+
 
 
   /* =====================================================
@@ -1308,15 +1620,21 @@ function drawGraph(
 
     zoomLayer
 
-      .append("g")
+      .append(
+        "g"
+      )
 
-      .selectAll("g")
+      .selectAll(
+        "g"
+      )
 
       .data(
         nodes
       )
 
-      .join("g")
+      .join(
+        "g"
+      )
 
       .attr(
         "class",
@@ -1330,14 +1648,13 @@ function drawGraph(
       );
 
 
+
   /* =====================================================
      CÍRCULOS
 
      Atención = transparente
-     Valores = transparente
      Agenda = transparente
-
-     Resto = pastel
+     Valores = transparente
 
      Problemas = triángulos
      ===================================================== */
@@ -1365,28 +1682,42 @@ function drawGraph(
 
 
         if (
-          d.label ===
-          "Atención"
+          d.id ===
+          atencionNode.id
         ) {
 
-          return 26;
+          return 28;
 
         }
 
 
         if (
-
-          d.label ===
-          "Valores"
-
-          ||
-
-          d.label ===
-          "Agenda"
-
+          d.id ===
+          agendaNode.id
         ) {
 
-          return 19;
+          return 23;
+
+        }
+
+
+        if (
+          d.id ===
+          valoresNode.id
+        ) {
+
+          return 21;
+
+        }
+
+
+        if (
+          agendaRootIDs.has(
+            d.id
+          )
+        ) {
+
+          return 17;
 
         }
 
@@ -1405,35 +1736,14 @@ function drawGraph(
 
 
         /*
-           NODO CENTRAL:
-           ATENCIÓN
+           Atención, Agenda y Valores
+           son transparentes.
         */
 
         if (
-          d.label ===
-          "Atención"
-        ) {
-
-          return "transparent";
-
-        }
-
-
-        /*
-           RAÍCES:
-           VALORES Y AGENDA
-        */
-
-        if (
-
-          d.label ===
-          "Valores"
-
-          ||
-
-          d.label ===
-          "Agenda"
-
+          transparentIDs.has(
+            d.id
+          )
         ) {
 
           return "transparent";
@@ -1460,8 +1770,8 @@ function drawGraph(
 
 
         if (
-          d.label ===
-          "Atención"
+          d.id ===
+          atencionNode.id
         ) {
 
           return "#333";
@@ -1470,15 +1780,9 @@ function drawGraph(
 
 
         if (
-
-          d.label ===
-          "Valores"
-
-          ||
-
-          d.label ===
-          "Agenda"
-
+          transparentIDs.has(
+            d.id
+          )
         ) {
 
           return "#555";
@@ -1500,8 +1804,8 @@ function drawGraph(
 
 
         if (
-          d.label ===
-          "Atención"
+          d.id ===
+          atencionNode.id
         ) {
 
           return 2.5;
@@ -1510,15 +1814,9 @@ function drawGraph(
 
 
         if (
-
-          d.label ===
-          "Valores"
-
-          ||
-
-          d.label ===
-          "Agenda"
-
+          transparentIDs.has(
+            d.id
+          )
         ) {
 
           return 2;
@@ -1531,6 +1829,7 @@ function drawGraph(
       }
 
     );
+
 
 
   /* =====================================================
@@ -1587,6 +1886,7 @@ function drawGraph(
     );
 
 
+
   /* =====================================================
      ETIQUETAS
      ===================================================== */
@@ -1616,28 +1916,42 @@ function drawGraph(
 
 
         if (
-          d.label ===
-          "Atención"
+          d.id ===
+          atencionNode.id
         ) {
 
-          return 33;
+          return 35;
 
         }
 
 
         if (
-
-          d.label ===
-          "Valores"
-
-          ||
-
-          d.label ===
-          "Agenda"
-
+          d.id ===
+          agendaNode.id
         ) {
 
-          return 25;
+          return 30;
+
+        }
+
+
+        if (
+          d.id ===
+          valoresNode.id
+        ) {
+
+          return 28;
+
+        }
+
+
+        if (
+          agendaRootIDs.has(
+            d.id
+          )
+        ) {
+
+          return 23;
 
         }
 
@@ -1657,21 +1971,48 @@ function drawGraph(
 
       "font-weight",
 
-      d =>
+      d => {
 
-        mainLabels.has(
-          d.label
-        )
+        if (
+          d.id ===
+          atencionNode.id
+        ) {
 
-          ? "bold"
+          return "bold";
 
-          : "normal"
+        }
+
+
+        if (
+          d.id ===
+          agendaNode.id
+        ) {
+
+          return "bold";
+
+        }
+
+
+        if (
+          d.id ===
+          valoresNode.id
+        ) {
+
+          return "bold";
+
+        }
+
+
+        return "normal";
+
+      }
 
     )
 
     .text(
       d => d.label
     );
+
 
 
   /* =====================================================
@@ -1701,6 +2042,7 @@ function drawGraph(
   );
 
 
+
   /* =====================================================
      ACTUALIZACIÓN DE POSICIONES
      ===================================================== */
@@ -1717,24 +2059,41 @@ function drawGraph(
       links
 
         .attr(
+
           "x1",
-          d => d.source.x
+
+          d =>
+            d.source.x
+
         )
 
         .attr(
+
           "y1",
-          d => d.source.y
+
+          d =>
+            d.source.y
+
         )
 
         .attr(
+
           "x2",
-          d => d.target.x
+
+          d =>
+            d.target.x
+
         )
 
         .attr(
+
           "y2",
-          d => d.target.y
+
+          d =>
+            d.target.y
+
         );
+
 
 
       /* RELATED */
@@ -1747,8 +2106,7 @@ function drawGraph(
 
           d =>
 
-            typeof d.source ===
-            "object"
+            typeof d.source === "object"
 
               ? d.source.x
 
@@ -1764,8 +2122,7 @@ function drawGraph(
 
           d =>
 
-            typeof d.source ===
-            "object"
+            typeof d.source === "object"
 
               ? d.source.y
 
@@ -1781,8 +2138,7 @@ function drawGraph(
 
           d =>
 
-            typeof d.target ===
-            "object"
+            typeof d.target === "object"
 
               ? d.target.x
 
@@ -1798,8 +2154,7 @@ function drawGraph(
 
           d =>
 
-            typeof d.target ===
-            "object"
+            typeof d.target === "object"
 
               ? d.target.y
 
@@ -1808,6 +2163,7 @@ function drawGraph(
                 )?.y
 
         );
+
 
 
       /* NODOS */
@@ -1826,6 +2182,7 @@ function drawGraph(
   );
 
 
+
   /* =====================================================
      RESPONSIVE
      ===================================================== */
@@ -1838,12 +2195,10 @@ function drawGraph(
 
 
       const newWidth =
-
         container.clientWidth;
 
 
       const newHeight =
-
         container.clientHeight;
 
 
@@ -1878,7 +2233,9 @@ function drawGraph(
 
       simulation
 
-        .alpha(0.3)
+        .alpha(
+          0.3
+        )
 
         .restart();
 
@@ -2067,6 +2424,7 @@ function drag(
   }
 
 
+
   function dragged(
     event,
     d
@@ -2081,6 +2439,7 @@ function drag(
       event.y;
 
   }
+
 
 
   function dragended(
@@ -2104,8 +2463,7 @@ function drag(
 
     /*
        Al soltar el nodo vuelve
-       a quedar sujeto a las
-       fuerzas del grafo.
+       a quedar sujeto a las fuerzas.
     */
 
     d.fx =
@@ -2116,6 +2474,7 @@ function drag(
       null;
 
   }
+
 
 
   return d3.drag()
@@ -2140,4 +2499,5 @@ function drag(
 </script>
 
 </body>
+
 </html>
