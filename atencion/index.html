@@ -171,8 +171,13 @@
   </div>
 
   <aside id="panel">
+
     <h2>Concepto</h2>
-    <p>Selecciona un concepto del grafo para consultar su información.</p>
+
+    <p>
+      Selecciona un concepto del grafo para consultar su información.
+    </p>
+
   </aside>
 
 </div>
@@ -183,16 +188,20 @@
 /* =========================================================
    CONFIGURACIÓN
 
-   Estructura esperada:
+   Estructura:
 
    /
    ├── valores.ttl
-   ├── Agenda/
+   │
+   ├── agenda/
    │   └── agenda.ttl
+   │
    └── Atencion/
        ├── atencion.ttl
        └── index.html
 
+   IMPORTANTE:
+   agenda está en MINÚSCULA
    ========================================================= */
 
 const ttlURLs = [
@@ -201,7 +210,7 @@ const ttlURLs = [
 
   "../valores.ttl",
 
-  "../Agenda/agenda.ttl"
+  "../agenda/agenda.ttl"
 
 ];
 
@@ -233,7 +242,7 @@ const SKOS = {
 
 
 /* =========================================================
-   CARGA DE LAS TRES ONTOLOGÍAS
+   CARGA DE LAS ONTOLOGÍAS
    ========================================================= */
 
 Promise.all(
@@ -245,7 +254,11 @@ Promise.all(
       .then(response => {
 
         if (!response.ok) {
-          throw new Error("No se pudo cargar " + url);
+
+          throw new Error(
+            "No se pudo cargar " + url
+          );
+
         }
 
         return response.text();
@@ -253,8 +266,11 @@ Promise.all(
       })
 
       .then(text => ({
+
         url: url,
+
         ttl: text
+
       }))
 
   )
@@ -263,37 +279,52 @@ Promise.all(
 
 .then(files => {
 
+
   /*
-     Los tres TTL se cargan en el mismo store RDF.
-     Así se integran Atención, Valores y Agenda.
+     Todos los TTL se cargan
+     en el mismo store RDF.
   */
 
-  const store = $rdf.graph();
+  const store =
+    $rdf.graph();
 
 
   files.forEach(file => {
 
+
     const baseURI =
+
       new URL(
         file.url,
         window.location.href
       ).href;
 
+
     $rdf.parse(
+
       file.ttl,
+
       store,
+
       baseURI,
+
       "text/turtle"
+
     );
 
   });
 
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
+
 
   if (status) {
+
     status.remove();
+
   }
 
 
@@ -301,122 +332,193 @@ Promise.all(
      CONCEPTOS
      ===================================================== */
 
-  const conceptStatements = store.match(
+  const conceptStatements =
 
-    null,
+    store.match(
 
-    $rdf.sym(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-    ),
+      null,
 
-    $rdf.sym(SKOS.Concept)
+      $rdf.sym(
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      ),
 
-  );
+      $rdf.sym(
+        SKOS.Concept
+      )
 
-
-  const nodesMap = new Map();
-
-
-  conceptStatements.forEach(statement => {
-
-    const uri =
-      statement.subject.value;
+    );
 
 
-    const pref =
-      store.any(
-        statement.subject,
-        $rdf.sym(SKOS.prefLabel)
+  const nodesMap =
+    new Map();
+
+
+  conceptStatements.forEach(
+    statement => {
+
+
+      const uri =
+        statement.subject.value;
+
+
+      const pref =
+
+        store.any(
+
+          statement.subject,
+
+          $rdf.sym(
+            SKOS.prefLabel
+          )
+
+        );
+
+
+      nodesMap.set(
+
+        uri,
+
+        {
+
+          id: uri,
+
+          label:
+
+            pref
+
+              ? pref.value
+
+              : uri
+                  .split(/[\/#]/)
+                  .pop(),
+
+          altLabels: [],
+
+          definition: null,
+
+          broader: null,
+
+          related: []
+
+        }
+
       );
 
+    }
 
-    nodesMap.set(uri, {
-
-      id: uri,
-
-      label:
-        pref
-          ? pref.value
-          : uri.split(/[\/#]/).pop(),
-
-      altLabels: [],
-
-      definition: null,
-
-      broader: null,
-
-      related: []
-
-    });
-
-  });
+  );
 
 
   /* =====================================================
      PROPIEDADES SKOS
      ===================================================== */
 
-  nodesMap.forEach(node => {
-
-    const subject =
-      $rdf.sym(node.id);
+  nodesMap.forEach(
+    node => {
 
 
-    /* ALT LABEL */
-
-    const alternatives =
-      store.each(
-        subject,
-        $rdf.sym(SKOS.altLabel)
-      );
-
-    node.altLabels =
-      alternatives.map(x => x.value);
+      const subject =
+        $rdf.sym(
+          node.id
+        );
 
 
-    /* DEFINITION */
+      /* ALT LABEL */
 
-    const definition =
-      store.any(
-        subject,
-        $rdf.sym(SKOS.definition)
-      );
+      const alternatives =
 
-    if (definition) {
-      node.definition =
-        definition.value;
+        store.each(
+
+          subject,
+
+          $rdf.sym(
+            SKOS.altLabel
+          )
+
+        );
+
+
+      node.altLabels =
+
+        alternatives.map(
+          x => x.value
+        );
+
+
+      /* DEFINITION */
+
+      const definition =
+
+        store.any(
+
+          subject,
+
+          $rdf.sym(
+            SKOS.definition
+          )
+
+        );
+
+
+      if (definition) {
+
+        node.definition =
+          definition.value;
+
+      }
+
+
+      /* BROADER */
+
+      const broader =
+
+        store.any(
+
+          subject,
+
+          $rdf.sym(
+            SKOS.broader
+          )
+
+        );
+
+
+      if (broader) {
+
+        node.broader =
+          broader.value;
+
+      }
+
+
+      /* RELATED */
+
+      const related =
+
+        store.each(
+
+          subject,
+
+          $rdf.sym(
+            SKOS.related
+          )
+
+        );
+
+
+      node.related =
+
+        related.map(
+          x => x.value
+        );
+
     }
 
-
-    /* BROADER */
-
-    const broader =
-      store.any(
-        subject,
-        $rdf.sym(SKOS.broader)
-      );
-
-    if (broader) {
-      node.broader =
-        broader.value;
-    }
-
-
-    /* RELATED */
-
-    const related =
-      store.each(
-        subject,
-        $rdf.sym(SKOS.related)
-      );
-
-    node.related =
-      related.map(x => x.value);
-
-  });
+  );
 
 
   const nodes =
+
     Array.from(
       nodesMap.values()
     );
@@ -432,101 +534,149 @@ Promise.all(
     new Set();
 
 
-  /*
-     Relaciones SKOS:BROADER
-  */
+  /* -----------------------------------------------------
+     BROADER
+     ----------------------------------------------------- */
 
-  nodes.forEach(node => {
-
-    if (
-      node.broader &&
-      nodesMap.has(node.broader)
-    ) {
-
-      const key =
-        node.broader +
-        "|" +
-        node.id;
+  nodes.forEach(
+    node => {
 
 
-      if (!hierarchyKeys.has(key)) {
+      if (
 
-        hierarchyKeys.add(key);
+        node.broader &&
 
-        hierarchyLinks.push({
+        nodesMap.has(
+          node.broader
+        )
 
-          source:
-            node.broader,
+      ) {
 
-          target:
-            node.id
 
-        });
+        const key =
+
+          node.broader +
+          "|" +
+          node.id;
+
+
+        if (
+          !hierarchyKeys.has(
+            key
+          )
+        ) {
+
+
+          hierarchyKeys.add(
+            key
+          );
+
+
+          hierarchyLinks.push({
+
+            source:
+              node.broader,
+
+            target:
+              node.id
+
+          });
+
+        }
 
       }
 
     }
 
-  });
+  );
 
 
-  /*
-     Relaciones SKOS:NARROWER
+  /* -----------------------------------------------------
+     NARROWER
 
-     Esto garantiza:
+     Fundamental para:
 
-     Atención
-        ├── Valores
-        └── Agenda
-  */
+           ATENCIÓN
+             /   \
+        Valores  Agenda
+     ----------------------------------------------------- */
 
-  nodes.forEach(node => {
-
-    const subject =
-      $rdf.sym(node.id);
+  nodes.forEach(
+    node => {
 
 
-    const narrowers =
-      store.each(
-        subject,
-        $rdf.sym(SKOS.narrower)
+      const subject =
+        $rdf.sym(
+          node.id
+        );
+
+
+      const narrowers =
+
+        store.each(
+
+          subject,
+
+          $rdf.sym(
+            SKOS.narrower
+          )
+
+        );
+
+
+      narrowers.forEach(
+        target => {
+
+
+          if (
+            !nodesMap.has(
+              target.value
+            )
+          ) {
+
+            return;
+
+          }
+
+
+          const key =
+
+            node.id +
+            "|" +
+            target.value;
+
+
+          if (
+            !hierarchyKeys.has(
+              key
+            )
+          ) {
+
+
+            hierarchyKeys.add(
+              key
+            );
+
+
+            hierarchyLinks.push({
+
+              source:
+                node.id,
+
+              target:
+                target.value
+
+            });
+
+          }
+
+        }
+
       );
 
+    }
 
-    narrowers.forEach(target => {
-
-      if (
-        !nodesMap.has(target.value)
-      ) {
-        return;
-      }
-
-
-      const key =
-        node.id +
-        "|" +
-        target.value;
-
-
-      if (!hierarchyKeys.has(key)) {
-
-        hierarchyKeys.add(key);
-
-        hierarchyLinks.push({
-
-          source:
-            node.id,
-
-          target:
-            target.value
-
-        });
-
-      }
-
-    });
-
-  });
+  );
 
 
   /* =====================================================
@@ -539,48 +689,72 @@ Promise.all(
     new Set();
 
 
-  nodes.forEach(node => {
-
-    node.related.forEach(target => {
-
-      if (
-        !nodesMap.has(target)
-      ) {
-        return;
-      }
+  nodes.forEach(
+    node => {
 
 
-      const key =
-        [node.id, target]
-          .sort()
-          .join("|");
+      node.related.forEach(
+        target => {
 
 
-      if (
-        !relatedKeys.has(key)
-      ) {
+          if (
+            !nodesMap.has(
+              target
+            )
+          ) {
 
-        relatedKeys.add(key);
+            return;
 
-        relatedLinks.push({
+          }
 
-          source:
-            node.id,
 
-          target:
-            target
+          const key =
 
-        });
+            [
+              node.id,
+              target
+            ]
 
-      }
+              .sort()
 
-    });
+              .join("|");
 
-  });
+
+          if (
+            !relatedKeys.has(
+              key
+            )
+          ) {
+
+
+            relatedKeys.add(
+              key
+            );
+
+
+            relatedLinks.push({
+
+              source:
+                node.id,
+
+              target:
+                target
+
+            });
+
+          }
+
+        }
+
+      );
+
+    }
+
+  );
 
 
   /* =====================================================
-     DETECTAR PROBLEMAS Y DESCENDIENTES
+     DETECCIÓN AUTOMÁTICA DE PROBLEMAS
      ===================================================== */
 
   const problemNodeIDs =
@@ -588,30 +762,42 @@ Promise.all(
 
 
   /*
-     Busca cualquier nodo llamado "Problemas".
+     Detecta todos los nodos
+     cuyo prefLabel sea Problemas.
   */
 
-  nodes.forEach(node => {
+  nodes.forEach(
+    node => {
 
-    if (
-      node.label
-        .trim()
-        .toLowerCase()
-        === "problemas"
-    ) {
 
-      problemNodeIDs.add(
-        node.id
-      );
+      if (
+
+        node.label
+          .trim()
+          .toLowerCase()
+
+        ===
+
+        "problemas"
+
+      ) {
+
+
+        problemNodeIDs.add(
+          node.id
+        );
+
+      }
 
     }
 
-  });
+  );
 
 
   /*
-     Todo descendiente de Problemas
-     también será triángulo rojo pastel.
+     Todos los descendientes
+     de Problemas también
+     serán problemas.
   */
 
   let changed = true;
@@ -619,40 +805,68 @@ Promise.all(
 
   while (changed) {
 
+
     changed = false;
 
 
-    hierarchyLinks.forEach(link => {
-
-      const sourceID =
-        typeof link.source === "object"
-          ? link.source.id
-          : link.source;
+    hierarchyLinks.forEach(
+      link => {
 
 
-      const targetID =
-        typeof link.target === "object"
-          ? link.target.id
-          : link.target;
+        const sourceID =
+
+          typeof link.source ===
+          "object"
+
+            ? link.source.id
+
+            : link.source;
 
 
-      if (
-        problemNodeIDs.has(sourceID) &&
-        !problemNodeIDs.has(targetID)
-      ) {
+        const targetID =
 
-        problemNodeIDs.add(
-          targetID
-        );
+          typeof link.target ===
+          "object"
 
-        changed = true;
+            ? link.target.id
+
+            : link.target;
+
+
+        if (
+
+          problemNodeIDs.has(
+            sourceID
+          )
+
+          &&
+
+          !problemNodeIDs.has(
+            targetID
+          )
+
+        ) {
+
+
+          problemNodeIDs.add(
+            targetID
+          );
+
+
+          changed = true;
+
+        }
 
       }
 
-    });
+    );
 
   }
 
+
+  /* =====================================================
+     DIBUJAR GRAFO
+     ===================================================== */
 
   drawGraph(
 
@@ -671,19 +885,25 @@ Promise.all(
 })
 
 
-.catch(error => {
-
-  document.getElementById(
-    "status"
-  ).innerHTML =
-
-    "<strong>Error:</strong> " +
-    error.message;
+.catch(
+  error => {
 
 
-  console.error(error);
+    document.getElementById(
+      "status"
+    ).innerHTML =
 
-});
+      "<strong>Error:</strong> " +
+      error.message;
+
+
+    console.error(
+      error
+    );
+
+  }
+
+);
 
 
 
@@ -707,14 +927,19 @@ function drawGraph(
 
 
   const container =
-    document.getElementById("graph");
+
+    document.getElementById(
+      "graph"
+    );
 
 
   const width =
+
     container.clientWidth;
 
 
   const height =
+
     container.clientHeight;
 
 
@@ -725,12 +950,19 @@ function drawGraph(
   const pastelColors = [
 
     "#dceaf7",
+
     "#e4f1e8",
+
     "#f8e7dc",
+
     "#eee4f5",
+
     "#f7efcf",
+
     "#dff1ef",
+
     "#f5e1e8",
+
     "#e8e4f4"
 
   ];
@@ -741,10 +973,13 @@ function drawGraph(
      ===================================================== */
 
   const mainLabels =
+
     new Set([
 
       "Atención",
+
       "Valores",
+
       "Agenda"
 
     ]);
@@ -756,9 +991,13 @@ function drawGraph(
 
   const svg =
 
-    d3.select("#graph")
+    d3.select(
+      "#graph"
+    )
 
-      .append("svg")
+      .append(
+        "svg"
+      )
 
       .attr(
         "width",
@@ -771,13 +1010,24 @@ function drawGraph(
       )
 
       .attr(
+
         "viewBox",
-        [0, 0, width, height]
+
+        [
+          0,
+          0,
+          width,
+          height
+        ]
+
       )
 
       .attr(
+
         "preserveAspectRatio",
+
         "xMidYMid meet"
+
       );
 
 
@@ -786,7 +1036,10 @@ function drawGraph(
      ===================================================== */
 
   const zoomLayer =
-    svg.append("g");
+
+    svg.append(
+      "g"
+    );
 
 
   svg.call(
@@ -799,13 +1052,18 @@ function drawGraph(
       ])
 
       .on(
+
         "zoom",
 
         event => {
 
+
           zoomLayer.attr(
+
             "transform",
+
             event.transform
+
           );
 
         }
@@ -821,8 +1079,14 @@ function drawGraph(
 
   const simulation =
 
-    d3.forceSimulation(nodes)
+    d3.forceSimulation(
+      nodes
+    )
 
+
+      /* ---------------------------------------------------
+         LINKS
+         --------------------------------------------------- */
 
       .force(
 
@@ -832,100 +1096,158 @@ function drawGraph(
           hierarchyLinks
         )
 
-          .id(d => d.id)
+          .id(
+            d => d.id
+          )
 
-          .distance(d => {
+          .distance(
+            d => {
 
-            /*
-               Atención queda claramente
-               separado de las dos ontologías.
-            */
 
-            if (
-              d.source.label === "Atención" ||
-              d.target.label === "Atención"
-            ) {
+              /*
+                 Más distancia entre
+                 Atención y las dos
+                 ontologías principales.
+              */
 
-              return 200;
+              if (
+
+                d.source.label ===
+                "Atención"
+
+                ||
+
+                d.target.label ===
+                "Atención"
+
+              ) {
+
+                return 200;
+
+              }
+
+
+              /*
+                 Separación adicional
+                 alrededor de Agenda
+                 y Valores.
+              */
+
+              if (
+
+                d.source.label ===
+                "Valores"
+
+                ||
+
+                d.target.label ===
+                "Valores"
+
+                ||
+
+                d.source.label ===
+                "Agenda"
+
+                ||
+
+                d.target.label ===
+                "Agenda"
+
+              ) {
+
+                return 140;
+
+              }
+
+
+              return 115;
 
             }
 
-            /*
-               Algo más de espacio alrededor
-               de Valores y Agenda.
-            */
+          )
 
-            if (
-              d.source.label === "Valores" ||
-              d.target.label === "Valores" ||
-              d.source.label === "Agenda" ||
-              d.target.label === "Agenda"
-            ) {
-
-              return 140;
-
-            }
-
-            return 115;
-
-          })
-
-          .strength(0.9)
+          .strength(
+            0.9
+          )
 
       )
 
+
+      /* ---------------------------------------------------
+         REPULSIÓN
+         --------------------------------------------------- */
 
       .force(
 
         "charge",
 
         d3.forceManyBody()
-          .strength(-650)
+
+          .strength(
+            -650
+          )
 
       )
 
+
+      /* ---------------------------------------------------
+         CENTRO
+         --------------------------------------------------- */
 
       .force(
 
         "center",
 
         d3.forceCenter(
+
           width / 2,
+
           height / 2
+
         )
 
       )
 
 
+      /* ---------------------------------------------------
+         COLISIÓN
+         --------------------------------------------------- */
+
       .force(
 
         "collision",
 
-        d3.forceCollide(d => {
+        d3.forceCollide(
 
-          if (
-            d.label === "Atención"
-          ) {
+          d => {
 
-            return 70;
+
+            if (
+              d.label ===
+              "Atención"
+            ) {
+
+              return 70;
+
+            }
+
+
+            if (
+              mainLabels.has(
+                d.label
+              )
+            ) {
+
+              return 55;
+
+            }
+
+
+            return 40;
 
           }
 
-
-          if (
-            mainLabels.has(
-              d.label
-            )
-          ) {
-
-            return 55;
-
-          }
-
-
-          return 40;
-
-        })
+        )
 
       );
 
@@ -990,7 +1312,9 @@ function drawGraph(
 
       .selectAll("g")
 
-      .data(nodes)
+      .data(
+        nodes
+      )
 
       .join("g")
 
@@ -1000,41 +1324,49 @@ function drawGraph(
       )
 
       .call(
-        drag(simulation)
+        drag(
+          simulation
+        )
       );
 
 
   /* =====================================================
      CÍRCULOS
 
-     Atención:
-     nodo central transparente
+     Atención = transparente
+     Valores = transparente
+     Agenda = transparente
 
-     Valores y Agenda:
-     raíces transparentes
+     Resto = pastel
 
-     Resto:
-     colores pastel
+     Problemas = triángulos
      ===================================================== */
 
   node
 
     .filter(
+
       d =>
         !problemNodeIDs.has(
           d.id
         )
+
     )
 
-    .append("circle")
+    .append(
+      "circle"
+    )
 
     .attr(
+
       "r",
 
       d => {
 
+
         if (
-          d.label === "Atención"
+          d.label ===
+          "Atención"
         ) {
 
           return 26;
@@ -1043,8 +1375,15 @@ function drawGraph(
 
 
         if (
-          d.label === "Valores" ||
-          d.label === "Agenda"
+
+          d.label ===
+          "Valores"
+
+          ||
+
+          d.label ===
+          "Agenda"
+
         ) {
 
           return 19;
@@ -1059,17 +1398,20 @@ function drawGraph(
     )
 
     .attr(
+
       "fill",
 
       (d, i) => {
 
+
         /*
-           ATENCIÓN:
-           nodo maestro central transparente
+           NODO CENTRAL:
+           ATENCIÓN
         */
 
         if (
-          d.label === "Atención"
+          d.label ===
+          "Atención"
         ) {
 
           return "transparent";
@@ -1078,13 +1420,20 @@ function drawGraph(
 
 
         /*
-           VALORES y AGENDA:
-           nodos raíz transparentes
+           RAÍCES:
+           VALORES Y AGENDA
         */
 
         if (
-          d.label === "Valores" ||
-          d.label === "Agenda"
+
+          d.label ===
+          "Valores"
+
+          ||
+
+          d.label ===
+          "Agenda"
+
         ) {
 
           return "transparent";
@@ -1093,8 +1442,10 @@ function drawGraph(
 
 
         return pastelColors[
+
           i %
           pastelColors.length
+
         ];
 
       }
@@ -1102,12 +1453,15 @@ function drawGraph(
     )
 
     .attr(
+
       "stroke",
 
       d => {
 
+
         if (
-          d.label === "Atención"
+          d.label ===
+          "Atención"
         ) {
 
           return "#333";
@@ -1116,8 +1470,15 @@ function drawGraph(
 
 
         if (
-          d.label === "Valores" ||
-          d.label === "Agenda"
+
+          d.label ===
+          "Valores"
+
+          ||
+
+          d.label ===
+          "Agenda"
+
         ) {
 
           return "#555";
@@ -1132,12 +1493,15 @@ function drawGraph(
     )
 
     .attr(
+
       "stroke-width",
 
       d => {
 
+
         if (
-          d.label === "Atención"
+          d.label ===
+          "Atención"
         ) {
 
           return 2.5;
@@ -1146,8 +1510,15 @@ function drawGraph(
 
 
         if (
-          d.label === "Valores" ||
-          d.label === "Agenda"
+
+          d.label ===
+          "Valores"
+
+          ||
+
+          d.label ===
+          "Agenda"
+
         ) {
 
           return 2;
@@ -1171,32 +1542,48 @@ function drawGraph(
   node
 
     .filter(
+
       d =>
         problemNodeIDs.has(
           d.id
         )
+
     )
 
-    .append("polygon")
+    .append(
+      "polygon"
+    )
 
     .attr(
+
       "points",
+
       "0,-14 13,10 -13,10"
+
     )
 
     .attr(
+
       "fill",
+
       "#f4b6b6"
+
     )
 
     .attr(
+
       "stroke",
+
       "#b76e6e"
+
     )
 
     .attr(
+
       "stroke-width",
+
       1.5
+
     );
 
 
@@ -1206,12 +1593,16 @@ function drawGraph(
 
   node
 
-    .append("text")
+    .append(
+      "text"
+    )
 
     .attr(
+
       "x",
 
       d => {
+
 
         if (
           problemNodeIDs.has(
@@ -1225,7 +1616,8 @@ function drawGraph(
 
 
         if (
-          d.label === "Atención"
+          d.label ===
+          "Atención"
         ) {
 
           return 33;
@@ -1234,8 +1626,15 @@ function drawGraph(
 
 
         if (
-          d.label === "Valores" ||
-          d.label === "Agenda"
+
+          d.label ===
+          "Valores"
+
+          ||
+
+          d.label ===
+          "Agenda"
+
         ) {
 
           return 25;
@@ -1255,13 +1654,17 @@ function drawGraph(
     )
 
     .style(
+
       "font-weight",
 
       d =>
+
         mainLabels.has(
           d.label
         )
+
           ? "bold"
+
           : "normal"
 
     )
@@ -1281,11 +1684,16 @@ function drawGraph(
 
     (event, d) => {
 
+
       event.stopPropagation();
 
+
       showPanel(
+
         d,
+
         nodesMap
+
       );
 
     }
@@ -1334,49 +1742,83 @@ function drawGraph(
       related
 
         .attr(
+
           "x1",
 
           d =>
-            typeof d.source === "object"
+
+            typeof d.source ===
+            "object"
+
               ? d.source.x
-              : nodesMap.get(d.source)?.x
+
+              : nodesMap.get(
+                  d.source
+                )?.x
+
         )
 
         .attr(
+
           "y1",
 
           d =>
-            typeof d.source === "object"
+
+            typeof d.source ===
+            "object"
+
               ? d.source.y
-              : nodesMap.get(d.source)?.y
+
+              : nodesMap.get(
+                  d.source
+                )?.y
+
         )
 
         .attr(
+
           "x2",
 
           d =>
-            typeof d.target === "object"
+
+            typeof d.target ===
+            "object"
+
               ? d.target.x
-              : nodesMap.get(d.target)?.x
+
+              : nodesMap.get(
+                  d.target
+                )?.x
+
         )
 
         .attr(
+
           "y2",
 
           d =>
-            typeof d.target === "object"
+
+            typeof d.target ===
+            "object"
+
               ? d.target.y
-              : nodesMap.get(d.target)?.y
+
+              : nodesMap.get(
+                  d.target
+                )?.y
+
         );
 
 
       /* NODOS */
 
       node.attr(
+
         "transform",
 
         d =>
           `translate(${d.x},${d.y})`
+
       );
 
     }
@@ -1394,16 +1836,28 @@ function drawGraph(
 
     () => {
 
+
       const newWidth =
+
         container.clientWidth;
 
+
       const newHeight =
+
         container.clientHeight;
 
 
       svg.attr(
+
         "viewBox",
-        [0, 0, newWidth, newHeight]
+
+        [
+          0,
+          0,
+          newWidth,
+          newHeight
+        ]
+
       );
 
 
@@ -1412,15 +1866,20 @@ function drawGraph(
         "center",
 
         d3.forceCenter(
+
           newWidth / 2,
+
           newHeight / 2
+
         )
 
       );
 
 
       simulation
+
         .alpha(0.3)
+
         .restart();
 
     }
@@ -1436,11 +1895,16 @@ function drawGraph(
    ========================================================= */
 
 function showPanel(
+
   concept,
+
   nodesMap
+
 ) {
 
+
   const panel =
+
     document.getElementById(
       "panel"
     );
@@ -1448,7 +1912,9 @@ function showPanel(
 
   const broader =
 
-    concept.broader &&
+    concept.broader
+
+    &&
 
     nodesMap.get(
       concept.broader
@@ -1466,13 +1932,18 @@ function showPanel(
     concept.related
 
       .map(
+
         uri =>
+
           nodesMap.get(
             uri
           )?.label
+
       )
 
-      .filter(Boolean);
+      .filter(
+        Boolean
+      );
 
 
   panel.innerHTML = `
@@ -1499,7 +1970,9 @@ function showPanel(
 
       ${
         concept.definition
+
           ? concept.definition
+
           : "—"
       }
 
@@ -1514,7 +1987,9 @@ function showPanel(
 
       ${
         concept.altLabels.length
+
           ? concept.altLabels.join(", ")
+
           : "—"
       }
 
@@ -1538,7 +2013,9 @@ function showPanel(
 
       ${
         related.length
+
           ? related.join(", ")
+
           : "—"
       }
 
@@ -1564,19 +2041,28 @@ function drag(
     d
   ) {
 
+
     if (
       !event.active
     ) {
 
       simulation
-        .alphaTarget(0.3)
+
+        .alphaTarget(
+          0.3
+        )
+
         .restart();
 
     }
 
 
-    d.fx = d.x;
-    d.fy = d.y;
+    d.fx =
+      d.x;
+
+
+    d.fy =
+      d.y;
 
   }
 
@@ -1586,8 +2072,10 @@ function drag(
     d
   ) {
 
+
     d.fx =
       event.x;
+
 
     d.fy =
       event.y;
@@ -1600,23 +2088,32 @@ function drag(
     d
   ) {
 
+
     if (
       !event.active
     ) {
 
       simulation
-        .alphaTarget(0);
+
+        .alphaTarget(
+          0
+        );
 
     }
 
 
     /*
        Al soltar el nodo vuelve
-       a quedar sujeto a las fuerzas.
+       a quedar sujeto a las
+       fuerzas del grafo.
     */
 
-    d.fx = null;
-    d.fy = null;
+    d.fx =
+      null;
+
+
+    d.fy =
+      null;
 
   }
 
