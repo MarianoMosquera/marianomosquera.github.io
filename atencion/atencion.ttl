@@ -1,12 +1,21 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dct:  <http://purl.org/dc/terms/> .
 
-@prefix aten: <https://marianomosquera.github.io/Atencion/atencion#> .
+# ============================================================
+# PREFIJOS
+# ============================================================
+
+@prefix aten: <https://marianomosquera.github.io/atencion/atencion#> .
+
 @prefix val:  <https://marianomosquera.github.io/valores#> .
-@prefix ag:   <https://marianomosquera.github.io/Agenda/agenda#> .
+
+@prefix inst: <https://marianomosquera.github.io/institucional#> .
+@prefix pol:  <https://marianomosquera.github.io/politica#> .
+@prefix soc:  <https://marianomosquera.github.io/social#> .
+@prefix amb:  <https://marianomosquera.github.io/ambiental#> .
+@prefix eco:  <https://marianomosquera.github.io/economica#> .
+@prefix tec:  <https://marianomosquera.github.io/tecnologica#> .
 
 
 # ============================================================
@@ -14,23 +23,28 @@
 # ATENCIÓN
 # ============================================================
 
-<https://marianomosquera.github.io/Atencion/atencion.ttl>
+<https://marianomosquera.github.io/atencion/atencion.ttl>
     a owl:Ontology ;
 
     dct:title
         "Ontología de Atención"@es ;
 
     dct:description
-        "Ontología integradora de Valores y Agenda."@es ;
+        "Ontología SKOS integradora de Valores y Agenda. Agenda integra las dimensiones Institucional, Política, Social, Ambiental, Económica y Tecnológica."@es ;
 
     owl:imports
         <https://marianomosquera.github.io/valores.ttl> ,
-        <https://marianomosquera.github.io/Agenda/agenda.ttl> .
+        <https://marianomosquera.github.io/institucional.ttl> ,
+        <https://marianomosquera.github.io/politica.ttl> ,
+        <https://marianomosquera.github.io/social.ttl> ,
+        <https://marianomosquera.github.io/ambiental.ttl> ,
+        <https://marianomosquera.github.io/economica.ttl> ,
+        <https://marianomosquera.github.io/tecnologica.ttl> .
 
 
 # ============================================================
-# CONCEPTO PRINCIPAL
 # ATENCIÓN
+# Nodo raíz de la ontología integrada
 # ============================================================
 
 aten:Atencion
@@ -41,7 +55,7 @@ aten:Atencion
 
     skos:narrower
         val:Valores ,
-        ag:Agenda .
+        aten:Agenda .
 
 
 # ============================================================
@@ -57,8 +71,76 @@ val:Valores
 # ============================================================
 # AGENDA
 # Narrower de Atención
+# Nodo integrador de las seis dimensiones
 # ============================================================
 
-ag:Agenda
+aten:Agenda
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Agenda"@es ;
+
     skos:broader
-        aten:Atencion .
+        aten:Atencion ;
+
+    skos:narrower
+        inst:Institucional ,
+        pol:Politica ,
+        soc:Social ,
+        amb:Ambiental ,
+        eco:Economica ,
+        tec:Tecnologica .
+
+
+# ============================================================
+# INSTITUCIONAL
+# ============================================================
+
+inst:Institucional
+    skos:broader
+        aten:Agenda .
+
+
+# ============================================================
+# POLÍTICA
+# ============================================================
+
+pol:Politica
+    skos:broader
+        aten:Agenda .
+
+
+# ============================================================
+# SOCIAL
+# ============================================================
+
+soc:Social
+    skos:broader
+        aten:Agenda .
+
+
+# ============================================================
+# AMBIENTAL
+# ============================================================
+
+amb:Ambiental
+    skos:broader
+        aten:Agenda .
+
+
+# ============================================================
+# ECONÓMICA
+# ============================================================
+
+eco:Economica
+    skos:broader
+        aten:Agenda .
+
+
+# ============================================================
+# TECNOLÓGICA
+# ============================================================
+
+tec:Tecnologica
+    skos:broader
+        aten:Agenda .
