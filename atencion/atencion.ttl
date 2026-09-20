@@ -1,0 +1,64 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+@prefix aten: <https://marianomosquera.github.io/Atencion/atencion#> .
+@prefix val:  <https://marianomosquera.github.io/valores#> .
+@prefix ag:   <https://marianomosquera.github.io/Agenda/agenda#> .
+
+
+# ============================================================
+# ONTOLOGÍA MAESTRA
+# ATENCIÓN
+# ============================================================
+
+<https://marianomosquera.github.io/Atencion/atencion.ttl>
+    a owl:Ontology ;
+
+    dct:title
+        "Ontología de Atención"@es ;
+
+    dct:description
+        "Ontología integradora de Valores y Agenda."@es ;
+
+    owl:imports
+        <https://marianomosquera.github.io/valores.ttl> ,
+        <https://marianomosquera.github.io/Agenda/agenda.ttl> .
+
+
+# ============================================================
+# CONCEPTO PRINCIPAL
+# ATENCIÓN
+# ============================================================
+
+aten:Atencion
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Atención"@es ;
+
+    skos:narrower
+        val:Valores ,
+        ag:Agenda .
+
+
+# ============================================================
+# VALORES
+# Narrower de Atención
+# ============================================================
+
+val:Valores
+    skos:broader
+        aten:Atencion .
+
+
+# ============================================================
+# AGENDA
+# Narrower de Atención
+# ============================================================
+
+ag:Agenda
+    skos:broader
+        aten:Atencion .
