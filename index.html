@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,24 +18,23 @@
       background: #ffffff;
       color: #333333;
       font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .container {
       width: 90%;
       max-width: 1050px;
+      margin: 0 auto;
       text-align: center;
-      padding: 60px 30px;
+      padding: 60px 30px 30px;
     }
 
+    /* LOGOS */
     .logos {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 70px;
-      margin-bottom: 55px;
+      margin-bottom: 50px;
     }
 
     .logo-ucc {
@@ -53,37 +53,137 @@
       width: 70px;
       height: 2px;
       background: #163d78;
-      margin: 0 auto 40px auto;
+      margin: 0 auto 35px;
+    }
+
+    /* PORTADA */
+    h1 {
+      margin: 0 0 25px;
+      font-size: 32px;
+      font-weight: 500;
+      color: #2f2f2f;
     }
 
     .description {
       max-width: 820px;
       margin: 0 auto;
-      font-size: 20px;
+      font-size: 18px;
       line-height: 1.7;
       font-weight: 300;
       color: #404040;
     }
 
-    .links {
-      margin-top: 45px;
-      font-size: 15px;
-      letter-spacing: 0.3px;
+    /* ONTOLOGÍA */
+    .ontology-section {
+      margin: 45px auto 0;
+      max-width: 760px;
     }
 
-    .links a {
+    details {
+      border-top: 1px solid #dddddd;
+      border-bottom: 1px solid #dddddd;
+      padding: 0;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 20px 10px;
+      font-size: 18px;
+      color: #164a7b;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: " +";
+      font-weight: 300;
+      margin-left: 6px;
+    }
+
+    details[open] summary::after {
+      content: " −";
+    }
+
+    .ontology-content {
+      padding: 0 25px 28px;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .ontology-content p {
+      margin: 0 auto 25px;
+      max-width: 650px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #555555;
+    }
+
+    .ontology-button {
+      display: inline-block;
+      padding: 11px 22px;
+      border: 1px solid #164a7b;
+      border-radius: 5px;
+      color: #164a7b;
+      background: #ffffff;
+      text-decoration: none;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+
+    .ontology-button:hover {
+      background: #164a7b;
+      color: #ffffff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* PIE */
+    footer {
+      margin-top: 60px;
+      padding-top: 25px;
+      border-top: 1px solid #eeeeee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-image {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 50%;
+      opacity: 0.9;
+    }
+
+    .footer-link {
+      font-size: 13px;
       color: #164a7b;
       text-decoration: none;
-      margin: 0 15px;
     }
 
-    .links a:hover {
+    .footer-link:hover {
       text-decoration: underline;
     }
 
+    /* RESPONSIVE */
     @media (max-width: 700px) {
+
       .container {
-        padding: 40px 20px;
+        padding: 40px 20px 25px;
       }
 
       .logos {
@@ -98,14 +198,26 @@
         max-width: 350px;
       }
 
+      h1 {
+        font-size: 27px;
+      }
+
       .description {
-        font-size: 17px;
+        font-size: 16px;
         line-height: 1.6;
       }
 
-      .links a {
-        display: block;
-        margin: 12px 0;
+      .ontology-section {
+        margin-top: 35px;
+      }
+
+      .ontology-content {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      footer {
+        margin-top: 45px;
       }
     }
   </style>
@@ -115,36 +227,85 @@
 
   <main class="container">
 
+    <!-- LOGOS -->
     <div class="logos">
-      <img src="images/UCC_logo.png"
-           alt="Universidad Católica de Córdoba"
-           class="logo-ucc">
 
-      <img src="images/BITSS_logo.png"
-           alt="Berkeley Initiative for Transparency in the Social Sciences"
-           class="logo-bitss">
+      <img
+        src="images/UCC_logo.png"
+        alt="Universidad Católica de Córdoba"
+        class="logo-ucc"
+      >
+
+      <img
+        src="images/BITSS_logo.png"
+        alt="Berkeley Initiative for Transparency in the Social Sciences"
+        class="logo-bitss"
+      >
+
     </div>
 
     <div class="divider"></div>
 
+    <!-- PORTADA -->
+    <h1>Ética Institucional y Transparencia</h1>
+
     <p class="description">
-      Proyecto de la Universidad Católica de Córdoba, con el apoyo de la
-      Iniciativa de Transparencia en Ciencias Sociales de la Universidad de
-      Berkeley. Tiene como objetivo promover marcos de referencia en materia
-      de ética institucional y transparencia.
+      Proyecto financiado por Berkeley Initiative for Transparency in the
+      Social Sciences (BITSS), gestionado por el Center for Effective Global
+      Action (CEGA).
     </p>
 
-    <div class="links">
-      <a href="https://tr4nsp4renci4.com" target="_blank" rel="noopener">
-        tr4nsp4renci4.com
-      </a>
+    <!-- ONTOLOGÍA -->
+    <section class="ontology-section">
 
-      <a href="https://www.marianomosquera.com" target="_blank" rel="noopener">
+      <details>
+
+        <summary>Ontología</summary>
+
+        <div class="ontology-content">
+
+          <p>
+            Ontología para el análisis de la ética institucional y la
+            transparencia, estructurada como un sistema de conceptos y
+            relaciones semánticas que permite organizar y analizar sus
+            principales dimensiones.
+          </p>
+
+          <a
+            href="etica/"
+            class="ontology-button"
+          >
+            Ver visualización
+          </a>
+
+        </div>
+
+      </details>
+
+    </section>
+
+    <!-- PIE -->
+    <footer>
+
+      <img
+        src="images/Mosquera.jpg"
+        alt="Mariano Mosquera"
+        class="footer-image"
+      >
+
+      <a
+        href="https://www.marianomosquera.com"
+        target="_blank"
+        rel="noopener"
+        class="footer-link"
+      >
         marianomosquera.com
       </a>
-    </div>
+
+    </footer>
 
   </main>
 
 </body>
 </html>
+```
