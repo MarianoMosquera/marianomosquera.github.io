@@ -1,0 +1,336 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix comp: <https://marianomosquera.github.io/compliance#> .
+
+# =========================================================
+# CONCEPTO PRINCIPAL
+# =========================================================
+
+comp:Compliance a skos:Concept ;
+    skos:prefLabel "Compliance"@es ;
+    skos:narrower comp:AnalisisRiesgo,
+                  comp:Responsabilidad,
+                  comp:Normas,
+                  comp:Problemas .
+
+# =========================================================
+# 1. ANÁLISIS DE RIESGO
+# =========================================================
+
+comp:AnalisisRiesgo a skos:Concept ;
+    skos:prefLabel "Análisis de riesgo"@es ;
+    skos:broader comp:Compliance ;
+    skos:narrower comp:DebidaDiligencia,
+                  comp:Capacidad .
+
+comp:DebidaDiligencia a skos:Concept ;
+    skos:prefLabel "Debida diligencia"@es ;
+    skos:broader comp:AnalisisRiesgo .
+
+comp:Capacidad a skos:Concept ;
+    skos:prefLabel "Capacidad"@es ;
+    skos:broader comp:AnalisisRiesgo ;
+    skos:narrower comp:CapacidadInstitucional,
+                  comp:CapacidadPersonal,
+                  comp:FactoresExternos .
+
+# --- Capacidad institucional ---
+
+comp:CapacidadInstitucional a skos:Concept ;
+    skos:prefLabel "Institucional"@es ;
+    skos:broader comp:Capacidad ;
+    skos:narrower comp:Tiempo,
+                  comp:Presupuesto,
+                  comp:Infraestructura,
+                  comp:RecursosHumanos,
+                  comp:Procedimientos,
+                  comp:Coordinacion,
+                  comp:Informacion ;
+    skos:related comp:FactoresExternos .
+
+comp:Tiempo a skos:Concept ;
+    skos:prefLabel "Tiempo"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+comp:Presupuesto a skos:Concept ;
+    skos:prefLabel "Presupuesto"@es ;
+    skos:altLabel "Financiamiento"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+comp:Infraestructura a skos:Concept ;
+    skos:prefLabel "Infraestructura"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+comp:RecursosHumanos a skos:Concept ;
+    skos:prefLabel "Recursos humanos"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+comp:Procedimientos a skos:Concept ;
+    skos:prefLabel "Procedimientos"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+comp:Coordinacion a skos:Concept ;
+    skos:prefLabel "Coordinación"@es ;
+    skos:altLabel "Comunicación"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+comp:Informacion a skos:Concept ;
+    skos:prefLabel "Información"@es ;
+    skos:broader comp:CapacidadInstitucional .
+
+# --- Capacidad personal ---
+
+comp:CapacidadPersonal a skos:Concept ;
+    skos:prefLabel "Personal"@es ;
+    skos:broader comp:Capacidad ;
+    skos:narrower comp:Experiencia,
+                  comp:Habilidades,
+                  comp:Motivacion,
+                  comp:Adaptacion .
+
+comp:Experiencia a skos:Concept ;
+    skos:prefLabel "Experiencia"@es ;
+    skos:broader comp:CapacidadPersonal .
+
+comp:Habilidades a skos:Concept ;
+    skos:prefLabel "Habilidades"@es ;
+    skos:broader comp:CapacidadPersonal .
+
+comp:Motivacion a skos:Concept ;
+    skos:prefLabel "Motivación"@es ;
+    skos:broader comp:CapacidadPersonal .
+
+comp:Adaptacion a skos:Concept ;
+    skos:prefLabel "Adaptación"@es ;
+    skos:broader comp:CapacidadPersonal .
+
+# --- Factores externos ---
+
+comp:FactoresExternos a skos:Concept ;
+    skos:prefLabel "Factores externos"@es ;
+    skos:broader comp:Capacidad ;
+    skos:related comp:CapacidadInstitucional .
+
+# =========================================================
+# 2. RESPONSABILIDAD
+# =========================================================
+
+comp:Responsabilidad a skos:Concept ;
+    skos:prefLabel "Responsabilidad"@es ;
+    skos:broader comp:Compliance ;
+    skos:narrower comp:ResponsabilidadFuncional,
+                  comp:ResponsabilidadInstitucional .
+
+comp:ResponsabilidadFuncional a skos:Concept ;
+    skos:prefLabel "Funcional"@es ;
+    skos:broader comp:Responsabilidad .
+
+comp:ResponsabilidadInstitucional a skos:Concept ;
+    skos:prefLabel "Institucional"@es ;
+    skos:broader comp:Responsabilidad .
+
+# =========================================================
+# 3. NORMAS
+# =========================================================
+
+comp:Normas a skos:Concept ;
+    skos:prefLabel "Normas"@es ;
+    skos:altLabel "Incentivos"@es ;
+    skos:broader comp:Compliance ;
+    skos:narrower comp:Generales,
+                  comp:Declaraciones,
+                  comp:RiesgoEstandar,
+                  comp:ConflictoIntereses,
+                  comp:GestionIntereses,
+                  comp:Capacitacion,
+                  comp:Recompensas,
+                  comp:Investigacion .
+
+# --- Generales ---
+
+comp:Generales a skos:Concept ;
+    skos:prefLabel "Generales"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:CodigosEtica,
+                  comp:PlanesIntegridad .
+
+comp:CodigosEtica a skos:Concept ;
+    skos:prefLabel "Códigos de ética"@es ;
+    skos:altLabel "Códigos de conducta"@es ;
+    skos:broader comp:Generales .
+
+comp:PlanesIntegridad a skos:Concept ;
+    skos:prefLabel "Planes de integridad"@es ;
+    skos:broader comp:Generales .
+
+# --- Declaraciones ---
+
+comp:Declaraciones a skos:Concept ;
+    skos:prefLabel "Declaraciones"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:Intereses,
+                  comp:Reuniones,
+                  comp:Bienes,
+                  comp:Salario,
+                  comp:Ingresos,
+                  comp:Obsequios .
+
+comp:Intereses a skos:Concept ;
+    skos:prefLabel "Intereses"@es ;
+    skos:broader comp:Declaraciones .
+
+comp:Reuniones a skos:Concept ;
+    skos:prefLabel "Reuniones"@es ;
+    skos:broader comp:Declaraciones .
+
+comp:Bienes a skos:Concept ;
+    skos:prefLabel "Bienes"@es ;
+    skos:altLabel "Patrimonio"@es ;
+    skos:broader comp:Declaraciones .
+
+comp:Salario a skos:Concept ;
+    skos:prefLabel "Salario"@es ;
+    skos:broader comp:Declaraciones .
+
+comp:Ingresos a skos:Concept ;
+    skos:prefLabel "Ingresos"@es ;
+    skos:broader comp:Declaraciones .
+
+comp:Obsequios a skos:Concept ;
+    skos:prefLabel "Obsequios"@es ;
+    skos:broader comp:Declaraciones .
+
+# --- Por riesgo estándar ---
+
+comp:RiesgoEstandar a skos:Concept ;
+    skos:prefLabel "Por riesgo estándar"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:Incompatibilidades,
+                  comp:NoRelacionFamiliares,
+                  comp:NoDelegacion,
+                  comp:Desconcentracion,
+                  comp:Rotacion .
+
+comp:Incompatibilidades a skos:Concept ;
+    skos:prefLabel "Incompatibilidades"@es ;
+    skos:broader comp:RiesgoEstandar .
+
+comp:NoRelacionFamiliares a skos:Concept ;
+    skos:prefLabel "No-relación con familiares"@es ;
+    skos:broader comp:RiesgoEstandar .
+
+comp:NoDelegacion a skos:Concept ;
+    skos:prefLabel "No-delegación"@es ;
+    skos:broader comp:RiesgoEstandar .
+
+comp:Desconcentracion a skos:Concept ;
+    skos:prefLabel "Desconcentración"@es ;
+    skos:broader comp:RiesgoEstandar .
+
+comp:Rotacion a skos:Concept ;
+    skos:prefLabel "Rotación"@es ;
+    skos:broader comp:RiesgoEstandar .
+
+# --- Conflicto de intereses ---
+
+comp:ConflictoIntereses a skos:Concept ;
+    skos:prefLabel "Conflicto de intereses"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:DeberAbstencion ;
+    skos:related comp:GestionIntereses .
+
+comp:DeberAbstencion a skos:Concept ;
+    skos:prefLabel "Deber de abstención"@es ;
+    skos:broader comp:ConflictoIntereses .
+
+# --- Gestión de intereses ---
+
+comp:GestionIntereses a skos:Concept ;
+    skos:prefLabel "Gestión de intereses"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:Sponsoreo,
+                  comp:Lobby ;
+    skos:related comp:ConflictoIntereses .
+
+comp:Sponsoreo a skos:Concept ;
+    skos:prefLabel "Sponsoreo"@es ;
+    skos:broader comp:GestionIntereses .
+
+comp:Lobby a skos:Concept ;
+    skos:prefLabel "Lobby"@es ;
+    skos:broader comp:GestionIntereses .
+
+# --- Capacitación ---
+
+comp:Capacitacion a skos:Concept ;
+    skos:prefLabel "Capacitación"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:ToneAtTheTop .
+
+comp:ToneAtTheTop a skos:Concept ;
+    skos:prefLabel "Tone at the Top"@en ;
+    skos:broader comp:Capacitacion .
+
+# --- Recompensas ---
+
+comp:Recompensas a skos:Concept ;
+    skos:prefLabel "Recompensas"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:Idoneidad,
+                  comp:Merito,
+                  comp:SalarioCompetitivo .
+
+comp:Idoneidad a skos:Concept ;
+    skos:prefLabel "Idoneidad"@es ;
+    skos:broader comp:Recompensas .
+
+comp:Merito a skos:Concept ;
+    skos:prefLabel "Mérito"@es ;
+    skos:broader comp:Recompensas .
+
+comp:SalarioCompetitivo a skos:Concept ;
+    skos:prefLabel "Salario competitivo"@es ;
+    skos:broader comp:Recompensas .
+
+# --- En investigación ---
+
+comp:Investigacion a skos:Concept ;
+    skos:prefLabel "En investigación"@es ;
+    skos:broader comp:Normas ;
+    skos:narrower comp:ConsentimientoInformado,
+                  comp:ProteccionDatosPersonales .
+
+comp:ConsentimientoInformado a skos:Concept ;
+    skos:prefLabel "Consentimiento informado"@es ;
+    skos:broader comp:Investigacion .
+
+comp:ProteccionDatosPersonales a skos:Concept ;
+    skos:prefLabel "Protección de datos personales"@es ;
+    skos:broader comp:Investigacion .
+
+# =========================================================
+# 4. PROBLEMAS
+# =========================================================
+
+comp:Problemas a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader comp:Compliance ;
+    skos:narrower comp:Corrupcion,
+                  comp:Maladministration .
+
+comp:Corrupcion a skos:Concept ;
+    skos:prefLabel "Corrupción"@es ;
+    skos:broader comp:Problemas ;
+    skos:narrower comp:AbusoPoder .
+
+comp:AbusoPoder a skos:Concept ;
+    skos:prefLabel "Abuso de poder"@es ;
+    skos:broader comp:Corrupcion .
+
+comp:Maladministration a skos:Concept ;
+    skos:prefLabel "Maladministration"@en ;
+    skos:broader comp:Problemas ;
+    skos:narrower comp:Negligencia .
+
+comp:Negligencia a skos:Concept ;
+    skos:prefLabel "Negligencia"@es ;
+    skos:broader comp:Maladministration .
