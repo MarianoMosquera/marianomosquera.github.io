@@ -1,0 +1,262 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+
+
+# ============================================================
+# ONTOLOGÍA MAESTRA
+# ÉTICA INSTITUCIONAL
+# ============================================================
+
+@prefix ei:
+    <https://marianomosquera.github.io/etica/etica#> .
+
+
+# ============================================================
+# PREFIJOS DE LAS ONTOLOGÍAS DEL MAIN
+# ============================================================
+
+@prefix val:
+    <https://marianomosquera.github.io/valores#> .
+
+@prefix inst:
+    <https://marianomosquera.github.io/institucional#> .
+
+@prefix pol:
+    <https://marianomosquera.github.io/politica#> .
+
+@prefix soc:
+    <https://marianomosquera.github.io/social#> .
+
+@prefix amb:
+    <https://marianomosquera.github.io/ambiental#> .
+
+@prefix eco:
+    <https://marianomosquera.github.io/economica#> .
+
+@prefix tec:
+    <https://marianomosquera.github.io/tecnologica#> .
+
+@prefix rac:
+    <https://marianomosquera.github.io/racionalidad#> .
+
+@prefix comp:
+    <https://marianomosquera.github.io/compliance#> .
+
+@prefix eng:
+    <https://marianomosquera.github.io/engagement#> .
+
+@prefix acc:
+    <https://marianomosquera.github.io/accountability#> .
+
+
+# ============================================================
+# DECLARACIÓN DE LA ONTOLOGÍA
+# ============================================================
+
+<https://marianomosquera.github.io/etica/etica.ttl>
+
+    a owl:Ontology ;
+
+    dct:title
+        "Ontología de Ética Institucional"@es ;
+
+    dct:description
+        "Ontología SKOS integradora de Valores, Agenda, Racionalidad y Gobernanza."@es ;
+
+    owl:imports
+
+        <https://marianomosquera.github.io/valores.ttl> ,
+
+        <https://marianomosquera.github.io/institucional.ttl> ,
+        <https://marianomosquera.github.io/politica.ttl> ,
+        <https://marianomosquera.github.io/social.ttl> ,
+        <https://marianomosquera.github.io/ambiental.ttl> ,
+        <https://marianomosquera.github.io/economica.ttl> ,
+        <https://marianomosquera.github.io/tecnologica.ttl> ,
+
+        <https://marianomosquera.github.io/racionalidad.ttl> ,
+
+        <https://marianomosquera.github.io/compliance.ttl> ,
+        <https://marianomosquera.github.io/engagement.ttl> ,
+        <https://marianomosquera.github.io/accountability.ttl> .
+
+
+# ============================================================
+# ÉTICA INSTITUCIONAL
+# Nodo central
+# ============================================================
+
+ei:EticaInstitucional
+
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Ética institucional"@es ;
+
+    skos:narrower
+        ei:Atencion ,
+        rac:Racionalidad ,
+        ei:Gobernanza .
+
+
+# ============================================================
+# ATENCIÓN
+# Narrower de Ética institucional
+# ============================================================
+
+ei:Atencion
+
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Atención"@es ;
+
+    skos:broader
+        ei:EticaInstitucional ;
+
+    skos:narrower
+        val:Valores ,
+        ei:Agenda .
+
+
+# ============================================================
+# VALORES
+# Narrower de Atención
+# ============================================================
+
+val:Valores
+
+    skos:broader
+        ei:Atencion .
+
+
+# ============================================================
+# AGENDA
+# Narrower de Atención
+# Nodo integrador de las seis dimensiones
+# ============================================================
+
+ei:Agenda
+
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Agenda"@es ;
+
+    skos:broader
+        ei:Atencion ;
+
+    skos:narrower
+        inst:Institucional ,
+        pol:Politica ,
+        soc:Social ,
+        amb:Ambiental ,
+        eco:Economica ,
+        tec:Tecnologica .
+
+
+# ============================================================
+# DIMENSIONES DE AGENDA
+# ============================================================
+
+inst:Institucional
+
+    skos:broader
+        ei:Agenda .
+
+
+pol:Politica
+
+    skos:broader
+        ei:Agenda .
+
+
+soc:Social
+
+    skos:broader
+        ei:Agenda .
+
+
+amb:Ambiental
+
+    skos:broader
+        ei:Agenda .
+
+
+eco:Economica
+
+    skos:broader
+        ei:Agenda .
+
+
+tec:Tecnologica
+
+    skos:broader
+        ei:Agenda .
+
+
+# ============================================================
+# RACIONALIDAD
+# Vinculación directa con Ética institucional
+# ============================================================
+
+rac:Racionalidad
+
+    skos:broader
+        ei:EticaInstitucional .
+
+
+# ============================================================
+# GOBERNANZA
+# Narrower de Ética institucional
+# Nodo integrador
+# ============================================================
+
+ei:Gobernanza
+
+    a skos:Concept ;
+
+    skos:prefLabel
+        "Gobernanza"@es ;
+
+    skos:broader
+        ei:EticaInstitucional ;
+
+    skos:narrower
+        comp:Compliance ,
+        eng:Engagement ,
+        acc:Accountability .
+
+
+# ============================================================
+# COMPLIANCE
+# Narrower de Gobernanza
+# ============================================================
+
+comp:Compliance
+
+    skos:broader
+        ei:Gobernanza .
+
+
+# ============================================================
+# ENGAGEMENT
+# Narrower de Gobernanza
+# ============================================================
+
+eng:Engagement
+
+    skos:broader
+        ei:Gobernanza .
+
+
+# ============================================================
+# ACCOUNTABILITY
+# Narrower de Gobernanza
+# ============================================================
+
+acc:Accountability
+
+    skos:broader
+        ei:Gobernanza .
