@@ -1,0 +1,217 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix eng: <https://marianomosquera.github.io/engagement#> .
+
+# ============================================================
+# CONCEPTO PRINCIPAL
+# ============================================================
+
+eng:Engagement a skos:Concept ;
+    skos:prefLabel "Engagement"@es ;
+    skos:narrower eng:Colaboracion ,
+                  eng:Anticipacion ,
+                  eng:Problemas .
+
+# ============================================================
+# COLABORACIÓN
+# ============================================================
+
+eng:Colaboracion a skos:Concept ;
+    skos:prefLabel "Colaboración"@es ;
+    skos:altLabel "Participación"@es ;
+    skos:broader eng:Engagement ;
+    skos:narrower eng:Pluralidad ,
+                  eng:TipoColaboracion ,
+                  eng:Deliberacion ,
+                  eng:Acuerdo ,
+                  eng:Oposicion .
+
+# --- Pluralidad ---
+
+eng:Pluralidad a skos:Concept ;
+    skos:prefLabel "Pluralidad"@es ;
+    skos:broader eng:Colaboracion ;
+    skos:narrower eng:Representacion ,
+                  eng:Inclusion ,
+                  eng:Horizontalidad .
+
+eng:Representacion a skos:Concept ;
+    skos:prefLabel "Representación"@es ;
+    skos:broader eng:Pluralidad .
+
+eng:Inclusion a skos:Concept ;
+    skos:prefLabel "Inclusión"@es ;
+    skos:broader eng:Pluralidad .
+
+eng:Horizontalidad a skos:Concept ;
+    skos:prefLabel "Horizontalidad"@es ;
+    skos:broader eng:Pluralidad .
+
+# --- Tipo ---
+
+eng:TipoColaboracion a skos:Concept ;
+    skos:prefLabel "Tipo"@es ;
+    skos:broader eng:Colaboracion ;
+    skos:narrower eng:Consejo ,
+                  eng:Comite ,
+                  eng:Comision .
+
+eng:Consejo a skos:Concept ;
+    skos:prefLabel "Consejo"@es ;
+    skos:broader eng:TipoColaboracion .
+
+eng:Comite a skos:Concept ;
+    skos:prefLabel "Comité"@es ;
+    skos:broader eng:TipoColaboracion .
+
+eng:Comision a skos:Concept ;
+    skos:prefLabel "Comisión"@es ;
+    skos:broader eng:TipoColaboracion .
+
+# --- Deliberación ---
+
+eng:Deliberacion a skos:Concept ;
+    skos:prefLabel "Deliberación"@es ;
+    skos:broader eng:Colaboracion ;
+    skos:narrower eng:Dialogo ,
+                  eng:Debate ,
+                  eng:Discusion ,
+                  eng:Retroalimentacion ,
+                  eng:Aprendizaje .
+
+eng:Dialogo a skos:Concept ;
+    skos:prefLabel "Diálogo"@es ;
+    skos:broader eng:Deliberacion .
+
+eng:Debate a skos:Concept ;
+    skos:prefLabel "Debate"@es ;
+    skos:broader eng:Deliberacion .
+
+eng:Discusion a skos:Concept ;
+    skos:prefLabel "Discusión"@es ;
+    skos:broader eng:Deliberacion .
+
+eng:Retroalimentacion a skos:Concept ;
+    skos:prefLabel "Retroalimentación"@es ;
+    skos:broader eng:Deliberacion .
+
+eng:Aprendizaje a skos:Concept ;
+    skos:prefLabel "Aprendizaje"@es ;
+    skos:broader eng:Deliberacion .
+
+# --- Acuerdo ---
+
+eng:Acuerdo a skos:Concept ;
+    skos:prefLabel "Acuerdo"@es ;
+    skos:broader eng:Colaboracion ;
+    skos:narrower eng:Negociacion ,
+                  eng:Consenso ,
+                  eng:Priorizacion ,
+                  eng:Sintesis ,
+                  eng:Votacion .
+
+eng:Negociacion a skos:Concept ;
+    skos:prefLabel "Negociación"@es ;
+    skos:broader eng:Acuerdo .
+
+eng:Consenso a skos:Concept ;
+    skos:prefLabel "Consenso"@es ;
+    skos:broader eng:Acuerdo .
+
+eng:Priorizacion a skos:Concept ;
+    skos:prefLabel "Priorización"@es ;
+    skos:broader eng:Acuerdo .
+
+eng:Sintesis a skos:Concept ;
+    skos:prefLabel "Síntesis"@es ;
+    skos:broader eng:Acuerdo .
+
+eng:Votacion a skos:Concept ;
+    skos:prefLabel "Votación"@es ;
+    skos:broader eng:Acuerdo .
+
+# --- Oposición ---
+
+eng:Oposicion a skos:Concept ;
+    skos:prefLabel "Oposición"@es ;
+    skos:broader eng:Colaboracion ;
+    skos:narrower eng:Minoria .
+
+eng:Minoria a skos:Concept ;
+    skos:prefLabel "Minoría"@es ;
+    skos:broader eng:Oposicion .
+
+# ============================================================
+# ANTICIPACIÓN
+# ============================================================
+
+eng:Anticipacion a skos:Concept ;
+    skos:prefLabel "Anticipación"@es ;
+    skos:broader eng:Engagement ;
+    skos:narrower eng:Censo ,
+                  eng:Muestra .
+
+eng:Censo a skos:Concept ;
+    skos:prefLabel "Censo"@es ;
+    skos:broader eng:Anticipacion .
+
+eng:Muestra a skos:Concept ;
+    skos:prefLabel "Muestra"@es ;
+    skos:broader eng:Anticipacion ;
+    skos:narrower eng:Encuesta ,
+                  eng:GrupoFocal ,
+                  eng:InvestigacionMercado ,
+                  eng:Sondeo ,
+                  eng:EstudioCaso ,
+                  eng:Observacion ,
+                  eng:Entrevista ,
+                  eng:Panel ,
+                  eng:Consulta .
+
+eng:Encuesta a skos:Concept ;
+    skos:prefLabel "Encuesta"@es ;
+    skos:broader eng:Muestra .
+
+eng:GrupoFocal a skos:Concept ;
+    skos:prefLabel "Grupo focal"@es ;
+    skos:broader eng:Muestra .
+
+eng:InvestigacionMercado a skos:Concept ;
+    skos:prefLabel "Investigación de mercado"@es ;
+    skos:broader eng:Muestra .
+
+eng:Sondeo a skos:Concept ;
+    skos:prefLabel "Sondeo"@es ;
+    skos:broader eng:Muestra .
+
+eng:EstudioCaso a skos:Concept ;
+    skos:prefLabel "Estudio de caso"@es ;
+    skos:broader eng:Muestra .
+
+eng:Observacion a skos:Concept ;
+    skos:prefLabel "Observación"@es ;
+    skos:broader eng:Muestra .
+
+eng:Entrevista a skos:Concept ;
+    skos:prefLabel "Entrevista"@es ;
+    skos:broader eng:Muestra .
+
+eng:Panel a skos:Concept ;
+    skos:prefLabel "Panel"@es ;
+    skos:broader eng:Muestra .
+
+eng:Consulta a skos:Concept ;
+    skos:prefLabel "Consulta"@es ;
+    skos:broader eng:Muestra .
+
+# ============================================================
+# PROBLEMAS
+# ============================================================
+
+eng:Problemas a skos:Concept ;
+    skos:prefLabel "Problemas"@es ;
+    skos:broader eng:Engagement ;
+    skos:narrower eng:Colusion .
+
+eng:Colusion a skos:Concept ;
+    skos:prefLabel "Colusión"@es ;
+    skos:broader eng:Problemas .
