@@ -101,6 +101,15 @@ pol:Desinformacion
     skos:related pol:Polarizacion ;
     skos:related pol:LibertadExpresion .
 
+pol:Populismo
+    a skos:Concept ;
+    skos:prefLabel "Populismo"@es ;
+    skos:broader pol:Problemas .
+
+pol:Autoritarismo
+    a skos:Concept ;
+    skos:prefLabel "Autoritarismo"@es ;
+    skos:broader pol:Problemas .
 
 # =========================================
 # ACTORES
@@ -131,16 +140,6 @@ pol:LGBT
 # =========================================
 # CONCEPTOS SECUNDARIOS
 # =========================================
-
-pol:Autoritarismo
-    a skos:Concept ;
-    skos:prefLabel "Autoritarismo"@es ;
-    skos:broader pol:Democracia .
-
-pol:Populismo
-    a skos:Concept ;
-    skos:prefLabel "Populismo"@es ;
-    skos:broader pol:Democracia .
 
 pol:PartidosPoliticos
     a skos:Concept ;
