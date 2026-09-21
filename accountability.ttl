@@ -1,289 +1,234 @@
-@prefix acc: <https://marianomosquera.github.io/accountability#> .
+@prefix : <https://marianomosquera.github.io/accountability#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
-# =========================================================
-# CONCEPT SCHEME
-# =========================================================
+### ============================================
+### ACCOUNTABILITY
+### ============================================
 
-acc:AccountabilityScheme a skos:ConceptScheme ;
-    skos:prefLabel "Accountability"@es ;
-    skos:hasTopConcept acc:Accountability .
-
-# =========================================================
-# ACCOUNTABILITY
-# =========================================================
-
-acc:Accountability a skos:Concept ;
+:Accountability a skos:Concept ;
     skos:prefLabel "Accountability"@es ;
     skos:altLabel "Rendición de cuentas"@es ;
-    skos:topConceptOf acc:AccountabilityScheme ;
-    skos:narrower
-        acc:Transparencia ,
-        acc:Control ,
-        acc:Denuncia ,
-        acc:Sancion ,
-        acc:Memoria ,
-        acc:Problemas ,
-        acc:Actores .
+    skos:narrower :Transparencia ,
+                  :Control ,
+                  :Sancion ,
+                  :Problemas ,
+                  :Actores .
 
-# =========================================================
-# TRANSPARENCIA
-# =========================================================
 
-acc:Transparencia a skos:Concept ;
-    skos:prefLabel "Transparencia"@es ;
-    skos:broader acc:Accountability ;
-    skos:narrower
-        acc:TipoTransparencia ,
-        acc:Justificacion ,
-        acc:Restricciones .
+### ============================================
+### CONTROL
+### ============================================
 
-# Tipo de transparencia
-
-acc:TipoTransparencia a skos:Concept ;
-    skos:prefLabel "Tipo"@es ;
-    skos:broader acc:Transparencia ;
-    skos:narrower
-        acc:Divulgacion ,
-        acc:Apertura ,
-        acc:Visibilidad ,
-        acc:Publicidad ,
-        acc:Reporting ,
-        acc:DatosAbiertos .
-
-acc:Divulgacion a skos:Concept ;
-    skos:prefLabel "Divulgación"@es ;
-    skos:broader acc:TipoTransparencia .
-
-acc:Apertura a skos:Concept ;
-    skos:prefLabel "Apertura"@es ;
-    skos:broader acc:TipoTransparencia .
-
-acc:Visibilidad a skos:Concept ;
-    skos:prefLabel "Visibilidad"@es ;
-    skos:broader acc:TipoTransparencia .
-
-acc:Publicidad a skos:Concept ;
-    skos:prefLabel "Publicidad"@es ;
-    skos:broader acc:TipoTransparencia .
-
-acc:Reporting a skos:Concept ;
-    skos:prefLabel "Reporting"@es ;
-    skos:broader acc:TipoTransparencia .
-
-acc:DatosAbiertos a skos:Concept ;
-    skos:prefLabel "Datos abiertos"@es ;
-    skos:broader acc:TipoTransparencia .
-
-# Justificación
-
-acc:Justificacion a skos:Concept ;
-    skos:prefLabel "Justificación"@es ;
-    skos:broader acc:Transparencia ;
-    skos:narrower
-        acc:Answerability ,
-        acc:Explicabilidad ,
-        acc:AccesoInformacion .
-
-acc:Answerability a skos:Concept ;
-    skos:prefLabel "Answerability"@es ;
-    skos:broader acc:Justificacion .
-
-acc:Explicabilidad a skos:Concept ;
-    skos:prefLabel "Explicabilidad"@es ;
-    skos:broader acc:Justificacion .
-
-acc:AccesoInformacion a skos:Concept ;
-    skos:prefLabel "Acceso a información"@es ;
-    skos:broader acc:Justificacion .
-
-# Restricciones
-
-acc:Restricciones a skos:Concept ;
-    skos:prefLabel "Restricciones"@es ;
-    skos:broader acc:Transparencia .
-
-# =========================================================
-# CONTROL
-# =========================================================
-
-acc:Control a skos:Concept ;
+:Control a skos:Concept ;
     skos:prefLabel "Control"@es ;
-    skos:broader acc:Accountability ;
-    skos:narrower
-        acc:TipoControl ,
-        acc:Periodicidad .
+    skos:broader :Accountability ;
+    skos:narrower :TipoControl ,
+                  :Periodicidad ,
+                  :Denuncia .
 
-acc:TipoControl a skos:Concept ;
+:TipoControl a skos:Concept ;
     skos:prefLabel "Tipo"@es ;
-    skos:broader acc:Control ;
-    skos:narrower
-        acc:Auditoria ,
-        acc:Evaluacion ,
-        acc:MejoraContinua ,
-        acc:Supervision ,
-        acc:Fiscalizacion ,
-        acc:Vigilancia .
+    skos:broader :Control ;
+    skos:narrower :Auditoria ,
+                  :Evaluacion ,
+                  :MejoraContinua ,
+                  :Supervision ,
+                  :Fiscalizacion ,
+                  :Vigilancia .
 
-acc:Auditoria a skos:Concept ;
+:Auditoria a skos:Concept ;
     skos:prefLabel "Auditoría"@es ;
-    skos:broader acc:TipoControl .
+    skos:broader :TipoControl .
 
-acc:Evaluacion a skos:Concept ;
+:Evaluacion a skos:Concept ;
     skos:prefLabel "Evaluación"@es ;
-    skos:broader acc:TipoControl .
+    skos:broader :TipoControl .
 
-acc:MejoraContinua a skos:Concept ;
+:MejoraContinua a skos:Concept ;
     skos:prefLabel "Mejora continua"@es ;
-    skos:broader acc:TipoControl .
+    skos:broader :TipoControl .
 
-acc:Supervision a skos:Concept ;
+:Supervision a skos:Concept ;
     skos:prefLabel "Supervisión"@es ;
-    skos:broader acc:TipoControl .
+    skos:broader :TipoControl .
 
-acc:Fiscalizacion a skos:Concept ;
+:Fiscalizacion a skos:Concept ;
     skos:prefLabel "Fiscalización"@es ;
-    skos:broader acc:TipoControl .
+    skos:broader :TipoControl .
 
-acc:Vigilancia a skos:Concept ;
+:Vigilancia a skos:Concept ;
     skos:prefLabel "Vigilancia"@es ;
-    skos:broader acc:TipoControl .
+    skos:broader :TipoControl .
 
-acc:Periodicidad a skos:Concept ;
+:Periodicidad a skos:Concept ;
     skos:prefLabel "Periodicidad"@es ;
-    skos:broader acc:Control .
+    skos:broader :Control .
 
-# =========================================================
-# DENUNCIA
-# =========================================================
 
-acc:Denuncia a skos:Concept ;
+### ============================================
+### DENUNCIA
+### Ahora depende de Control
+### ============================================
+
+:Denuncia a skos:Concept ;
     skos:prefLabel "Denuncia"@es ;
-    skos:broader acc:Accountability ;
-    skos:narrower acc:ProteccionDenunciantes .
+    skos:broader :Control ;
+    skos:narrower :ProteccionDenunciantes .
 
-acc:ProteccionDenunciantes a skos:Concept ;
+:ProteccionDenunciantes a skos:Concept ;
     skos:prefLabel "Protección de denunciantes"@es ;
-    skos:broader acc:Denuncia .
+    skos:broader :Denuncia .
 
-# =========================================================
-# SANCIÓN
-# =========================================================
 
-acc:Sancion a skos:Concept ;
+### ============================================
+### SANCIÓN
+### ============================================
+
+:Sancion a skos:Concept ;
     skos:prefLabel "Sanción"@es ;
-    skos:broader acc:Accountability .
+    skos:broader :Accountability ;
+    skos:narrower :Memoria .
 
-# =========================================================
-# MEMORIA
-# =========================================================
 
-acc:Memoria a skos:Concept ;
+### ============================================
+### MEMORIA
+### Ahora depende de Sanción
+### ============================================
+
+:Memoria a skos:Concept ;
     skos:prefLabel "Memoria"@es ;
-    skos:broader acc:Accountability ;
-    skos:narrower acc:ListasNegras .
+    skos:broader :Sancion ;
+    skos:narrower :ListasNegras .
 
-acc:ListasNegras a skos:Concept ;
+:ListasNegras a skos:Concept ;
     skos:prefLabel "Listas negras"@es ;
     skos:altLabel "Registro de infractores"@es ;
-    skos:broader acc:Memoria .
+    skos:broader :Memoria .
 
-# =========================================================
-# PROBLEMAS
-# =========================================================
 
-acc:Problemas a skos:Concept ;
+### ============================================
+### TRANSPARENCIA
+### ============================================
+
+:Transparencia a skos:Concept ;
+    skos:prefLabel "Transparencia"@es ;
+    skos:broader :Accountability ;
+    skos:narrower :TipoTransparencia ,
+                  :Justificacion ,
+                  :Restricciones .
+
+:TipoTransparencia a skos:Concept ;
+    skos:prefLabel "Tipo"@es ;
+    skos:broader :Transparencia ;
+    skos:narrower :Divulgacion ,
+                  :Apertura ,
+                  :Visibilidad ,
+                  :Publicidad ,
+                  :Reporting ,
+                  :DatosAbiertos .
+
+:Divulgacion a skos:Concept ;
+    skos:prefLabel "Divulgación"@es ;
+    skos:broader :TipoTransparencia .
+
+:Apertura a skos:Concept ;
+    skos:prefLabel "Apertura"@es ;
+    skos:broader :TipoTransparencia .
+
+:Visibilidad a skos:Concept ;
+    skos:prefLabel "Visibilidad"@es ;
+    skos:broader :TipoTransparencia .
+
+:Publicidad a skos:Concept ;
+    skos:prefLabel "Publicidad"@es ;
+    skos:broader :TipoTransparencia .
+
+:Reporting a skos:Concept ;
+    skos:prefLabel "Reporting"@es ;
+    skos:broader :TipoTransparencia .
+
+:DatosAbiertos a skos:Concept ;
+    skos:prefLabel "Datos abiertos"@es ;
+    skos:broader :TipoTransparencia .
+
+
+### ============================================
+### JUSTIFICACIÓN
+### ============================================
+
+:Justificacion a skos:Concept ;
+    skos:prefLabel "Justificación"@es ;
+    skos:broader :Transparencia ;
+    skos:narrower :Answerability ,
+                  :Explicabilidad ,
+                  :AccesoInformacion .
+
+:Answerability a skos:Concept ;
+    skos:prefLabel "Answerability"@es ;
+    skos:broader :Justificacion .
+
+:Explicabilidad a skos:Concept ;
+    skos:prefLabel "Explicabilidad"@es ;
+    skos:broader :Justificacion .
+
+:AccesoInformacion a skos:Concept ;
+    skos:prefLabel "Acceso a información"@es ;
+    skos:broader :Justificacion .
+
+:Restricciones a skos:Concept ;
+    skos:prefLabel "Restricciones"@es ;
+    skos:broader :Transparencia .
+
+
+### ============================================
+### PROBLEMAS
+### ============================================
+
+:Problemas a skos:Concept ;
     skos:prefLabel "Problemas"@es ;
-    skos:broader acc:Accountability ;
-    skos:narrower acc:Sobreinformacion .
+    skos:broader :Accountability ;
+    skos:narrower :Sobreinformacion .
 
-acc:Sobreinformacion a skos:Concept ;
+:Sobreinformacion a skos:Concept ;
     skos:prefLabel "Sobreinformación"@es ;
-    skos:broader acc:Problemas .
+    skos:broader :Problemas .
 
-# =========================================================
-# ACTORES
-# =========================================================
 
-acc:Actores a skos:Concept ;
+### ============================================
+### ACTORES
+### ============================================
+
+:Actores a skos:Concept ;
     skos:prefLabel "Actores"@es ;
-    skos:broader acc:Accountability ;
-    skos:narrower
-        acc:Expertos ,
-        acc:Afectados .
+    skos:broader :Accountability ;
+    skos:narrower :Expertos ,
+                  :Afectados .
 
-# Expertos
-
-acc:Expertos a skos:Concept ;
+:Expertos a skos:Concept ;
     skos:prefLabel "Expertos"@es ;
-    skos:broader acc:Actores ;
-    skos:narrower
-        acc:Prensa ,
-        acc:ONG ,
-        acc:Watchdog ,
-        acc:AccionColectiva ,
-        acc:AgenciasEstatales ,
-        acc:Veeduria ,
-        acc:OposicionPolitica ,
-        acc:Sindicatos ,
-        acc:Pares .
+    skos:broader :Actores ;
+    skos:narrower :Prensa ,
+                  :ONG ,
+                  :Watchdog ,
+                  :AccionColectiva .
 
-acc:Prensa a skos:Concept ;
-    skos:prefLabel "Prensa"@es ;
-    skos:broader acc:Expertos .
-
-acc:ONG a skos:Concept ;
-    skos:prefLabel "ONG"@es ;
-    skos:broader acc:Expertos .
-
-acc:Watchdog a skos:Concept ;
-    skos:prefLabel "Watchdog"@es ;
-    skos:broader acc:Expertos .
-
-acc:AccionColectiva a skos:Concept ;
-    skos:prefLabel "Acción colectiva"@es ;
-    skos:broader acc:Expertos .
-
-acc:AgenciasEstatales a skos:Concept ;
-    skos:prefLabel "Agencias estatales"@es ;
-    skos:broader acc:Expertos .
-
-acc:Veeduria a skos:Concept ;
-    skos:prefLabel "Veeduría"@es ;
-    skos:broader acc:Expertos .
-
-acc:OposicionPolitica a skos:Concept ;
-    skos:prefLabel "Oposición política"@es ;
-    skos:broader acc:Expertos .
-
-acc:Sindicatos a skos:Concept ;
-    skos:prefLabel "Sindicatos"@es ;
-    skos:broader acc:Expertos .
-
-acc:Pares a skos:Concept ;
-    skos:prefLabel "Pares"@es ;
-    skos:broader acc:Expertos .
-
-# Afectados
-
-acc:Afectados a skos:Concept ;
+:Afectados a skos:Concept ;
     skos:prefLabel "Afectados"@es ;
-    skos:broader acc:Actores ;
-    skos:narrower
-        acc:Ciudadanos ,
-        acc:Consumidores ,
-        acc:Accionistas .
+    skos:broader :Actores .
 
-acc:Ciudadanos a skos:Concept ;
-    skos:prefLabel "Ciudadanos"@es ;
-    skos:altLabel "Votantes"@es ;
-    skos:broader acc:Afectados .
+:Prensa a skos:Concept ;
+    skos:prefLabel "Prensa"@es ;
+    skos:broader :Expertos .
 
-acc:Consumidores a skos:Concept ;
-    skos:prefLabel "Consumidores"@es ;
-    skos:broader acc:Afectados .
+:ONG a skos:Concept ;
+    skos:prefLabel "ONG"@es ;
+    skos:broader :Expertos .
 
-acc:Accionistas a skos:Concept ;
-    skos:prefLabel "Accionistas"@es ;
-    skos:broader acc:Afectados .
+:Watchdog a skos:Concept ;
+    skos:prefLabel "Watchdog"@es ;
+    skos:broader :Expertos .
+
+:AccionColectiva a skos:Concept ;
+    skos:prefLabel "Acción colectiva"@es ;
+    skos:broader :Expertos .
