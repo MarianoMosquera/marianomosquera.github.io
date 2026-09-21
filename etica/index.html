@@ -12,6 +12,10 @@
 
   <style>
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
@@ -44,6 +48,7 @@
       flex: 1;
       background: white;
       min-width: 0;
+      overflow: hidden;
     }
 
     #graph svg {
@@ -59,7 +64,6 @@
       background: #fafafa;
       border-left: 1px solid #ddd;
       overflow-y: auto;
-      box-sizing: border-box;
     }
 
     #panel h2 {
@@ -71,19 +75,14 @@
       margin-top: 18px;
     }
 
-    .node circle {
-      stroke: #666;
-      stroke-width: 1.5px;
-      cursor: grab;
-    }
-
+    .node circle,
+    .node rect,
     .node polygon {
-      stroke: #b76e6e;
-      stroke-width: 1.5px;
       cursor: grab;
     }
 
     .node circle:active,
+    .node rect:active,
     .node polygon:active {
       cursor: grabbing;
     }
@@ -91,11 +90,12 @@
     .node text {
       font-size: 13px;
       pointer-events: none;
+      fill: #222;
     }
 
     .link {
       stroke: #aaa;
-      stroke-width: 1.5px;
+      stroke-width: 1.4px;
     }
 
     .related {
@@ -108,11 +108,6 @@
       padding: 30px;
       font-size: 16px;
     }
-
-
-    /* =====================================================
-       RESPONSIVE
-       ===================================================== */
 
     @media (max-width: 700px) {
 
@@ -155,14 +150,12 @@
   </style>
 </head>
 
-
 <body>
 
 <header>
   <h1>Ontología de Ética Institucional</h1>
   <p>Visualización SKOS — Mariano Mosquera</p>
 </header>
-
 
 <div id="container">
 
@@ -183,29 +176,8 @@
 <script>
 
 /* =========================================================
-   CONFIGURACIÓN
-
-   Estructura:
-
-   /
-   ├── valores.ttl
-   ├── institucional.ttl
-   ├── politica.ttl
-   ├── social.ttl
-   ├── ambiental.ttl
-   ├── economica.ttl
-   ├── tecnologica.ttl
-   ├── racionalidad.ttl
-   ├── compliance.ttl
-   ├── engagement.ttl
-   ├── accountability.ttl
-   │
-   └── etica/
-       ├── etica.ttl
-       └── index.html
-
+   CONFIGURACIÓN DE TTL
    ========================================================= */
-
 
 const ttlURLs = [
 
@@ -259,7 +231,6 @@ const SKOS = {
 };
 
 
-
 /* =========================================================
    CARGA DE TODOS LOS TTL
    ========================================================= */
@@ -273,11 +244,9 @@ Promise.all(
       .then(response => {
 
         if (!response.ok) {
-
           throw new Error(
             "No se pudo cargar " + url
           );
-
         }
 
         return response.text();
@@ -302,25 +271,17 @@ Promise.all(
 
   files.forEach(file => {
 
-
     const baseURI =
-
       new URL(
         file.url,
         window.location.href
       ).href;
 
-
     $rdf.parse(
-
       file.ttl,
-
       store,
-
       baseURI,
-
       "text/turtle"
-
     );
 
   });
@@ -329,11 +290,9 @@ Promise.all(
   const status =
     document.getElementById("status");
 
-
   if (status) {
     status.remove();
   }
-
 
 
   /* =====================================================
@@ -343,13 +302,9 @@ Promise.all(
   const conceptStatements =
 
     store.match(
-
       null,
-
       $rdf.sym(RDF_TYPE),
-
       $rdf.sym(SKOS.Concept)
-
     );
 
 
@@ -359,26 +314,17 @@ Promise.all(
 
   conceptStatements.forEach(statement => {
 
-
     const uri =
       statement.subject.value;
 
-
     const pref =
-
       store.any(
-
         statement.subject,
-
         $rdf.sym(SKOS.prefLabel)
-
       );
 
-
     nodesMap.set(
-
       uri,
-
       {
 
         id: uri,
@@ -397,11 +343,9 @@ Promise.all(
         related: []
 
       }
-
     );
 
   });
-
 
 
   /* =====================================================
@@ -410,7 +354,6 @@ Promise.all(
 
   nodesMap.forEach(node => {
 
-
     const subject =
       $rdf.sym(node.id);
 
@@ -418,71 +361,48 @@ Promise.all(
     /* ALT LABEL */
 
     const alternatives =
-
       store.each(
-
         subject,
-
         $rdf.sym(SKOS.altLabel)
-
       );
-
 
     node.altLabels =
       alternatives.map(x => x.value);
 
 
-
     /* DEFINITION */
 
     const definition =
-
       store.any(
-
         subject,
-
         $rdf.sym(SKOS.definition)
-
       );
-
 
     if (definition) {
       node.definition = definition.value;
     }
 
 
-
     /* BROADER */
 
     const broader =
-
       store.any(
-
         subject,
-
         $rdf.sym(SKOS.broader)
-
       );
-
 
     if (broader) {
       node.broader = broader.value;
     }
 
 
-
     /* RELATED */
 
     const related =
-
       store.each(
-
         subject,
-
         $rdf.sym(SKOS.related)
-
       );
-
 
     node.related =
       related.map(x => x.value);
@@ -490,20 +410,12 @@ Promise.all(
   });
 
 
-
   const nodes =
     Array.from(nodesMap.values());
 
 
-
   /* =====================================================
-     NORMALIZACIÓN DE ETIQUETAS
-
-     Permite detectar:
-     Ética / Etica
-     Política / Politica
-     Económica / Economica
-     etc.
+     NORMALIZACIÓN
      ===================================================== */
 
   function normalizeLabel(text) {
@@ -529,17 +441,13 @@ Promise.all(
     const normalized =
       normalizeLabel(label);
 
-
     return nodes.find(
-
       node =>
         normalizeLabel(node.label)
         === normalized
-
     );
 
   }
-
 
 
   /* =====================================================
@@ -574,7 +482,6 @@ Promise.all(
     findByLabel("Accountability");
 
 
-
   /* =====================================================
      RAÍCES DE AGENDA
      ===================================================== */
@@ -596,7 +503,6 @@ Promise.all(
 
   const tecnologicaNode =
     findByLabel("Tecnológica");
-
 
 
   /* =====================================================
@@ -640,7 +546,6 @@ Promise.all(
   }
 
 
-
   /* =====================================================
      RELACIONES JERÁRQUICAS
      ===================================================== */
@@ -656,7 +561,6 @@ Promise.all(
     target
   ) {
 
-
     if (
       !source ||
       !target ||
@@ -665,10 +569,8 @@ Promise.all(
       return;
     }
 
-
     const key =
       source + "|" + target;
-
 
     if (
       hierarchyKeys.has(key)
@@ -676,19 +578,14 @@ Promise.all(
       return;
     }
 
-
     hierarchyKeys.add(key);
 
-
     hierarchyLinks.push({
-
       source: source,
       target: target
-
     });
 
   }
-
 
 
   /* =====================================================
@@ -697,28 +594,19 @@ Promise.all(
 
   nodes.forEach(node => {
 
-
     if (
-
       node.broader &&
-
       nodesMap.has(node.broader)
-
     ) {
 
-
       addHierarchy(
-
         node.broader,
-
         node.id
-
       );
 
     }
 
   });
-
 
 
   /* =====================================================
@@ -727,36 +615,24 @@ Promise.all(
 
   nodes.forEach(node => {
 
-
     const subject =
       $rdf.sym(node.id);
 
-
     const narrowers =
-
       store.each(
-
         subject,
-
         $rdf.sym(SKOS.narrower)
-
       );
 
-
     narrowers.forEach(target => {
-
 
       if (
         nodesMap.has(target.value)
       ) {
 
-
         addHierarchy(
-
           node.id,
-
           target.value
-
         );
 
       }
@@ -766,20 +642,15 @@ Promise.all(
   });
 
 
-
   /* =====================================================
      ESTRUCTURA MAESTRA
 
-                     ÉTICA INSTITUCIONAL
-                      /       |       \
-                     /        |        \
-              ATENCIÓN   RACIONALIDAD   GOBERNANZA
-                /                         /   |   \
-           Valores                    Compliance
-                \                    Engagement
-                Agenda              Accountability
-                  |
-          seis dimensiones
+                       ÉTICA INSTITUCIONAL
+
+             ATENCIÓN    RACIONALIDAD    GOBERNANZA
+
+            /       \                    /    |    \
+        VALORES    AGENDA        COMPLIANCE ENGAGEMENT ACCOUNTABILITY
 
      ===================================================== */
 
@@ -787,49 +658,34 @@ Promise.all(
   /* ÉTICA → ATENCIÓN */
 
   addHierarchy(
-
     eticaNode.id,
-
     atencionNode.id
-
   );
-
 
   atencionNode.broader =
     eticaNode.id;
 
 
-
   /* ÉTICA → RACIONALIDAD */
 
   addHierarchy(
-
     eticaNode.id,
-
     racionalidadNode.id
-
   );
-
 
   racionalidadNode.broader =
     eticaNode.id;
 
 
-
   /* ÉTICA → GOBERNANZA */
 
   addHierarchy(
-
     eticaNode.id,
-
     gobernanzaNode.id
-
   );
-
 
   gobernanzaNode.broader =
     eticaNode.id;
-
 
 
   /* =====================================================
@@ -837,30 +693,21 @@ Promise.all(
      ===================================================== */
 
   addHierarchy(
-
     atencionNode.id,
-
     valoresNode.id
-
   );
-
 
   valoresNode.broader =
     atencionNode.id;
 
 
   addHierarchy(
-
     atencionNode.id,
-
     agendaNode.id
-
   );
-
 
   agendaNode.broader =
     atencionNode.id;
-
 
 
   /* =====================================================
@@ -881,21 +728,15 @@ Promise.all(
 
   agendaRoots.forEach(root => {
 
-
     addHierarchy(
-
       agendaNode.id,
-
       root.id
-
     );
-
 
     root.broader =
       agendaNode.id;
 
   });
-
 
 
   /* =====================================================
@@ -913,21 +754,15 @@ Promise.all(
 
   governanceRoots.forEach(root => {
 
-
     addHierarchy(
-
       gobernanzaNode.id,
-
       root.id
-
     );
-
 
     root.broader =
       gobernanzaNode.id;
 
   });
-
 
 
   /* =====================================================
@@ -942,9 +777,7 @@ Promise.all(
 
   nodes.forEach(node => {
 
-
     node.related.forEach(target => {
-
 
       if (
         !nodesMap.has(target)
@@ -952,18 +785,13 @@ Promise.all(
         return;
       }
 
-
       const key =
-
         [
           node.id,
           target
         ]
-
         .sort()
-
         .join("|");
-
 
       if (
         relatedKeys.has(key)
@@ -971,15 +799,11 @@ Promise.all(
         return;
       }
 
-
       relatedKeys.add(key);
 
-
       relatedLinks.push({
-
         source: node.id,
         target: target
-
       });
 
     });
@@ -987,91 +811,240 @@ Promise.all(
   });
 
 
-
   /* =====================================================
-     PROBLEMAS
+     FUNCIÓN PARA OBTENER DESCENDIENTES
 
-     Todo nodo denominado "Problemas"
-     y todos sus descendientes se
-     representan como triángulos rojos.
+     Permite aplicar una misma forma/color a una categoría
+     y a todo lo que deriva jerárquicamente de ella.
      ===================================================== */
 
-  const problemNodeIDs =
-    new Set();
+  function descendantsOfLabels(labels) {
 
+    const result =
+      new Set();
 
-  nodes.forEach(node => {
+    const normalizedLabels =
+      labels.map(normalizeLabel);
 
-
-    if (
-
-      normalizeLabel(node.label)
-      ===
-      "problemas"
-
-    ) {
-
-
-      problemNodeIDs.add(
-        node.id
-      );
-
-    }
-
-  });
-
-
-
-  let changed = true;
-
-
-  while (changed) {
-
-
-    changed = false;
-
-
-    hierarchyLinks.forEach(link => {
-
-
-      const sourceID =
-
-        typeof link.source === "object"
-          ? link.source.id
-          : link.source;
-
-
-      const targetID =
-
-        typeof link.target === "object"
-          ? link.target.id
-          : link.target;
-
+    nodes.forEach(node => {
 
       if (
-
-        problemNodeIDs.has(sourceID)
-
-        &&
-
-        !problemNodeIDs.has(targetID)
-
+        normalizedLabels.includes(
+          normalizeLabel(node.label)
+        )
       ) {
 
-
-        problemNodeIDs.add(
-          targetID
-        );
-
-
-        changed = true;
+        result.add(node.id);
 
       }
 
     });
 
+
+    let changed = true;
+
+    while (changed) {
+
+      changed = false;
+
+      hierarchyLinks.forEach(link => {
+
+        const sourceID =
+          typeof link.source === "object"
+            ? link.source.id
+            : link.source;
+
+        const targetID =
+          typeof link.target === "object"
+            ? link.target.id
+            : link.target;
+
+        if (
+          result.has(sourceID) &&
+          !result.has(targetID)
+        ) {
+
+          result.add(targetID);
+          changed = true;
+
+        }
+
+      });
+
+    }
+
+    return result;
+
   }
 
+
+  /* =====================================================
+     CATEGORÍAS VISUALES
+     ===================================================== */
+
+
+  /* PROBLEMAS:
+     triángulos rojo pastel */
+
+  const problemNodeIDs =
+    descendantsOfLabels([
+      "Problemas"
+    ]);
+
+
+  /* ACTORES:
+     cuadrados azul pastel */
+
+  const actorNodeIDs =
+    descendantsOfLabels([
+      "Actores"
+    ]);
+
+
+  /*
+     TIPO:
+     amarillo pastel
+
+     Se consideran Tipo y Tipos.
+  */
+
+  const typeNodeIDs =
+    descendantsOfLabels([
+      "Tipo",
+      "Tipos"
+    ]);
+
+
+  /*
+     TEMAS:
+     verde pastel
+  */
+
+  const themeNodeIDs =
+    descendantsOfLabels([
+      "Temas"
+    ]);
+
+
+  /*
+     NORMAS:
+     violeta pastel
+  */
+
+  const normNodeIDs =
+    descendantsOfLabels([
+      "Normas"
+    ]);
+
+
+  /*
+     EVIDENCIA:
+     celeste pastel
+  */
+
+  const evidenceNodeIDs =
+    descendantsOfLabels([
+      "Evidencia"
+    ]);
+
+
+  /*
+     CALIDAD:
+     turquesa pastel
+  */
+
+  const qualityNodeIDs =
+    descendantsOfLabels([
+      "Calidad"
+    ]);
+
+
+  /*
+     RESPONSABILIDAD:
+     naranja pastel
+  */
+
+  const responsibilityNodeIDs =
+    descendantsOfLabels([
+      "Responsabilidad"
+    ]);
+
+
+  /*
+     TEORÍA:
+     lavanda pastel
+  */
+
+  const theoryNodeIDs =
+    descendantsOfLabels([
+      "Teoría"
+    ]);
+
+
+  /*
+     TELEOLOGÍA:
+     rosa pastel
+  */
+
+  const teleologyNodeIDs =
+    descendantsOfLabels([
+      "Teleología"
+    ]);
+
+
+  /*
+     CONTROL:
+     verde azulado pastel
+  */
+
+  const controlNodeIDs =
+    descendantsOfLabels([
+      "Control"
+    ]);
+
+
+  /*
+     TRANSPARENCIA:
+     durazno pastel
+  */
+
+  const transparencyNodeIDs =
+    descendantsOfLabels([
+      "Transparencia"
+    ]);
+
+
+  /*
+     ANÁLISIS DE RIESGO:
+     beige pastel
+  */
+
+  const riskNodeIDs =
+    descendantsOfLabels([
+      "Análisis de riesgo"
+    ]);
+
+
+  /*
+     PLURALIDAD:
+     rosa/lila pastel
+  */
+
+  const pluralityNodeIDs =
+    descendantsOfLabels([
+      "Pluralidad"
+    ]);
+
+
+  /*
+     CAPACIDAD:
+     verde pastel claro
+  */
+
+  const capacityNodeIDs =
+    descendantsOfLabels([
+      "Capacidad"
+    ]);
 
 
   /* =====================================================
@@ -1088,21 +1061,41 @@ Promise.all(
 
     nodesMap,
 
-    problemNodeIDs,
-
     {
+
       eticaNode,
       atencionNode,
       valoresNode,
       agendaNode,
       racionalidadNode,
       gobernanzaNode,
+
+      complianceNode,
+      engagementNode,
+      accountabilityNode,
+
       agendaRoots,
-      governanceRoots
+      governanceRoots,
+
+      problemNodeIDs,
+      actorNodeIDs,
+      typeNodeIDs,
+      themeNodeIDs,
+      normNodeIDs,
+      evidenceNodeIDs,
+      qualityNodeIDs,
+      responsibilityNodeIDs,
+      theoryNodeIDs,
+      teleologyNodeIDs,
+      controlNodeIDs,
+      transparencyNodeIDs,
+      riskNodeIDs,
+      pluralityNodeIDs,
+      capacityNodeIDs
+
     }
 
   );
-
 
 
 })
@@ -1110,25 +1103,20 @@ Promise.all(
 
 .catch(error => {
 
-
   const status =
     document.getElementById("status");
-
 
   if (status) {
 
     status.innerHTML =
-
       "<strong>Error:</strong> "
       + error.message;
 
   }
 
-
   console.error(error);
 
 });
-
 
 
 /* =========================================================
@@ -1138,15 +1126,9 @@ Promise.all(
 function drawGraph(
 
   nodes,
-
   hierarchyLinks,
-
   relatedLinks,
-
   nodesMap,
-
-  problemNodeIDs,
-
   structure
 
 ) {
@@ -1160,11 +1142,31 @@ function drawGraph(
     agendaNode,
     racionalidadNode,
     gobernanzaNode,
+
+    complianceNode,
+    engagementNode,
+    accountabilityNode,
+
     agendaRoots,
-    governanceRoots
+    governanceRoots,
+
+    problemNodeIDs,
+    actorNodeIDs,
+    typeNodeIDs,
+    themeNodeIDs,
+    normNodeIDs,
+    evidenceNodeIDs,
+    qualityNodeIDs,
+    responsibilityNodeIDs,
+    theoryNodeIDs,
+    teleologyNodeIDs,
+    controlNodeIDs,
+    transparencyNodeIDs,
+    riskNodeIDs,
+    pluralityNodeIDs,
+    capacityNodeIDs
 
   } = structure;
-
 
 
   const container =
@@ -1179,102 +1181,336 @@ function drawGraph(
     container.clientHeight;
 
 
-
   /* =====================================================
-     COLORES PASTEL
+     COLORES SEMÁNTICOS
      ===================================================== */
 
-  const pastelColors = [
+  const COLORS = {
 
-    "#dceaf7",
-    "#e4f1e8",
-    "#f8e7dc",
-    "#eee4f5",
-    "#f7efcf",
-    "#dff1ef",
-    "#f5e1e8",
-    "#e8e4f4"
+    actors:
+      "#cfe3f4",
 
-  ];
+    actorsStroke:
+      "#759bb8",
 
+    problems:
+      "#f4b6b6",
+
+    problemsStroke:
+      "#b76e6e",
+
+    type:
+      "#f7e7a9",
+
+    themes:
+      "#d7ead3",
+
+    norms:
+      "#e4d7f1",
+
+    evidence:
+      "#d5e9f6",
+
+    quality:
+      "#d2ece7",
+
+    responsibility:
+      "#f5ddc5",
+
+    theory:
+      "#e5ddf2",
+
+    teleology:
+      "#f3dce6",
+
+    control:
+      "#d5ebe5",
+
+    transparency:
+      "#f6dfcf",
+
+    risk:
+      "#eee5cf",
+
+    plurality:
+      "#eadcf0",
+
+    capacity:
+      "#dcebd5",
+
+    default:
+      "#e4e8ec"
+
+  };
 
 
   /* =====================================================
      NODOS TRANSPARENTES
 
-     EXACTAMENTE:
-
      Ética institucional
      Atención
-     Racionalidad
      Gobernanza
-
+     Racionalidad
+     Valores
+     Agenda
+     Compliance
+     Engagement
+     Accountability
      ===================================================== */
 
   const transparentIDs =
-    new Set([
+    new Set(
 
-      eticaNode.id,
-      atencionNode.id,
-      racionalidadNode.id,
-      gobernanzaNode.id
+      [
 
-    ]);
+        eticaNode,
+        atencionNode,
+        gobernanzaNode,
+        racionalidadNode,
 
+        valoresNode,
+        agendaNode,
+
+        complianceNode,
+        engagementNode,
+        accountabilityNode
+
+      ]
+
+      .filter(Boolean)
+
+      .map(node => node.id)
+
+    );
 
 
   const agendaRootIDs =
     new Set(
-
       agendaRoots.map(
         node => node.id
       )
-
     );
 
 
   const governanceRootIDs =
     new Set(
-
       governanceRoots.map(
         node => node.id
       )
-
     );
 
+
+  /* =====================================================
+     FUNCIONES DE JERARQUÍA
+     ===================================================== */
+
+  function isDescendantOf(
+    node,
+    ancestor
+  ) {
+
+    if (!node || !ancestor) {
+      return false;
+    }
+
+    let current = node;
+
+    const visited =
+      new Set();
+
+    while (
+      current &&
+      current.broader &&
+      !visited.has(current.id)
+    ) {
+
+      visited.add(current.id);
+
+      if (
+        current.broader === ancestor.id
+      ) {
+        return true;
+      }
+
+      current =
+        nodesMap.get(
+          current.broader
+        );
+
+    }
+
+    return false;
+
+  }
 
 
   /* =====================================================
      POSICIONES INICIALES
+
+     El objetivo es que el grafo nazca ya organizado
+     antes de que actúe la simulación.
      ===================================================== */
 
-  eticaNode.x =
+  const cx =
     width / 2;
 
-  eticaNode.y =
+  const cy =
     height / 2;
 
+
+  /* Centro */
+
+  eticaNode.x =
+    cx;
+
+  eticaNode.y =
+    cy;
+
+
+  /* Tres grandes ramas */
 
   atencionNode.x =
-    width / 2 - 260;
+    cx - 270;
 
   atencionNode.y =
-    height / 2;
+    cy - 30;
 
 
   racionalidadNode.x =
-    width / 2;
+    cx;
 
   racionalidadNode.y =
-    height / 2 - 250;
+    cy - 260;
 
 
   gobernanzaNode.x =
-    width / 2 + 260;
+    cx + 270;
 
   gobernanzaNode.y =
-    height / 2;
+    cy - 30;
 
+
+  /* Atención */
+
+  valoresNode.x =
+    cx - 390;
+
+  valoresNode.y =
+    cy + 130;
+
+
+  agendaNode.x =
+    cx - 200;
+
+  agendaNode.y =
+    cy + 180;
+
+
+  /* Gobernanza */
+
+  if (complianceNode) {
+
+    complianceNode.x =
+      cx + 160;
+
+    complianceNode.y =
+      cy + 170;
+
+  }
+
+
+  if (engagementNode) {
+
+    engagementNode.x =
+      cx + 290;
+
+    engagementNode.y =
+      cy + 190;
+
+  }
+
+
+  if (accountabilityNode) {
+
+    accountabilityNode.x =
+      cx + 420;
+
+    accountabilityNode.y =
+      cy + 150;
+
+  }
+
+
+  /*
+     Distribución inicial de las seis dimensiones
+     de Agenda.
+  */
+
+  const agendaAngles = [
+
+    Math.PI * 0.55,
+    Math.PI * 0.75,
+    Math.PI * 0.95,
+    Math.PI * 1.15,
+    Math.PI * 1.35,
+    Math.PI * 1.55
+
+  ];
+
+
+  agendaRoots.forEach(
+    (root, i) => {
+
+      const angle =
+        agendaAngles[
+          i % agendaAngles.length
+        ];
+
+      root.x =
+        agendaNode.x +
+        Math.cos(angle) * 180;
+
+      root.y =
+        agendaNode.y +
+        Math.sin(angle) * 180;
+
+    }
+  );
+
+
+  /*
+     Pequeña dispersión inicial controlada
+     para el resto de nodos.
+  */
+
+  nodes.forEach(
+    (d, i) => {
+
+      if (
+        Number.isFinite(d.x) &&
+        Number.isFinite(d.y)
+      ) {
+        return;
+      }
+
+      const angle =
+        (i / Math.max(1, nodes.length))
+        * Math.PI * 2;
+
+      const radius =
+        120 +
+        (i % 7) * 18;
+
+      d.x =
+        cx +
+        Math.cos(angle) * radius;
+
+      d.y =
+        cy +
+        Math.sin(angle) * radius;
+
+    }
+  );
 
 
   /* =====================================================
@@ -1311,13 +1547,9 @@ function drawGraph(
       )
 
       .attr(
-
         "preserveAspectRatio",
-
         "xMidYMid meet"
-
       );
-
 
 
   /* =====================================================
@@ -1338,29 +1570,248 @@ function drawGraph(
       ])
 
       .on(
-
         "zoom",
-
         event => {
 
           zoomLayer.attr(
-
             "transform",
-
             event.transform
-
           );
 
         }
-
       )
 
   );
 
 
+  /* =====================================================
+     OBJETIVOS ESPACIALES
+
+     Estas fuerzas son deliberadamente suaves.
+
+     No fijan los nodos:
+     simplemente ayudan a que cada gran rama permanezca
+     aproximadamente en su sector.
+     ===================================================== */
+
+  function targetX(d) {
+
+    if (
+      d.id === eticaNode.id
+    ) {
+      return cx;
+    }
+
+
+    if (
+      d.id === atencionNode.id
+    ) {
+      return cx - 260;
+    }
+
+
+    if (
+      d.id === racionalidadNode.id
+    ) {
+      return cx;
+    }
+
+
+    if (
+      d.id === gobernanzaNode.id
+    ) {
+      return cx + 260;
+    }
+
+
+    if (
+      d.id === valoresNode.id
+    ) {
+      return cx - 360;
+    }
+
+
+    if (
+      d.id === agendaNode.id
+    ) {
+      return cx - 190;
+    }
+
+
+    if (
+      complianceNode &&
+      d.id === complianceNode.id
+    ) {
+      return cx + 150;
+    }
+
+
+    if (
+      engagementNode &&
+      d.id === engagementNode.id
+    ) {
+      return cx + 285;
+    }
+
+
+    if (
+      accountabilityNode &&
+      d.id === accountabilityNode.id
+    ) {
+      return cx + 410;
+    }
+
+
+    /*
+       Descendientes de Atención
+    */
+
+    if (
+      isDescendantOf(
+        d,
+        atencionNode
+      )
+    ) {
+      return cx - 230;
+    }
+
+
+    /*
+       Descendientes de Racionalidad
+    */
+
+    if (
+      isDescendantOf(
+        d,
+        racionalidadNode
+      )
+    ) {
+      return cx;
+    }
+
+
+    /*
+       Descendientes de Gobernanza
+    */
+
+    if (
+      isDescendantOf(
+        d,
+        gobernanzaNode
+      )
+    ) {
+      return cx + 250;
+    }
+
+
+    return cx;
+
+  }
+
+
+  function targetY(d) {
+
+    if (
+      d.id === eticaNode.id
+    ) {
+      return cy;
+    }
+
+
+    if (
+      d.id === atencionNode.id
+    ) {
+      return cy;
+    }
+
+
+    if (
+      d.id === racionalidadNode.id
+    ) {
+      return cy - 250;
+    }
+
+
+    if (
+      d.id === gobernanzaNode.id
+    ) {
+      return cy;
+    }
+
+
+    if (
+      d.id === valoresNode.id
+    ) {
+      return cy + 130;
+    }
+
+
+    if (
+      d.id === agendaNode.id
+    ) {
+      return cy + 170;
+    }
+
+
+    if (
+      governanceRootIDs.has(d.id)
+    ) {
+      return cy + 170;
+    }
+
+
+    if (
+      isDescendantOf(
+        d,
+        racionalidadNode
+      )
+    ) {
+      return cy - 230;
+    }
+
+
+    if (
+      isDescendantOf(
+        d,
+        agendaNode
+      )
+    ) {
+      return cy + 210;
+    }
+
+
+    if (
+      isDescendantOf(
+        d,
+        gobernanzaNode
+      )
+    ) {
+      return cy + 180;
+    }
+
+
+    if (
+      isDescendantOf(
+        d,
+        valoresNode
+      )
+    ) {
+      return cy + 120;
+    }
+
+
+    return cy;
+
+  }
+
 
   /* =====================================================
      SIMULACIÓN
+
+     Menos repulsión que antes:
+     -700 → -360
+
+     Esto hace el grafo más compacto.
      ===================================================== */
 
   const simulation =
@@ -1383,151 +1834,95 @@ function drawGraph(
         .distance(d => {
 
 
-          /*
-             Ética institucional
-             con sus tres grandes ramas.
-          */
+          /* Ética y grandes ramas */
 
           if (
-
-            d.source.id === eticaNode.id
-
-            ||
-
+            d.source.id === eticaNode.id ||
             d.target.id === eticaNode.id
-
           ) {
-
-            return 240;
-
+            return 190;
           }
 
 
-          /*
-             Atención
-          */
+          /* Atención */
 
           if (
-
-            d.source.id === atencionNode.id
-
-            ||
-
+            d.source.id === atencionNode.id ||
             d.target.id === atencionNode.id
-
           ) {
-
-            return 175;
-
+            return 135;
           }
 
 
-          /*
-             Agenda
-          */
+          /* Gobernanza */
 
           if (
-
-            d.source.id === agendaNode.id
-
-            ||
-
-            d.target.id === agendaNode.id
-
-          ) {
-
-            return 150;
-
-          }
-
-
-          /*
-             Gobernanza
-          */
-
-          if (
-
-            d.source.id === gobernanzaNode.id
-
-            ||
-
+            d.source.id === gobernanzaNode.id ||
             d.target.id === gobernanzaNode.id
-
           ) {
-
-            return 175;
-
+            return 135;
           }
 
 
-          /*
-             Racionalidad
-          */
+          /* Racionalidad */
 
           if (
-
-            d.source.id === racionalidadNode.id
-
-            ||
-
+            d.source.id === racionalidadNode.id ||
             d.target.id === racionalidadNode.id
-
           ) {
-
-            return 140;
-
+            return 115;
           }
 
 
-          /*
-             Grandes ontologías
-          */
+          /* Agenda */
 
           if (
-
-            d.source.id === valoresNode.id
-
-            ||
-
-            d.target.id === valoresNode.id
-
-            ||
-
-            agendaRootIDs.has(
-              d.source.id
-            )
-
-            ||
-
-            agendaRootIDs.has(
-              d.target.id
-            )
-
-            ||
-
-            governanceRootIDs.has(
-              d.source.id
-            )
-
-            ||
-
-            governanceRootIDs.has(
-              d.target.id
-            )
-
+            d.source.id === agendaNode.id ||
+            d.target.id === agendaNode.id
           ) {
-
-            return 125;
-
+            return 120;
           }
 
 
-          return 105;
+          /* Valores */
+
+          if (
+            d.source.id === valoresNode.id ||
+            d.target.id === valoresNode.id
+          ) {
+            return 105;
+          }
+
+
+          /* Raíces */
+
+          if (
+            agendaRootIDs.has(
+              d.source.id
+            )
+            ||
+            agendaRootIDs.has(
+              d.target.id
+            )
+            ||
+            governanceRootIDs.has(
+              d.source.id
+            )
+            ||
+            governanceRootIDs.has(
+              d.target.id
+            )
+          ) {
+            return 95;
+          }
+
+
+          return 82;
 
         })
 
         .strength(
-          0.9
+          0.85
         )
 
       )
@@ -1539,9 +1934,102 @@ function drawGraph(
 
         d3.forceManyBody()
 
-          .strength(
-            -700
-          )
+          .strength(d => {
+
+            if (
+              d.id === eticaNode.id
+            ) {
+              return -650;
+            }
+
+            if (
+              transparentIDs.has(d.id)
+            ) {
+              return -470;
+            }
+
+            return -360;
+
+          })
+
+      )
+
+
+      /*
+         Fuerzas direccionales suaves.
+         Son las responsables del mayor orden inicial.
+      */
+
+      .force(
+
+        "x",
+
+        d3.forceX(
+          d => targetX(d)
+        )
+
+        .strength(d => {
+
+          if (
+            d.id === eticaNode.id
+          ) {
+            return 0.35;
+          }
+
+          if (
+            d.id === atencionNode.id ||
+            d.id === racionalidadNode.id ||
+            d.id === gobernanzaNode.id
+          ) {
+            return 0.20;
+          }
+
+          if (
+            transparentIDs.has(d.id)
+          ) {
+            return 0.09;
+          }
+
+          return 0.012;
+
+        })
+
+      )
+
+
+      .force(
+
+        "y",
+
+        d3.forceY(
+          d => targetY(d)
+        )
+
+        .strength(d => {
+
+          if (
+            d.id === eticaNode.id
+          ) {
+            return 0.35;
+          }
+
+          if (
+            d.id === atencionNode.id ||
+            d.id === racionalidadNode.id ||
+            d.id === gobernanzaNode.id
+          ) {
+            return 0.20;
+          }
+
+          if (
+            transparentIDs.has(d.id)
+          ) {
+            return 0.09;
+          }
+
+          return 0.012;
+
+        })
 
       )
 
@@ -1551,11 +2039,12 @@ function drawGraph(
         "center",
 
         d3.forceCenter(
+          cx,
+          cy
+        )
 
-          width / 2,
-
-          height / 2
-
+        .strength(
+          0.035
         )
 
       )
@@ -1565,51 +2054,57 @@ function drawGraph(
 
         "collision",
 
-        d3.forceCollide(
+        d3.forceCollide()
 
-          d => {
+          .radius(d => {
 
 
             if (
               d.id === eticaNode.id
             ) {
-              return 85;
+              return 75;
+            }
+
+
+            if (
+              d.id === atencionNode.id ||
+              d.id === racionalidadNode.id ||
+              d.id === gobernanzaNode.id
+            ) {
+              return 62;
             }
 
 
             if (
               transparentIDs.has(d.id)
             ) {
-              return 68;
+              return 52;
             }
 
 
             if (
-              d.id === agendaNode.id
+              actorNodeIDs.has(d.id)
             ) {
-              return 58;
+              return 34;
             }
 
 
             if (
-              agendaRootIDs.has(d.id)
-              ||
-              governanceRootIDs.has(d.id)
-              ||
-              d.id === valoresNode.id
+              problemNodeIDs.has(d.id)
             ) {
-              return 50;
+              return 32;
             }
 
 
-            return 42;
+            return 31;
 
-          }
+          })
 
-        )
+          .strength(
+            0.85
+          )
 
       );
-
 
 
   /* =====================================================
@@ -1634,7 +2129,6 @@ function drawGraph(
       );
 
 
-
   /* =====================================================
      JERARQUÍA
      ===================================================== */
@@ -1655,7 +2149,6 @@ function drawGraph(
         "class",
         "link"
       );
-
 
 
   /* =====================================================
@@ -1684,227 +2177,346 @@ function drawGraph(
       );
 
 
+  /* =====================================================
+     COLOR DE CADA NODO
+
+     Prioridad:
+
+     1. Transparente
+     2. Actores
+     3. Problemas
+     4. Tipo
+     5. categorías semánticas
+     ===================================================== */
+
+  function nodeColor(d) {
+
+
+    if (
+      transparentIDs.has(d.id)
+    ) {
+      return "transparent";
+    }
+
+
+    /*
+       Actores domina sobre cualquier otra categoría.
+    */
+
+    if (
+      actorNodeIDs.has(d.id)
+    ) {
+      return COLORS.actors;
+    }
+
+
+    if (
+      problemNodeIDs.has(d.id)
+    ) {
+      return COLORS.problems;
+    }
+
+
+    /*
+       Tipo tiene prioridad alta para que todos los
+       Tipo/Tipos se reconozcan visualmente.
+    */
+
+    if (
+      typeNodeIDs.has(d.id)
+    ) {
+      return COLORS.type;
+    }
+
+
+    if (
+      normNodeIDs.has(d.id)
+    ) {
+      return COLORS.norms;
+    }
+
+
+    if (
+      evidenceNodeIDs.has(d.id)
+    ) {
+      return COLORS.evidence;
+    }
+
+
+    if (
+      qualityNodeIDs.has(d.id)
+    ) {
+      return COLORS.quality;
+    }
+
+
+    if (
+      responsibilityNodeIDs.has(d.id)
+    ) {
+      return COLORS.responsibility;
+    }
+
+
+    if (
+      theoryNodeIDs.has(d.id)
+    ) {
+      return COLORS.theory;
+    }
+
+
+    if (
+      teleologyNodeIDs.has(d.id)
+    ) {
+      return COLORS.teleology;
+    }
+
+
+    if (
+      controlNodeIDs.has(d.id)
+    ) {
+      return COLORS.control;
+    }
+
+
+    if (
+      transparencyNodeIDs.has(d.id)
+    ) {
+      return COLORS.transparency;
+    }
+
+
+    if (
+      riskNodeIDs.has(d.id)
+    ) {
+      return COLORS.risk;
+    }
+
+
+    if (
+      pluralityNodeIDs.has(d.id)
+    ) {
+      return COLORS.plurality;
+    }
+
+
+    if (
+      capacityNodeIDs.has(d.id)
+    ) {
+      return COLORS.capacity;
+    }
+
+
+    if (
+      themeNodeIDs.has(d.id)
+    ) {
+      return COLORS.themes;
+    }
+
+
+    return COLORS.default;
+
+  }
+
+
+  /* =====================================================
+     TAMAÑO
+     ===================================================== */
+
+  function nodeRadius(d) {
+
+
+    /*
+       Nodo principal
+    */
+
+    if (
+      d.id === eticaNode.id
+    ) {
+      return 38;
+    }
+
+
+    /*
+       Tres grandes nodos estructurales
+    */
+
+    if (
+      d.id === atencionNode.id ||
+      d.id === racionalidadNode.id ||
+      d.id === gobernanzaNode.id
+    ) {
+      return 28;
+    }
+
+
+    /*
+       Valores y Agenda
+    */
+
+    if (
+      d.id === valoresNode.id ||
+      d.id === agendaNode.id
+    ) {
+      return 21;
+    }
+
+
+    /*
+       Compliance / Engagement / Accountability
+    */
+
+    if (
+      governanceRootIDs.has(d.id)
+    ) {
+      return 19;
+    }
+
+
+    /*
+       Seis dimensiones de Agenda
+    */
+
+    if (
+      agendaRootIDs.has(d.id)
+    ) {
+      return 17;
+    }
+
+
+    return 11;
+
+  }
+
 
   /* =====================================================
      CÍRCULOS
+
+     Todo excepto:
+     - Problemas
+     - Actores
      ===================================================== */
 
   node
 
     .filter(
-
       d =>
         !problemNodeIDs.has(d.id)
-
+        &&
+        !actorNodeIDs.has(d.id)
     )
 
     .append("circle")
 
     .attr(
-
       "r",
+      d => nodeRadius(d)
+    )
 
+    .attr(
+      "fill",
+      d => nodeColor(d)
+    )
+
+    .attr(
+      "stroke",
       d => {
-
-
-        /*
-           Nodo central principal
-        */
 
         if (
           d.id === eticaNode.id
         ) {
-
-          return 30;
-
+          return "#333";
         }
 
+        if (
+          transparentIDs.has(d.id)
+        ) {
+          return "#555";
+        }
 
-        /*
-           Tres nodos estructurales
-        */
+        return "#777";
+
+      }
+    )
+
+    .attr(
+      "stroke-width",
+      d => {
 
         if (
-          d.id === atencionNode.id
-          ||
-          d.id === racionalidadNode.id
-          ||
+          d.id === eticaNode.id
+        ) {
+          return 3;
+        }
+
+        if (
+          d.id === atencionNode.id ||
+          d.id === racionalidadNode.id ||
           d.id === gobernanzaNode.id
         ) {
-
-          return 23;
-
+          return 2.4;
         }
-
-
-        /*
-           Agenda
-        */
-
-        if (
-          d.id === agendaNode.id
-        ) {
-
-          return 19;
-
-        }
-
-
-        /*
-           Raíces de ontologías
-        */
-
-        if (
-
-          d.id === valoresNode.id
-
-          ||
-
-          agendaRootIDs.has(d.id)
-
-          ||
-
-          governanceRootIDs.has(d.id)
-
-        ) {
-
-          return 16;
-
-        }
-
-
-        return 11;
-
-      }
-
-    )
-
-    .attr(
-
-      "fill",
-
-      (d, i) => {
-
-
-        /*
-           Los cuatro nodos centrales
-           son transparentes.
-        */
 
         if (
           transparentIDs.has(d.id)
         ) {
-
-          return "transparent";
-
-        }
-
-
-        return pastelColors[
-          i % pastelColors.length
-        ];
-
-      }
-
-    )
-
-    .attr(
-
-      "stroke",
-
-      d => {
-
-
-        if (
-          d.id === eticaNode.id
-        ) {
-
-          return "#333";
-
-        }
-
-
-        if (
-          transparentIDs.has(d.id)
-        ) {
-
-          return "#555";
-
-        }
-
-
-        return "#666";
-
-      }
-
-    )
-
-    .attr(
-
-      "stroke-width",
-
-      d => {
-
-
-        if (
-          d.id === eticaNode.id
-        ) {
-
-          return 2.7;
-
-        }
-
-
-        if (
-          transparentIDs.has(d.id)
-        ) {
-
           return 2;
-
         }
 
-
-        return 1.5;
+        return 1.4;
 
       }
-
     );
 
 
-
   /* =====================================================
-     TRIÁNGULOS ROJO PASTEL
+     ACTORES
 
-     Problemas y descendientes
+     Todos los Actores y todos sus descendientes
+     son cuadrados azul pastel.
      ===================================================== */
 
   node
 
     .filter(
-
       d =>
-        problemNodeIDs.has(d.id)
-
+        actorNodeIDs.has(d.id)
     )
 
-    .append("polygon")
+    .append("rect")
 
     .attr(
+      "x",
+      -12
+    )
 
-      "points",
+    .attr(
+      "y",
+      -12
+    )
 
-      "0,-14 13,10 -13,10"
+    .attr(
+      "width",
+      24
+    )
 
+    .attr(
+      "height",
+      24
+    )
+
+    .attr(
+      "rx",
+      2
     )
 
     .attr(
       "fill",
-      "#f4b6b6"
+      COLORS.actors
     )
 
     .attr(
       "stroke",
-      "#b76e6e"
+      COLORS.actorsStroke
     )
 
     .attr(
@@ -1912,6 +2524,44 @@ function drawGraph(
       1.5
     );
 
+
+  /* =====================================================
+     PROBLEMAS
+
+     Todos los Problemas y sus descendientes
+     son triángulos rojo pastel.
+     ===================================================== */
+
+  node
+
+    .filter(
+      d =>
+        problemNodeIDs.has(d.id)
+        &&
+        !actorNodeIDs.has(d.id)
+    )
+
+    .append("polygon")
+
+    .attr(
+      "points",
+      "0,-14 13,10 -13,10"
+    )
+
+    .attr(
+      "fill",
+      COLORS.problems
+    )
+
+    .attr(
+      "stroke",
+      COLORS.problemsStroke
+    )
+
+    .attr(
+      "stroke-width",
+      1.5
+    );
 
 
   /* =====================================================
@@ -1923,71 +2573,65 @@ function drawGraph(
     .append("text")
 
     .attr(
-
       "x",
-
       d => {
+
+
+        if (
+          actorNodeIDs.has(d.id)
+        ) {
+          return 18;
+        }
 
 
         if (
           problemNodeIDs.has(d.id)
         ) {
-
           return 18;
-
         }
 
 
         if (
           d.id === eticaNode.id
         ) {
-
-          return 38;
-
+          return 47;
         }
 
 
         if (
-          transparentIDs.has(d.id)
+          d.id === atencionNode.id ||
+          d.id === racionalidadNode.id ||
+          d.id === gobernanzaNode.id
         ) {
-
-          return 30;
-
+          return 36;
         }
 
 
         if (
+          d.id === valoresNode.id ||
           d.id === agendaNode.id
         ) {
-
-          return 25;
-
+          return 28;
         }
 
 
         if (
-
-          d.id === valoresNode.id
-
-          ||
-
-          agendaRootIDs.has(d.id)
-
-          ||
-
           governanceRootIDs.has(d.id)
-
         ) {
+          return 26;
+        }
 
-          return 22;
 
+        if (
+          agendaRootIDs.has(d.id)
+        ) {
+          return 23;
         }
 
 
         return 16;
 
       }
-
     )
 
     .attr(
@@ -1996,40 +2640,75 @@ function drawGraph(
     )
 
     .style(
-
       "font-weight",
-
       d => {
 
 
         if (
           d.id === eticaNode.id
         ) {
+          return "700";
+        }
 
-          return "bold";
 
+        if (
+          d.id === atencionNode.id ||
+          d.id === racionalidadNode.id ||
+          d.id === gobernanzaNode.id
+        ) {
+          return "700";
         }
 
 
         if (
           transparentIDs.has(d.id)
         ) {
-
-          return "bold";
-
+          return "600";
         }
 
 
         return "normal";
 
       }
+    )
 
+    .style(
+      "font-size",
+      d => {
+
+
+        if (
+          d.id === eticaNode.id
+        ) {
+          return "17px";
+        }
+
+
+        if (
+          d.id === atencionNode.id ||
+          d.id === racionalidadNode.id ||
+          d.id === gobernanzaNode.id
+        ) {
+          return "15px";
+        }
+
+
+        if (
+          d.id === valoresNode.id ||
+          d.id === agendaNode.id
+        ) {
+          return "14px";
+        }
+
+
+        return null;
+
+      }
     )
 
     .text(
       d => d.label
     );
-
 
 
   /* =====================================================
@@ -2042,22 +2721,16 @@ function drawGraph(
 
     (event, d) => {
 
-
       event.stopPropagation();
 
-
       showPanel(
-
         d,
-
         nodesMap
-
       );
 
     }
 
   );
-
 
 
   /* =====================================================
@@ -2092,7 +2765,6 @@ function drawGraph(
           "y2",
           d => d.target.y
         );
-
 
 
       related
@@ -2162,7 +2834,6 @@ function drawGraph(
         );
 
 
-
       node.attr(
 
         "transform",
@@ -2175,7 +2846,6 @@ function drawGraph(
     }
 
   );
-
 
 
   /* =====================================================
@@ -2211,16 +2881,21 @@ function drawGraph(
       );
 
 
+      /*
+         El centro se actualiza al cambiar el tamaño.
+      */
+
       simulation.force(
 
         "center",
 
         d3.forceCenter(
-
           newWidth / 2,
-
           newHeight / 2
+        )
 
+        .strength(
+          0.035
         )
 
       );
@@ -2228,7 +2903,7 @@ function drawGraph(
 
       simulation
 
-        .alpha(0.3)
+        .alpha(0.25)
 
         .restart();
 
@@ -2239,7 +2914,6 @@ function drawGraph(
 }
 
 
-
 /* =========================================================
    PANEL DE INFORMACIÓN
    ========================================================= */
@@ -2247,7 +2921,6 @@ function drawGraph(
 function showPanel(
 
   concept,
-
   nodesMap
 
 ) {
@@ -2369,7 +3042,6 @@ function showPanel(
 }
 
 
-
 /* =========================================================
    ARRASTRE DE NODOS
    ========================================================= */
@@ -2387,7 +3059,7 @@ function drag(simulation) {
 
       simulation
 
-        .alphaTarget(0.3)
+        .alphaTarget(0.18)
 
         .restart();
 
@@ -2400,7 +3072,6 @@ function drag(simulation) {
   }
 
 
-
   function dragged(
     event,
     d
@@ -2410,7 +3081,6 @@ function drag(simulation) {
     d.fy = event.y;
 
   }
-
 
 
   function dragended(
@@ -2429,15 +3099,14 @@ function drag(simulation) {
 
 
     /*
-       Al soltar el nodo vuelve
-       a quedar sujeto a las fuerzas.
+       Al soltar el nodo vuelve a quedar sujeto
+       a las fuerzas del grafo.
     */
 
     d.fx = null;
     d.fy = null;
 
   }
-
 
 
   return d3.drag()
@@ -2462,5 +3131,4 @@ function drag(simulation) {
 </script>
 
 </body>
-
 </html>
