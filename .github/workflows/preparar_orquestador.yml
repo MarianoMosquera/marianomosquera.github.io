@@ -1,0 +1,38 @@
+name: Preparar Orquestador - Prueba 40 abstracts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  preparar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Preparar prueba de 40 abstracts
+        run: |
+          python orquestador/orquestador.py prepare --limit 40
+
+      - name: Mostrar archivos generados
+        run: |
+          echo "Archivos generados:"
+          ls -lah resultados/
+
+      - name: Guardar resultados de preparación
+        uses: actions/upload-artifact@v4
+        with:
+          name: preparacion-40-abstracts
+          path: resultados/
+          retention-days: 30
