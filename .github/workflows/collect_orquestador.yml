@@ -1,0 +1,64 @@
+name: Consultar y recolectar Batch - Prueba 40 abstracts
+
+on:
+  workflow_dispatch:
+    inputs:
+      submit_run_id:
+        description: "Run ID de la ejecución Submit"
+        required: true
+        type: string
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Descargar estado del Batch
+        uses: actions/download-artifact@v5
+        with:
+          name: batch-submit-40-abstracts
+          path: resultados
+          run-id: ${{ inputs.submit_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Mostrar archivos recuperados
+        run: |
+          echo "Archivos disponibles:"
+          ls -lah resultados/
+
+      - name: Consultar estado del Batch
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python orquestador/orquestador.py status
+
+      - name: Recolectar y procesar resultados
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python orquestador/orquestador.py collect
+
+      - name: Guardar resultados finales
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-40-abstracts
+          path: resultados/
+          retention-days: 30
