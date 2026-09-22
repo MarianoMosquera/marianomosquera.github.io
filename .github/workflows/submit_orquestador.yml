@@ -1,0 +1,66 @@
+name: Enviar Orquestador - Prueba 40 abstracts
+
+on:
+  workflow_dispatch:
+    inputs:
+      prepare_run_id:
+        description: "Run ID de la ejecución Prepare"
+        required: true
+        type: string
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Descargar preparación de 40 abstracts
+        uses: actions/download-artifact@v5
+        with:
+          name: preparacion-40-abstracts
+          path: resultados
+          run-id: ${{ inputs.prepare_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verificar archivos antes del envío
+        run: |
+          echo "Archivos disponibles:"
+          ls -lah resultados/
+
+          echo "Número de solicitudes preparadas:"
+          wc -l resultados/batch_input.jsonl
+
+      - name: Enviar Batch a OpenAI
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python orquestador/orquestador.py submit
+
+      - name: Mostrar estado inicial
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python orquestador/orquestador.py status
+
+      - name: Guardar estado del Batch
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-submit-40-abstracts
+          path: resultados/
+          retention-days: 30
