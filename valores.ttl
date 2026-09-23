@@ -263,6 +263,11 @@ ex:Resiliencia
     skos:broader ex:Competencia ;
     skos:related ex:Merito, ex:Iniciativa .
 
+ex:Adaptacion 
+    a skos:Concept ;
+    skos:prefLabel "Adaptación"@es ;
+    skos:broader ex:Competencia .
+
 ex:Libertad
     a skos:Concept ;
     skos:prefLabel "Libertad"@es .
