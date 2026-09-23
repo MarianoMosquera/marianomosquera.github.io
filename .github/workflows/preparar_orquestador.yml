@@ -21,9 +21,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Preparar prueba de 40 abstracts
-        run: |
-          python orquestador/orquestador.py prepare --limit 40
+      - name: Preparar prueba de 40 abstracts nuevos
+      run: |
+      python orquestador/orquestador.py prepare --limit 40 --offset 40
 
       - name: Mostrar archivos generados
         run: |
