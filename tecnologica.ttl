@@ -46,7 +46,13 @@ tec:Ciencia
     a skos:Concept ;
     skos:prefLabel "Ciencia"@es ;
     skos:broader tec:Temas ;
+    skos:narrower tec:Investigacion ;
     skos:narrower tec:Ingenieria .
+
+tec:Investigacion 
+    a skos:Concept ;
+    skos:prefLabel "Investigación"@es ;
+    skos:broader tec:Ciencia .
 
 tec:Ingenieria
     a skos:Concept ;
