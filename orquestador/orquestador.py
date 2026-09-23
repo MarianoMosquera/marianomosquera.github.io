@@ -898,7 +898,8 @@ def read_csv_robust(
 
 
 def load_corpus(
-    limit: Optional[int] = None
+    limit: Optional[int] = None,
+    offset: int = 0,
 ) -> Tuple[
     pd.DataFrame,
     str,
@@ -910,16 +911,16 @@ def load_corpus(
     que contienen abstract.
 
     Si se especifica limit, se seleccionan solamente los
-    primeros N abstracts válidos.
+    primeros N abstracts únicos posteriores al offset,
+    excluyendo textos ya presentes antes del offset y
+    duplicados dentro de la propia selección.
 
     Ejemplo:
         limit=40
+        offset=40
 
-    Los ID se generan DESPUÉS de excluir registros sin abstract
-    y DESPUÉS de aplicar el límite.
-
-    Para la prueba de 40:
-        00001 ... 00040
+    Los ID conservan la posición correlativa original dentro
+    de los abstracts válidos del corpus.
     """
 
     df = read_csv_robust(
@@ -956,9 +957,27 @@ def load_corpus(
 
     total_valid_before_limit = len(valid)
 
+    # Posición estable dentro de los abstracts válidos del corpus.
+    valid["__CORPUS_POSITION__"] = range(
+        1,
+        len(valid) + 1,
+    )
+
     # --------------------------------------------------------
     # LÍMITE OPCIONAL PARA PRUEBAS
     # --------------------------------------------------------
+
+    if offset < 0:
+        fatal(
+            "El offset debe ser un número entero "
+            "mayor o igual que 0."
+        )
+
+    if offset > len(valid):
+        fatal(
+            f"El offset ({offset}) supera la cantidad de "
+            f"abstracts válidos disponibles ({len(valid)})."
+        )
 
     if limit is not None:
 
@@ -968,27 +987,94 @@ def load_corpus(
                 "mayor que 0."
             )
 
+        previous_abstracts = set(
+            valid.iloc[:offset][abstract_column]
+            .astype(str)
+            .str.strip()
+        )
+
+        selected_indices: List[int] = []
+        selected_abstracts = set()
+        repeated_with_previous = 0
+        repeated_with_selection = 0
+
+        for index in range(offset, len(valid)):
+
+            abstract_text = str(
+                valid.at[index, abstract_column]
+            ).strip()
+
+            if abstract_text in previous_abstracts:
+                repeated_with_previous += 1
+                continue
+
+            if abstract_text in selected_abstracts:
+                repeated_with_selection += 1
+                continue
+
+            selected_indices.append(index)
+            selected_abstracts.add(abstract_text)
+
+            if len(selected_indices) == limit:
+                break
+
+        if len(selected_indices) < limit:
+            fatal(
+                f"No fue posible reunir {limit} abstracts únicos nuevos. "
+                f"Sólo se encontraron {len(selected_indices)} después "
+                f"del offset {offset}."
+            )
+
         valid = (
-            valid.head(limit)
+            valid.loc[selected_indices]
             .copy()
             .reset_index(drop=True)
         )
 
         info(
             "Modo de prueba activado: "
-            f"máximo {limit} abstracts."
+            f"offset={offset}, {limit} abstracts únicos nuevos."
+        )
+
+        info(
+            f"Abstracts anteriores excluidos: {offset}"
+        )
+
+        info(
+            "Duplicados con abstracts anteriores omitidos: "
+            f"{repeated_with_previous}"
+        )
+
+        info(
+            "Duplicados dentro de la nueva selección omitidos: "
+            f"{repeated_with_selection}"
+        )
+
+        info(
+            f"Abstracts nuevos seleccionados: {len(valid)}"
+        )
+
+        if len(valid) > 0:
+            info(
+                "Rango recorrido del corpus válido: "
+                f"{offset + 1}–"
+                f"{int(valid['__CORPUS_POSITION__'].iloc[-1])}"
+            )
+
+    else:
+        valid = (
+            valid.iloc[offset:]
+            .copy()
+            .reset_index(drop=True)
         )
 
     # --------------------------------------------------------
-    # ID CORRELATIVO
+    # ID CORRELATIVO ESTABLE SEGÚN POSICIÓN EN EL CORPUS
     # --------------------------------------------------------
 
     valid["ID"] = [
-        f"{i:05d}"
-        for i in range(
-            1,
-            len(valid) + 1
-        )
+        f"{int(position):05d}"
+        for position in valid["__CORPUS_POSITION__"]
     ]
 
     valid["__ABSTRACT__"] = (
@@ -1303,7 +1389,8 @@ def build_request(
 # ============================================================
 
 def prepare_batch(
-    limit: Optional[int] = None
+    limit: Optional[int] = None,
+    offset: int = 0,
 ) -> Dict[str, Any]:
 
     ensure_output_dir()
@@ -1316,7 +1403,8 @@ def prepare_batch(
 
     corpus, abstract_column, excluded = (
         load_corpus(
-            limit=limit
+            limit=limit,
+            offset=offset,
         )
     )
 
@@ -1380,6 +1468,9 @@ def prepare_batch(
 
         "limit":
             limit,
+
+        "offset":
+            offset,
 
         "number_of_abstracts":
             len(corpus),
@@ -2421,8 +2512,14 @@ def build_final_outputs(
         "limit"
     )
 
+    run_offset = state.get(
+        "offset",
+        0,
+    )
+
     corpus, _, _ = load_corpus(
-        limit=run_limit
+        limit=run_limit,
+        offset=run_offset,
     )
 
     expected_ids = corpus[
@@ -2889,6 +2986,21 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
 
+    prepare_parser.add_argument(
+
+        "--offset",
+
+        type=int,
+
+        default=0,
+
+        help=(
+            "Número de abstracts válidos iniciales "
+            "a omitir antes de aplicar --limit. "
+            "Ejemplo: --offset 40 --limit 40."
+        ),
+    )
+
     # SUBMIT
     subparsers.add_parser(
 
@@ -2950,7 +3062,8 @@ def main() -> None:
     if args.command == "prepare":
 
         prepare_batch(
-            limit=args.limit
+            limit=args.limit,
+            offset=args.offset,
         )
 
     elif args.command == "submit":
