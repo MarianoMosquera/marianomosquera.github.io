@@ -60,6 +60,11 @@ soc:Cultura
     skos:prefLabel "Cultura"@es ;
     skos:broader soc:Identidad .
 
+soc:Religion 
+    a skos:Concept ;
+    skos:prefLabel "Religión"@es ;
+    skos:broader soc:Identidad .
+
 
 # =========================================
 # NARROWER DE CULTURA
