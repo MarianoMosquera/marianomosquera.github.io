@@ -165,6 +165,10 @@ ex:NoEstigmatizacion
     skos:broader ex:Igualdad ;
     skos:related ex:Dignidad, ex:Respeto, ex:Tolerancia, ex:Imparcialidad .
 
+val:NoDiscriminacion a skos:Concept ;
+    skos:prefLabel "No discriminación"@es ;
+    skos:broader val:Igualdad .
+
 ex:Justicia
     a skos:Concept ;
     skos:prefLabel "Justicia"@es .
