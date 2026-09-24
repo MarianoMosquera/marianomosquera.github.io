@@ -241,6 +241,11 @@ ex:Cuidado
     skos:broader ex:Justicia ;
     skos:related ex:Vulnerabilidad, ex:Solidaridad, ex:Beneficencia, ex:NoMaleficencia, ex:Sustentabilidad, ex:Sostenibilidad .
 
+ex:Empatia 
+    a skos:Concept ;
+    skos:prefLabel "Empatía"@es ;
+    skos:broader ex:Justicia .
+
 ex:Competencia
     a skos:Concept ;
     skos:prefLabel "Competencia"@es .
