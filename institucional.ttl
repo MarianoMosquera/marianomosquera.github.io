@@ -23,6 +23,7 @@ inst:Temas
     skos:broader inst:Institucional ;
     skos:narrower inst:DerechosHumanos,
                   inst:Normas,
+                  inst:Administracion,
                   inst:RelacionesInterjurisdiccionales .
 
 inst:Actores
@@ -72,6 +73,11 @@ inst:ConvencionesInternacionales
 inst:RelacionesInterjurisdiccionales
     a skos:Concept ;
     skos:prefLabel "Relaciones interjurisdiccionales"@es ;
+    skos:broader inst:Temas .
+
+inst:Administracion 
+    a skos:Concept ;
+    skos:prefLabel "Administración"@es ;
     skos:broader inst:Temas .
 
 # =========================================
