@@ -55,7 +55,7 @@ MAX_OUTPUT_TOKENS = 24000
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 
-CORPUS_PATH = REPO_ROOT / "corpus" / "OA_2026_Es.csv"
+CORPUS_PATH = REPO_ROOT / "corpus" / "OA2_2026_Es.csv"
 
 OUTPUT_DIR = REPO_ROOT / "resultados"
 
