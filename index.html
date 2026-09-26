@@ -69,6 +69,11 @@ h1 {
   gap: 2px;
   margin: 0 0 12px;
 }
+.definition-arrow {
+  color: #8a96a6;
+  font-size: 13px;
+  line-height: 1.75;
+}
 .section-link {
   color: #164a7b;
   text-decoration: underline;
@@ -188,9 +193,9 @@ footer {
     <p><strong>Concepto:</strong> La ética institucional evalúa los procesos de decisión en un marco de prácticas regulares desde un enfoque articulado entre atención, racionalidad y gobernanza.</p>
 
     <div class="definitions">
-      <div class="definition"><span>§</span><div><strong>Atención:</strong> Identificación estructural de la decisión, incluye valores y agenda, implica interés y demanda.</div></div>
-      <div class="definition"><span>§</span><div><strong>Racionalidad:</strong> Lógica científica del proceso decisional, incluye teoría, teleología y evidencia, implica razones.</div></div>
-      <div class="definition"><span>§</span><div><strong>Gobernanza:</strong> Adecuación a la acción, incluye compliance, accountability y engagement.</div></div>
+      <div class="definition"><span class="definition-arrow">→</span><div>Atención: Identificación estructural de la decisión, incluye valores y agenda, implica interés y demanda.</div></div>
+      <div class="definition"><span class="definition-arrow">→</span><div>Racionalidad: Lógica científica del proceso decisional, incluye teoría, teleología y evidencia, implica razones.</div></div>
+      <div class="definition"><span class="definition-arrow">→</span><div>Gobernanza: Adecuación a la acción, incluye compliance, accountability y engagement.</div></div>
     </div>
 
     <p><strong>Investigación:</strong> Análisis de documentación especializada para la construcción de una clasificación relacional de conceptos (ontología, OD). Medición de prevalencia, coocurrencia y evolución de la OD. Acceso a <a class="section-link" href="https://marianomosquera.github.io/apuntes/doctec">documento técnico</a> y acceso a <a class="section-link" href="https://github.com/marianomosquera/marianomosquera.github.io">repositorio abierto</a>.</p>
@@ -496,10 +501,10 @@ document.querySelectorAll(&#x27;.ribbon&#x27;).forEach(r=&gt;{
 
     <details class="notes">
       <summary>Apuntes</summary>
-      <ul class="notes-list">
-        <li><a href="apuntes/ciencias-de-la-decision/">Ciencias de la Decisión</a></li>
-        <li><a href="apuntes/etica-en-investigacion/">Ética en investigación</a></li>
-      </ul>
+      <div class="notes-list">
+        <a href="apuntes/ciencias-de-la-decision/">Ciencias de la Decisión</a>
+        <a href="apuntes/etica-en-investigacion/">Ética en investigación</a>
+      </div>
     </details>
   </section>
 
