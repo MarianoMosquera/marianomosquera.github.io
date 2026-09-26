@@ -1,265 +1,378 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ética Institucional y Transparencia</title>
-
 <style>
-    * { box-sizing: border-box; }
-    body { margin:0; min-height:100vh; background:#fff; color:#333; font-family:Arial,Helvetica,sans-serif; }
-    .container { width:90%; max-width:1050px; margin:0 auto; text-align:center; padding:60px 30px 30px; }
-    .logos { display:flex; justify-content:center; align-items:center; gap:70px; margin-bottom:50px; }
-    .logo-ucc { width:310px; max-width:40%; height:auto; }
-    .logo-bitss { width:390px; max-width:48%; height:auto; }
-    .divider { width:70px; height:2px; background:#163d78; margin:0 auto 35px; }
-    h1 { margin:0 0 25px; font-size:32px; font-weight:500; color:#2f2f2f; }
-    .description { max-width:820px; margin:0 auto; font-size:18px; line-height:1.7; font-weight:300; color:#404040; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: #fff;
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.container {
+  width: 90%;
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 58px 30px 34px;
+}
+.logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 70px;
+  margin-bottom: 48px;
+}
+.logo-bitss { width: 390px; max-width: 48%; height: auto; }
+.logo-ucc { width: 310px; max-width: 40%; height: auto; }
+.divider {
+  width: 70px;
+  height: 2px;
+  background: #163d78;
+  margin: 0 auto 34px;
+}
+h1 {
+  margin: 0 0 24px;
+  text-align: center;
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #2f2f2f;
+}
+.lead {
+  max-width: 850px;
+  margin: 0 auto 45px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.7;
+  font-weight: 300;
+  color: #404040;
+}
+.content {
+  max-width: 850px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #444;
+}
+.content p { margin: 0 0 23px; }
+.content strong { color: #2f2f2f; font-weight: 600; }
+.definitions {
+  margin: 4px 0 28px;
+}
+.definition {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 2px;
+  margin: 0 0 12px;
+}
+.section-link {
+  color: #164a7b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.chart-section {
+  width: 100%;
+  margin: 48px auto 0;
+}
+.chart-frame {
+  display: block;
+  width: 100%;
+  height: 790px;
+  border: 0;
+  background: #fff;
+}
+.resources {
+  max-width: 850px;
+  margin: 35px auto 0;
+  border-top: 1px solid #ddd;
+  padding-top: 21px;
+}
+.resource-link {
+  display: block;
+  width: fit-content;
+  margin: 0 0 15px;
+  color: #164a7b;
+  font-size: 16px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+details.notes {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+details.notes summary {
+  cursor: pointer;
+  color: #164a7b;
+  font-size: 16px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  list-style: none;
+  width: fit-content;
+}
+details.notes summary::-webkit-details-marker { display:none; }
+details.notes summary::after { content:" +"; text-decoration:none; }
+details.notes[open] summary::after { content:" −"; }
+.notes-list {
+  padding: 13px 0 0 18px;
+  margin: 0;
+}
+.notes-list a {
+  color: #555;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+footer {
+  margin-top: 58px;
+  padding-top: 27px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+}
+.footer-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 4px;
+}
+.footer-link {
+  color: #164a7b;
+  font-size: 13px;
+  text-decoration: none;
+}
+.footer-link:hover { text-decoration: underline; }
 
-    /* VISUALIZACIÓN D3 */
-    .visualization-section { margin:55px auto 0; width:100%; }
-    .visualization-intro { margin:0 auto 22px; max-width:760px; }
-    .visualization-intro h2 { margin:0 0 9px; color:#2f2f2f; font-size:22px; font-weight:500; }
-    .visualization-intro p { margin:0; color:#777; font-size:14px; line-height:1.55; }
-    .viz-shell { position:relative; width:100%; height:680px; overflow:hidden; border:1px solid #e3e8ee; border-radius:18px; background:radial-gradient(circle at 50% 42%,#f8fbff 0,#f3f7fb 48%,#edf2f7 100%); box-shadow:0 18px 55px rgba(22,61,120,.09); text-align:left; }
-    .viz-header { position:absolute; z-index:5; top:24px; left:28px; right:28px; display:flex; align-items:flex-start; justify-content:space-between; gap:25px; pointer-events:none; }
-    .viz-eyebrow { color:#78889a; font-size:10px; letter-spacing:.2em; text-transform:uppercase; }
-    .viz-title { margin-top:4px; color:#26394e; font-size:24px; font-weight:600; letter-spacing:-.025em; }
-    .viz-sub { margin-top:5px; color:#8491a0; font-size:11px; }
-    .viz-control { width:360px; max-width:42%; padding:12px 15px; border:1px solid rgba(22,61,120,.12); border-radius:14px; background:rgba(255,255,255,.84); backdrop-filter:blur(12px); box-shadow:0 8px 25px rgba(40,65,95,.08); pointer-events:auto; }
-    .viz-ends { display:flex; justify-content:space-between; margin-bottom:7px; color:#9aa6b3; font-size:10px; font-weight:600; letter-spacing:.11em; text-transform:uppercase; }
-    .viz-ends .active { color:#164a7b; }
-    #mode { width:100%; accent-color:#164a7b; cursor:pointer; }
-    #d3-stage { display:block; width:100%; height:100%; }
-    .cluster-label { font-weight:700; font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
-    .node text { pointer-events:none; text-anchor:middle; fill:#fff; font-weight:600; }
-    .node .value { fill:rgba(255,255,255,.86); font-weight:500; }
-    .bubble { stroke:rgba(255,255,255,.72); stroke-width:1.2; filter:url(#bubbleShadow); cursor:grab; }
-    .bubble:active { cursor:grabbing; }
-    .halo { fill:none; stroke-width:1.2; opacity:.24; stroke-dasharray:3 6; }
-    .relation-zone { fill:rgba(255,255,255,.48); stroke:#b8c5d2; stroke-width:1; stroke-dasharray:3 6; }
-    .relation-label { font-size:10px; fill:#68798b; font-weight:700; letter-spacing:.09em; text-anchor:middle; }
-    .relation-link { fill:none; stroke:#9cacbd; stroke-width:1.2; stroke-opacity:.42; }
-    .viz-footer { position:absolute; left:28px; bottom:20px; color:#8c99a7; font-size:9px; letter-spacing:.07em; }
-    .viz-hint { position:absolute; right:28px; bottom:20px; color:#8c99a7; font-size:9px; }
+@media (max-width: 700px) {
+  .container { width: 100%; padding: 38px 18px 25px; }
+  .logos { flex-direction: column; gap: 30px; margin-bottom: 38px; }
+  .logo-bitss, .logo-ucc { width: 76%; max-width: 340px; }
+  h1 { font-size: 27px; }
+  .lead { font-size: 16px; line-height: 1.62; margin-bottom: 36px; }
+  .content { font-size: 15px; line-height: 1.68; }
+  .chart-section {
+    width: calc(100% + 36px);
+    margin-left: -18px;
+    margin-top: 38px;
+  }
+  .chart-frame { height: 760px; }
+  .resources { margin-top: 28px; }
+}
+</style>
+</head>
+<body>
+<main class="container">
 
-    /* ONTOLOGÍA */
-    .ontology-section { margin:45px auto 0; max-width:760px; }
-    details { border-top:1px solid #ddd; border-bottom:1px solid #ddd; padding:0; }
-    summary { list-style:none; cursor:pointer; padding:20px 10px; font-size:18px; color:#164a7b; font-weight:500; user-select:none; }
-    summary::-webkit-details-marker { display:none; }
-    summary::after { content:" +"; font-weight:300; margin-left:6px; }
-    details[open] summary::after { content:" −"; }
-    .ontology-content { padding:0 25px 28px; animation:fadeIn .25s ease; }
-    .ontology-content p { margin:0 auto 25px; max-width:650px; font-size:16px; line-height:1.7; color:#555; }
-    .ontology-button { display:inline-block; padding:11px 22px; border:1px solid #164a7b; border-radius:5px; color:#164a7b; background:#fff; text-decoration:none; font-size:15px; transition:all .2s ease; }
-    .ontology-button:hover { background:#164a7b; color:#fff; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+  <div class="logos">
+    <img src="images/BITSS_logo.png" alt="Berkeley Initiative for Transparency in the Social Sciences" class="logo-bitss">
+    <img src="images/UCC_logo.png" alt="Universidad Católica de Córdoba" class="logo-ucc">
+  </div>
 
-    footer { margin-top:60px; padding-top:25px; border-top:1px solid #eee; display:flex; flex-direction:column; align-items:center; gap:10px; }
-    .footer-image { width:42px; height:42px; object-fit:cover; border-radius:50%; opacity:.9; }
-    .footer-link { font-size:13px; color:#164a7b; text-decoration:none; }
-    .footer-link:hover { text-decoration:underline; }
+  <div class="divider"></div>
 
-    @media(max-width:700px){
-      .container{padding:40px 20px 25px}.logos{flex-direction:column;gap:35px;margin-bottom:40px}.logo-ucc,.logo-bitss{width:75%;max-width:350px}h1{font-size:27px}.description{font-size:16px;line-height:1.6}
-      .visualization-section{margin-top:42px}.viz-shell{height:760px;border-radius:14px}.viz-header{display:block;top:18px;left:18px;right:18px}.viz-title{font-size:20px}.viz-control{width:100%;max-width:none;margin-top:13px}.viz-footer{left:18px}.viz-hint{display:none}
-      .ontology-section{margin-top:35px}.ontology-content{padding-left:10px;padding-right:10px}footer{margin-top:45px}
-    }
-  </style>
-<style>
-/* GRÁFICO INTEGRADO V10 */
+  <h1>Ética Institucional y Transparencia</h1>
 
-#results-viz{
+  <p class="lead">
+    Proyecto financiado por Berkeley Initiative for Transparency in the Social Sciences (BITSS),
+    gestionado por el Center for Effective Global Action (CEGA).
+  </p>
+
+  <section class="content">
+    <p><strong>Concepto:</strong> La ética institucional evalúa los procesos de decisión en un marco de prácticas regulares desde un enfoque articulado entre atención, racionalidad y gobernanza.</p>
+
+    <div class="definitions">
+      <div class="definition"><span>§</span><div><strong>Atención:</strong> Identificación estructural de la decisión, incluye valores y agenda, implica interés y demanda.</div></div>
+      <div class="definition"><span>§</span><div><strong>Racionalidad:</strong> Lógica científica del proceso decisional, incluye teoría, teleología y evidencia, implica razones.</div></div>
+      <div class="definition"><span>§</span><div><strong>Gobernanza:</strong> Adecuación a la acción, incluye compliance, accountability y engagement.</div></div>
+    </div>
+
+    <p><strong>Investigación:</strong> Análisis de documentación especializada para la construcción de una clasificación relacional de conceptos (ontología, OD). Medición de prevalencia, coocurrencia y evolución de la OD. Acceso a <a class="section-link" href="https://marianomosquera.github.io/apuntes/doctec">documento técnico</a> y acceso a <a class="section-link" href="https://github.com/marianomosquera/marianomosquera.github.io">repositorio abierto</a>.</p>
+
+    <p><strong>Impacto:</strong> Identificación de escenarios de vanguardia y de puntos críticos presentes en el conocimiento experto, para diseñar y desarrollar procesos de mejora en ética institucional y transparencia.</p>
+  </section>
+
+  <section class="chart-section" aria-label="Gráfico de prevalencia y coocurrencia">
+    <iframe
+      class="chart-frame"
+      title="Prevalencia y coocurrencia"
+      srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;es&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover&quot;&gt;
+&lt;title&gt;Prevalencia y coocurrencia&lt;/title&gt;
+&lt;style&gt;
+:root{
   --ink:#071633; --muted:#60708a; --bg:#fff;
   --blue:#2f80ed; --red:#ff5157; --gold:#ffbd28; --teal:#18bfae;
   --purple:#8347ec; --green:#55c86a; --orange:#ff9138; --sky:#55a9ef;
 }
-#results-viz, #results-viz *{box-sizing:border-box}
-
-#results-viz{margin:0;background:var(--bg);color:var(--ink);font-family:"Rajdhani","Orbitron","Eurostile","Bank Gothic","Trebuchet MS",Arial,sans-serif}
-#results-viz .wrap{width:min(1600px,96vw);margin:auto;padding:clamp(22px,4vw,54px) clamp(10px,2vw,28px) 32px}
-#results-viz h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw,57px)}
-#results-viz .meta{margin:0 0 clamp(28px,4vw,58px);font-size:clamp(9px,.72vw,11px);letter-spacing:.14em;color:var(--muted);font-weight:500}#results-viz .meta .vsep{display:inline-block;width:1px;height:.9em;background:#aeb7c5;margin:0 9px;vertical-align:-.08em}
-#results-viz .chart{position:relative;min-height:680px}
-#results-viz .cols{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr 1fr 1fr .8fr;gap:clamp(38px,9vw,170px)}
-#results-viz .col h2{font-size:clamp(14px,1.45vw,22px);letter-spacing:.13em;margin:0 0 18px;text-align:center;font-weight:800}
-#results-viz .nodes{height:580px;position:relative}
-#results-viz .node{position:absolute;width:100%;height:var(--h);top:var(--y);display:flex;align-items:center;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1),filter .2s ease}
-.ready #results-viz .node{opacity:1;transform:none;transition-delay:calc(var(--i)*70ms)}
-#results-viz .node .bar{width:clamp(28px,3vw,42px);height:100%;min-height:28px;border-radius:3px;background:var(--c);box-shadow:0 7px 18px color-mix(in srgb,var(--c) 14%,transparent);transition:transform .25s ease,filter .25s ease}
-#results-viz .node .label{font-size:clamp(13px,1.22vw,19px);line-height:1.12;font-weight:500;letter-spacing:.01em}
-.gov #results-viz .node{justify-content:flex-end;gap:14px}#results-viz .gov .label{order:1;text-align:right}#results-viz .gov .bar{order:2}
-.val .node,.age .node,.rat #results-viz .node{gap:14px}.rat #results-viz .node{justify-content:flex-start}
-#results-viz .node:hover .bar,#results-viz .node:focus-visible .bar{transform:scaleX(1.16);filter:saturate(1.15)}
-#results-viz .node:focus-visible{outline:none}
-#results-viz .links{position:absolute;inset:43px 0 auto 0;width:100%;height:580px;z-index:1;overflow:visible;pointer-events:auto}
-#results-viz .ribbon{fill:none;stroke-linecap:round;opacity:.26;touch-action:manipulation;stroke-dasharray:1;stroke-dashoffset:1;transition:opacity .25s ease;cursor:pointer;pointer-events:stroke}#results-viz .ribbon:hover,#results-viz .ribbon:focus{opacity:.48;outline:none}
-.ready #results-viz .ribbon{animation:draw 1.25s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--delay)}
+*{box-sizing:border-box}
+html{background:#fff;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:&quot;Rajdhani&quot;,&quot;Orbitron&quot;,&quot;Eurostile&quot;,&quot;Bank Gothic&quot;,&quot;Trebuchet MS&quot;,Arial,sans-serif}
+.wrap{width:min(1600px,96vw);margin:auto;padding:clamp(22px,4vw,54px) clamp(10px,2vw,28px) 32px}
+h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw,57px)}
+.meta{margin:0 0 clamp(28px,4vw,58px);font-size:clamp(9px,.72vw,11px);letter-spacing:.14em;color:var(--muted);font-weight:500}.meta .vsep{display:inline-block;width:1px;height:.9em;background:#aeb7c5;margin:0 9px;vertical-align:-.08em}
+.chart{position:relative;min-height:680px}
+.cols{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr 1fr 1fr .8fr;gap:clamp(38px,9vw,170px)}
+.col h2{font-size:clamp(14px,1.45vw,22px);letter-spacing:.13em;margin:0 0 18px;text-align:center;font-weight:800}
+.nodes{height:580px;position:relative}
+.node{position:absolute;width:100%;height:var(--h);top:var(--y);display:flex;align-items:center;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1),filter .2s ease}
+.ready .node{opacity:1;transform:none;transition-delay:calc(var(--i)*70ms)}
+.node .bar{width:clamp(28px,3vw,42px);height:100%;min-height:28px;border-radius:3px;background:var(--c);box-shadow:0 7px 18px color-mix(in srgb,var(--c) 14%,transparent);transition:transform .25s ease,filter .25s ease}
+.node .label{font-size:clamp(13px,1.22vw,19px);line-height:1.12;font-weight:500;letter-spacing:.01em}
+.gov .node{justify-content:flex-end;gap:14px}.gov .label{order:1;text-align:right}.gov .bar{order:2}
+.val .node,.age .node,.rat .node{gap:14px}.rat .node{justify-content:flex-start}
+.node:hover .bar,.node:focus-visible .bar{transform:scaleX(1.16);filter:saturate(1.15)}
+.node:focus-visible{outline:none}
+.links{position:absolute;inset:43px 0 auto 0;width:100%;height:580px;z-index:1;overflow:visible;pointer-events:auto}
+.ribbon{fill:none;stroke-linecap:round;opacity:.26;touch-action:manipulation;stroke-dasharray:1;stroke-dashoffset:1;transition:opacity .25s ease;cursor:pointer;pointer-events:stroke}.ribbon:hover,.ribbon:focus{opacity:.48;outline:none}
+.ready .ribbon{animation:draw 1.25s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--delay)}
 @keyframes draw{to{stroke-dashoffset:0}}
-#results-viz .info{width:fit-content;max-width:min(760px,92vw);margin:18px auto 0;padding:13px 22px;border-radius:9px;background:#f7f9fc;display:flex;align-items:center;justify-content:center;gap:22px;font-size:clamp(16px,1.3vw,20px);box-shadow:0 8px 30px rgba(20,45,90,.035);opacity:0;transform:translateY(8px);transition:.6s ease;white-space:nowrap}
-.ready #results-viz .info{opacity:1;transform:none;transition-delay:1s}
-#results-viz .dot{width:25px;height:25px;min-width:25px;min-height:25px;flex:0 0 25px;border-radius:50%;background:var(--blue);box-shadow:0 4px 14px rgba(47,128,237,.24)}
-#results-viz .sep{width:1px;height:34px;background:#aeb7c5}
-#results-viz .value{font-size:1.18em;letter-spacing:.05em}#results-viz .cooc{font-size:.76em;letter-spacing:.025em;color:var(--muted);font-weight:500}
-#results-viz .tip{position:fixed;z-index:20;pointer-events:none;background:#071633;color:#fff;padding:8px 11px;border-radius:7px;font-size:13px;opacity:0;transform:translate(-50%,-115%);transition:opacity .15s ease;white-space:nowrap}
-#results-viz .tip.show{opacity:.94}
-#results-viz .zoom-controls{position:fixed;right:14px;bottom:14px;z-index:30;display:flex;gap:6px;opacity:.72;transition:opacity .2s ease}
-#results-viz .zoom-controls:hover,#results-viz .zoom-controls:focus-within{opacity:1}
-#results-viz .zoom-btn{width:38px;height:38px;border:1px solid #d8deea;border-radius:9px;background:rgba(255,255,255,.94);color:var(--ink);font:600 18px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 18px rgba(20,45,90,.08);touch-action:manipulation}
-#results-viz .zoom-btn:hover,#results-viz .zoom-btn:focus-visible{background:#f7f9fc;outline:none}
-@media (prefers-reduced-motion:reduce){#results-viz, #results-viz *{animation:none!important;transition:none!important}.node,#results-viz .info{opacity:1;transform:none}#results-viz .ribbon{stroke-dashoffset:0}}
+.info{width:fit-content;max-width:min(760px,92vw);margin:18px auto 0;padding:13px 22px;border-radius:9px;background:#f7f9fc;display:flex;align-items:center;justify-content:center;gap:22px;font-size:clamp(16px,1.3vw,20px);box-shadow:0 8px 30px rgba(20,45,90,.035);opacity:0;transform:translateY(8px);transition:.6s ease;white-space:nowrap}
+.ready .info{opacity:1;transform:none;transition-delay:1s}
+.dot{width:25px;height:25px;min-width:25px;min-height:25px;flex:0 0 25px;border-radius:50%;background:var(--blue);box-shadow:0 4px 14px rgba(47,128,237,.24)}
+.sep{width:1px;height:34px;background:#aeb7c5}
+.value{font-size:1.18em;letter-spacing:.05em}.cooc{font-size:.76em;letter-spacing:.025em;color:var(--muted);font-weight:500}
+.tip{position:fixed;z-index:20;pointer-events:none;background:#071633;color:#fff;padding:8px 11px;border-radius:7px;font-size:13px;opacity:0;transform:translate(-50%,-115%);transition:opacity .15s ease;white-space:nowrap}
+.tip.show{opacity:.94}
+.zoom-controls{position:fixed;right:14px;bottom:14px;z-index:30;display:flex;gap:6px;opacity:.72;transition:opacity .2s ease}
+.zoom-controls:hover,.zoom-controls:focus-within{opacity:1}
+.zoom-btn{width:38px;height:38px;border:1px solid #d8deea;border-radius:9px;background:rgba(255,255,255,.94);color:var(--ink);font:600 18px/1 Arial,sans-serif;display:grid;place-items:center;cursor:pointer;box-shadow:0 5px 18px rgba(20,45,90,.08);touch-action:manipulation}
+.zoom-btn:hover,.zoom-btn:focus-visible{background:#f7f9fc;outline:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.node,.info{opacity:1;transform:none}.ribbon{stroke-dashoffset:0}}
 @media(max-width:720px){
-  #results-viz .wrap{width:100%;padding:24px 0 22px;overflow:hidden}
-  #results-viz h1{font-size:clamp(25px,8vw,37px);margin:0 14px 4px}#results-viz .meta{margin:0 14px 30px;font-size:9px}
+  .wrap{width:100%;padding:24px 0 22px;overflow:hidden}
+  h1{font-size:clamp(25px,8vw,37px);margin:0 14px 4px}.meta{margin:0 14px 30px;font-size:9px}
 
   /* Móvil: el lienzo completo se escala mediante un wrapper de tamaño visual real. */
-  #results-viz .chart{
+  .chart{
     width:1400px;
     min-height:680px;
     transform-origin:top left;
     margin-left:8px;
   }
-  #results-viz .cols{
+  .cols{
     width:1400px;
     grid-template-columns:repeat(4, 1fr);
     gap:126px;
   }
-  #results-viz .col h2{font-size:22px;letter-spacing:.13em;margin-bottom:18px}
-  #results-viz .nodes{height:580px}
-  #results-viz .links{top:43px;width:1400px;height:580px}
-  #results-viz .node .bar{width:42px;min-height:28px}
-  #results-viz .node .label{font-size:19px;line-height:1.12}
-  .gov #results-viz .node{gap:14px}.val .node,.age .node,.rat #results-viz .node{gap:14px}
+  .col h2{font-size:22px;letter-spacing:.13em;margin-bottom:18px}
+  .nodes{height:580px}
+  .links{top:43px;width:1400px;height:580px}
+  .node .bar{width:42px;min-height:28px}
+  .node .label{font-size:19px;line-height:1.12}
+  .gov .node{gap:14px}.val .node,.age .node,.rat .node{gap:14px}
 
   /* Panel de lectura independiente del escalado del gráfico. */
-  #results-viz .info{margin:18px auto 0;padding:10px 15px;gap:12px;font-size:14px;width:fit-content;max-width:94vw;white-space:normal;flex-wrap:wrap}
-  #results-viz .dot{width:19px;height:19px;min-width:19px;min-height:19px;flex:0 0 19px}#results-viz .sep{height:27px}#results-viz .cooc{flex-basis:100%;text-align:center;margin-top:-4px}
+  .info{margin:18px auto 0;padding:10px 15px;gap:12px;font-size:14px;width:fit-content;max-width:94vw;white-space:normal;flex-wrap:wrap}
+  .dot{width:19px;height:19px;min-width:19px;min-height:19px;flex:0 0 19px}.sep{height:27px}.cooc{flex-basis:100%;text-align:center;margin-top:-4px}
 }
 
 /* Corrección puntual: ejes verticales de las cuatro barras equidistantes. */
-#results-viz .cols{grid-template-columns:repeat(4,1fr);}
-.gov #results-viz .node{justify-content:flex-end;}
+.cols{grid-template-columns:repeat(4,1fr);}
+.gov .node{justify-content:flex-end;}
 @media(max-width:720px){
-  #results-viz .cols{grid-template-columns:repeat(4,1fr);gap:126px;}
+  .cols{grid-template-columns:repeat(4,1fr);gap:126px;}
 }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;wrap&quot; id=&quot;viz&quot;&gt;
+  &lt;h1&gt;Prevalencia y coocurrencia&lt;/h1&gt;
+  &lt;div class=&quot;meta&quot;&gt;2026&lt;span class=&quot;vsep&quot;&gt;&lt;/span&gt;Corpus 112&lt;/div&gt;
+  &lt;section class=&quot;chart&quot; aria-label=&quot;Visualización de prevalencia y coocurrencia&quot;&gt;
+    &lt;svg class=&quot;links&quot; viewBox=&quot;0 0 1400 580&quot; preserveAspectRatio=&quot;xMinYMin meet&quot; aria-hidden=&quot;true&quot;&gt;
+      &lt;defs&gt;
+        &lt;linearGradient id=&quot;g1&quot;&gt;&lt;stop stop-color=&quot;#2f80ed&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#ff5157&quot;/&gt;&lt;/linearGradient&gt;
+        &lt;linearGradient id=&quot;g2&quot;&gt;&lt;stop stop-color=&quot;#ff5157&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#ffbd28&quot;/&gt;&lt;/linearGradient&gt;
+        &lt;linearGradient id=&quot;g3&quot;&gt;&lt;stop stop-color=&quot;#18bfae&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#ffbd28&quot;/&gt;&lt;/linearGradient&gt;
+        &lt;linearGradient id=&quot;g4&quot;&gt;&lt;stop stop-color=&quot;#8347ec&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#ffbd28&quot;/&gt;&lt;/linearGradient&gt;
+      &lt;/defs&gt;
+      &lt;!-- Solo las cuatro relaciones del archivo fuente --&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Corrupción → Institucional&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#2f80ed&quot; pathLength=&quot;1&quot; style=&quot;--delay:.35s&quot; d=&quot;M274 52 C500 52 690 174 918 174&quot; stroke=&quot;url(#g1)&quot; stroke-width=&quot;42&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Marco de responsabilidad → Igualdad&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#ff5157&quot; pathLength=&quot;1&quot; style=&quot;--delay:.52s&quot; d=&quot;M274 158 C360 158 414 304 516 304&quot; stroke=&quot;url(#g2)&quot; stroke-width=&quot;35&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Análisis de riesgo → Propiedad → Teleología&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#18bfae&quot; pathLength=&quot;1&quot; style=&quot;--delay:.69s&quot; d=&quot;M274 322 C365 322 410 390 516 390 C760 390 1030 120 1236 120&quot; stroke=&quot;url(#g3)&quot; stroke-width=&quot;38&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Tecnológica → Evidencia&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#8347ec&quot; pathLength=&quot;1&quot; style=&quot;--delay:.86s&quot; d=&quot;M918 360 C1040 360 1110 515 1236 515&quot; stroke=&quot;url(#g4)&quot; stroke-width=&quot;36&quot;/&gt;
+    &lt;/svg&gt;
 
-/* Encaje del gráfico dentro del index institucional */
-#results-viz { width:100%; margin:55px auto 0; text-align:left; }
-#results-viz .wrap { width:min(1600px,96vw); max-width:none; }
-@media(max-width:720px){
-  #results-viz { margin-top:42px; }
-}
-</style></head>
-<body>
-<main class="container">
-<div class="logos"><img alt="Berkeley Initiative for Transparency in the Social Sciences" class="logo-bitss" src="images/BITSS_logo.png"/><img alt="Universidad Católica de Córdoba" class="logo-ucc" src="images/UCC_logo.png"/></div>
-<div class="divider"></div>
-<h1>Ética Institucional y Transparencia</h1>
-<p class="description">
-      Proyecto financiado por Berkeley Initiative for Transparency in the
-      Social Sciences (BITSS), gestionado por el Center for Effective Global
-      Action (CEGA).
-    </p>
+    &lt;div class=&quot;cols&quot;&gt;
+      &lt;div class=&quot;col gov&quot;&gt;&lt;h2&gt;GOBERNANZA&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Corrupción&quot; data-value=&quot;0,22&quot; style=&quot;--i:0;--y:0px;--h:104px;--c:#2f80ed&quot;&gt;&lt;span class=&quot;label&quot;&gt;Corrupción&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Marco de responsabilidad&quot; data-value=&quot;0,18&quot; style=&quot;--i:1;--y:116px;--h:85.09px;--c:#ff5157&quot;&gt;&lt;span class=&quot;label&quot;&gt;Marco de&lt;br&gt;responsabilidad&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Mecanismos de control&quot; data-value=&quot;0,14&quot; style=&quot;--i:2;--y:213px;--h:66.18px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;label&quot;&gt;Mecanismos&lt;br&gt;de control&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Análisis de riesgo&quot; data-value=&quot;0,13&quot; style=&quot;--i:3;--y:291px;--h:61.45px;--c:#18bfae&quot;&gt;&lt;span class=&quot;label&quot;&gt;Análisis de riesgo&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Compliance&quot; data-value=&quot;0,10&quot; style=&quot;--i:4;--y:364px;--h:47.27px;--c:#8347ec&quot;&gt;&lt;span class=&quot;label&quot;&gt;Compliance&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Procesos de colaboración&quot; data-value=&quot;0,09&quot; style=&quot;--i:5;--y:423px;--h:42.55px;--c:#55c86a&quot;&gt;&lt;span class=&quot;label&quot;&gt;Procesos de&lt;br&gt;colaboración&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Transparencia&quot; data-value=&quot;0,08&quot; style=&quot;--i:6;--y:478px;--h:37.82px;--c:#ff9138&quot;&gt;&lt;span class=&quot;label&quot;&gt;Transparencia&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Régimen de sanciones&quot; data-value=&quot;0,06&quot; style=&quot;--i:7;--y:528px;--h:28.36px;--c:#55a9ef&quot;&gt;&lt;span class=&quot;label&quot;&gt;Régimen de sanciones&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;&lt;/div&gt;
 
-<section id="results-viz"><div class="wrap" id="viz">
-<h1>Prevalencia y coocurrencia</h1>
-<div class="meta">2026<span class="vsep"></span>Corpus 112</div>
-<section aria-label="Visualización de prevalencia y coocurrencia" class="chart">
-<svg aria-hidden="true" class="links" preserveaspectratio="xMinYMin meet" viewbox="0 0 1400 580">
-<defs>
-<lineargradient id="g1"><stop stop-color="#2f80ed"></stop><stop offset="1" stop-color="#ff5157"></stop></lineargradient>
-<lineargradient id="g2"><stop stop-color="#ff5157"></stop><stop offset="1" stop-color="#ffbd28"></stop></lineargradient>
-<lineargradient id="g3"><stop stop-color="#18bfae"></stop><stop offset="1" stop-color="#ffbd28"></stop></lineargradient>
-<lineargradient id="g4"><stop stop-color="#8347ec"></stop><stop offset="1" stop-color="#ffbd28"></stop></lineargradient>
-</defs>
-<!-- Solo las cuatro relaciones del archivo fuente -->
-<path class="ribbon" d="M274 52 C500 52 690 174 918 174" data-color="#2f80ed" data-relation="Corrupción → Institucional" data-value="Coocurrencia" pathlength="1" stroke="url(#g1)" stroke-width="42" style="--delay:.35s" tabindex="0"></path>
-<path class="ribbon" d="M274 158 C360 158 414 304 516 304" data-color="#ff5157" data-relation="Marco de responsabilidad → Igualdad" data-value="Coocurrencia" pathlength="1" stroke="url(#g2)" stroke-width="35" style="--delay:.52s" tabindex="0"></path>
-<path class="ribbon" d="M274 322 C365 322 410 390 516 390 C760 390 1030 120 1236 120" data-color="#18bfae" data-relation="Análisis de riesgo → Propiedad → Teleología" data-value="Coocurrencia" pathlength="1" stroke="url(#g3)" stroke-width="38" style="--delay:.69s" tabindex="0"></path>
-<path class="ribbon" d="M918 360 C1040 360 1110 515 1236 515" data-color="#8347ec" data-relation="Tecnológica → Evidencia" data-value="Coocurrencia" pathlength="1" stroke="url(#g4)" stroke-width="36" style="--delay:.86s" tabindex="0"></path>
-</svg>
-<div class="cols">
-<div class="col gov"><h2>GOBERNANZA</h2><div class="nodes">
-<div class="node" data-name="Corrupción" data-value="0,22" style="--i:0;--y:0px;--h:104px;--c:#2f80ed"><span class="label">Corrupción</span><span class="bar"></span></div>
-<div class="node" data-name="Marco de responsabilidad" data-value="0,18" style="--i:1;--y:116px;--h:85.09px;--c:#ff5157"><span class="label">Marco de<br/>responsabilidad</span><span class="bar"></span></div>
-<div class="node" data-name="Mecanismos de control" data-value="0,14" style="--i:2;--y:213px;--h:66.18px;--c:#ffbd28"><span class="label">Mecanismos<br/>de control</span><span class="bar"></span></div>
-<div class="node" data-name="Análisis de riesgo" data-value="0,13" style="--i:3;--y:291px;--h:61.45px;--c:#18bfae"><span class="label">Análisis de riesgo</span><span class="bar"></span></div>
-<div class="node" data-name="Compliance" data-value="0,10" style="--i:4;--y:364px;--h:47.27px;--c:#8347ec"><span class="label">Compliance</span><span class="bar"></span></div>
-<div class="node" data-name="Procesos de colaboración" data-value="0,09" style="--i:5;--y:423px;--h:42.55px;--c:#55c86a"><span class="label">Procesos de<br/>colaboración</span><span class="bar"></span></div>
-<div class="node" data-name="Transparencia" data-value="0,08" style="--i:6;--y:478px;--h:37.82px;--c:#ff9138"><span class="label">Transparencia</span><span class="bar"></span></div>
-<div class="node" data-name="Régimen de sanciones" data-value="0,06" style="--i:7;--y:528px;--h:28.36px;--c:#55a9ef"><span class="label">Régimen de sanciones</span><span class="bar"></span></div>
-</div></div>
-<div class="col val"><h2>VALORES</h2><div class="nodes">
-<div class="node" data-name="Justicia" data-value="0,28" style="--i:0;--y:0px;--h:118px;--c:#45c96a"><span class="bar"></span><span class="label">Justicia</span></div>
-<div class="node" data-name="Cooperación" data-value="0,28" style="--i:1;--y:130px;--h:118px;--c:#7bd88b"><span class="bar"></span><span class="label">Cooperación</span></div>
-<div class="node" data-name="Igualdad" data-value="0,21" style="--i:2;--y:260px;--h:89px;--c:#ffbd28"><span class="bar"></span><span class="label">Igualdad</span></div>
-<div class="node" data-name="Propiedad" data-value="0,09" style="--i:3;--y:361px;--h:37.93px;--c:#18bfae"><span class="bar"></span><span class="label">Propiedad</span></div>
-<div class="node" data-name="Libertad" data-value="0,09" style="--i:4;--y:431px;--h:37.93px;--c:#a875ef"><span class="bar"></span><span class="label">Libertad</span></div>
-<div class="node" data-name="Competencia" data-value="0,05" style="--i:5;--y:501px;--h:21.07px;--c:#a875ef"><span class="bar"></span><span class="label">Competencia</span></div>
-</div></div>
-<div class="col age"><h2>AGENDA</h2><div class="nodes">
-<div class="node" data-name="Social" data-value="0,27" style="--i:0;--y:0px;--h:108px;--c:#ff5157"><span class="bar"></span><span class="label">Social</span></div>
-<div class="node" data-name="Institucional" data-value="0,27" style="--i:1;--y:120px;--h:108px;--c:#ff5157"><span class="bar"></span><span class="label">Institucional</span></div>
-<div class="node" data-name="Política" data-value="0,16" style="--i:2;--y:240px;--h:64px;--c:#ff777a"><span class="bar"></span><span class="label">Política</span></div>
-<div class="node" data-name="Tecnológica" data-value="0,15" style="--i:3;--y:326px;--h:60px;--c:#8347ec"><span class="bar"></span><span class="label">Tecnológica</span></div>
-<div class="node" data-name="Económica" data-value="0,12" style="--i:4;--y:407px;--h:48px;--c:#ffbd28"><span class="bar"></span><span class="label">Económica</span></div>
-<div class="node" data-name="Ambiental" data-value="0,03" style="--i:5;--y:475px;--h:12px;--c:#55c86a"><span class="bar"></span><span class="label">Ambiental</span></div>
-</div></div>
-<div class="col rat"><h2>RACIONALIDAD</h2><div class="nodes">
-<div class="node" data-name="Teleología" data-value="0,46" style="--i:0;--y:0px;--h:240px;--c:#ffbd28"><span class="bar"></span><span class="label">Teleología</span></div>
-<div class="node" data-name="Teoría" data-value="0,40" style="--i:1;--y:252px;--h:208.70px;--c:#ff9138"><span class="bar"></span><span class="label">Teoría</span></div>
-<div class="node" data-name="Evidencia" data-value="0,14" style="--i:2;--y:473px;--h:73.04px;--c:#ffbd28"><span class="bar"></span><span class="label">Evidencia</span></div>
-</div></div>
-</div>
-</section>
-<div class="info" id="info"><span class="dot" id="infoDot"></span><span id="infoName">Corrupción</span><span class="sep"></span><span class="value" id="infoValue">0,22</span><span class="cooc" id="infoCooc"></span></div>
-</div>
-<div aria-label="Controles de zoom" class="zoom-controls">
-<button aria-label="Acercar" class="zoom-btn" id="zoomIn" title="Acercar" type="button">⌕+</button>
-<button aria-label="Alejar" class="zoom-btn" id="zoomOut" title="Alejar" type="button">⌕−</button>
-<button aria-label="Restablecer zoom" class="zoom-btn" id="zoomReset" title="Restablecer zoom" type="button">↺</button>
-</div>
-<div class="tip" id="tip"></div></section><section class="ontology-section">
-<details>
-<summary>Ontología</summary>
-<div class="ontology-content">
-<p>La ontología se compone de conceptos y relaciones semánticas resultantes del análisis semántico de grandes volúmenes de documentación especializada en ética institucional y transparencia.</p>
-<a class="ontology-button" href="etica/">Ver visualización</a>
-</div>
-</details>
-</section>
-<footer>
-<img alt="Mariano Mosquera" class="footer-image" src="images/Mosquera.jpeg"/>
-<a class="footer-link" href="https://www.marianomosquera.com" rel="noopener" target="_blank">marianomosquera.com</a>
-</footer>
-</main>
+      &lt;div class=&quot;col val&quot;&gt;&lt;h2&gt;VALORES&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Justicia&quot; data-value=&quot;0,28&quot; style=&quot;--i:0;--y:0px;--h:118px;--c:#45c96a&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Justicia&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Cooperación&quot; data-value=&quot;0,28&quot; style=&quot;--i:1;--y:130px;--h:118px;--c:#7bd88b&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Cooperación&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Igualdad&quot; data-value=&quot;0,21&quot; style=&quot;--i:2;--y:260px;--h:89px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Igualdad&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Propiedad&quot; data-value=&quot;0,09&quot; style=&quot;--i:3;--y:361px;--h:37.93px;--c:#18bfae&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Propiedad&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Libertad&quot; data-value=&quot;0,09&quot; style=&quot;--i:4;--y:431px;--h:37.93px;--c:#a875ef&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Libertad&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Competencia&quot; data-value=&quot;0,05&quot; style=&quot;--i:5;--y:501px;--h:21.07px;--c:#a875ef&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Competencia&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;&lt;/div&gt;
 
-<script>
-const root=document.getElementById('viz');
-const infoName=document.getElementById('infoName'),infoValue=document.getElementById('infoValue'),infoDot=document.getElementById('infoDot'),infoCooc=document.getElementById('infoCooc'),tip=document.getElementById('tip');
+      &lt;div class=&quot;col age&quot;&gt;&lt;h2&gt;AGENDA&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Social&quot; data-value=&quot;0,27&quot; style=&quot;--i:0;--y:0px;--h:108px;--c:#ff5157&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Social&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Institucional&quot; data-value=&quot;0,27&quot; style=&quot;--i:1;--y:120px;--h:108px;--c:#ff5157&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Institucional&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Política&quot; data-value=&quot;0,16&quot; style=&quot;--i:2;--y:240px;--h:64px;--c:#ff777a&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Política&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Tecnológica&quot; data-value=&quot;0,15&quot; style=&quot;--i:3;--y:326px;--h:60px;--c:#8347ec&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Tecnológica&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Económica&quot; data-value=&quot;0,12&quot; style=&quot;--i:4;--y:407px;--h:48px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Económica&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Ambiental&quot; data-value=&quot;0,03&quot; style=&quot;--i:5;--y:475px;--h:12px;--c:#55c86a&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Ambiental&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;&lt;/div&gt;
+
+      &lt;div class=&quot;col rat&quot;&gt;&lt;h2&gt;RACIONALIDAD&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Teleología&quot; data-value=&quot;0,46&quot; style=&quot;--i:0;--y:0px;--h:240px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Teleología&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Teoría&quot; data-value=&quot;0,40&quot; style=&quot;--i:1;--y:252px;--h:208.70px;--c:#ff9138&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Teoría&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;node&quot; data-name=&quot;Evidencia&quot; data-value=&quot;0,14&quot; style=&quot;--i:2;--y:473px;--h:73.04px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Evidencia&lt;/span&gt;&lt;/div&gt;
+      &lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;div class=&quot;info&quot; id=&quot;info&quot;&gt;&lt;span class=&quot;dot&quot; id=&quot;infoDot&quot;&gt;&lt;/span&gt;&lt;span id=&quot;infoName&quot;&gt;Corrupción&lt;/span&gt;&lt;span class=&quot;sep&quot;&gt;&lt;/span&gt;&lt;span class=&quot;value&quot; id=&quot;infoValue&quot;&gt;0,22&lt;/span&gt;&lt;span class=&quot;cooc&quot; id=&quot;infoCooc&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;zoom-controls&quot; aria-label=&quot;Controles de zoom&quot;&gt;
+  &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomIn&quot; type=&quot;button&quot; aria-label=&quot;Acercar&quot; title=&quot;Acercar&quot;&gt;⌕+&lt;/button&gt;
+  &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomOut&quot; type=&quot;button&quot; aria-label=&quot;Alejar&quot; title=&quot;Alejar&quot;&gt;⌕−&lt;/button&gt;
+  &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomReset&quot; type=&quot;button&quot; aria-label=&quot;Restablecer zoom&quot; title=&quot;Restablecer zoom&quot;&gt;↺&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;tip&quot; id=&quot;tip&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+const root=document.getElementById(&#x27;viz&#x27;);
+const infoName=document.getElementById(&#x27;infoName&#x27;),infoValue=document.getElementById(&#x27;infoValue&#x27;),infoDot=document.getElementById(&#x27;infoDot&#x27;),infoCooc=document.getElementById(&#x27;infoCooc&#x27;),tip=document.getElementById(&#x27;tip&#x27;);
 const cooccurrences={
-  'Corrupción':'Corrupción → Institucional',
-  'Institucional':'Corrupción → Institucional',
-  'Marco de responsabilidad':'Marco de responsabilidad → Igualdad',
-  'Igualdad':'Marco de responsabilidad → Igualdad',
-  'Análisis de riesgo':'Análisis de riesgo → Propiedad → Teleología',
-  'Propiedad':'Análisis de riesgo → Propiedad → Teleología',
-  'Teleología':'Análisis de riesgo → Propiedad → Teleología',
-  'Tecnológica':'Tecnológica → Evidencia',
-  'Evidencia':'Tecnológica → Evidencia'
+  &#x27;Corrupción&#x27;:&#x27;Corrupción → Institucional&#x27;,
+  &#x27;Institucional&#x27;:&#x27;Corrupción → Institucional&#x27;,
+  &#x27;Marco de responsabilidad&#x27;:&#x27;Marco de responsabilidad → Igualdad&#x27;,
+  &#x27;Igualdad&#x27;:&#x27;Marco de responsabilidad → Igualdad&#x27;,
+  &#x27;Análisis de riesgo&#x27;:&#x27;Análisis de riesgo → Propiedad → Teleología&#x27;,
+  &#x27;Propiedad&#x27;:&#x27;Análisis de riesgo → Propiedad → Teleología&#x27;,
+  &#x27;Teleología&#x27;:&#x27;Análisis de riesgo → Propiedad → Teleología&#x27;,
+  &#x27;Tecnológica&#x27;:&#x27;Tecnológica → Evidencia&#x27;,
+  &#x27;Evidencia&#x27;:&#x27;Tecnológica → Evidencia&#x27;
 };
-const reveal=new IntersectionObserver(([e])=>{if(e.isIntersecting){root.classList.add('ready');reveal.disconnect()}},{threshold:.12});
+const reveal=new IntersectionObserver(([e])=&gt;{if(e.isIntersecting){root.classList.add(&#x27;ready&#x27;);reveal.disconnect()}},{threshold:.12});
 reveal.observe(root);
 
 // Escalado responsive robusto: calcula el ancho disponible real y evita que
 // transform + overflow recorten las columnas de la derecha en navegadores móviles.
-const chart=document.querySelector('.chart');
+const chart=document.querySelector(&#x27;.chart&#x27;);
 let userZoom=1,panX=0,panY=0;
 const MIN_ZOOM=.65,MAX_ZOOM=2.4,ZOOM_STEP=.15;
 function fitChart(){
-  if(window.innerWidth<=720){
+  if(window.innerWidth&lt;=720){
     const available=Math.max(280, document.documentElement.clientWidth);
     const baseScale=available/1400;
     const scale=baseScale*userZoom;
@@ -267,10 +380,10 @@ function fitChart(){
     chart.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`;
     chart.style.marginBottom=`${-680+(680*scale)}px`;
   }else{
-    chart.style.transform=userZoom===1&&panX===0&&panY===0?'':`translate(${panX}px,${panY}px) scale(${userZoom})`;
-    chart.style.transformOrigin='top center';
-    chart.style.marginLeft='';
-    chart.style.marginBottom=userZoom===1?'':`${680*(userZoom-1)}px`;
+    chart.style.transform=userZoom===1&amp;&amp;panX===0&amp;&amp;panY===0?&#x27;&#x27;:`translate(${panX}px,${panY}px) scale(${userZoom})`;
+    chart.style.transformOrigin=&#x27;top center&#x27;;
+    chart.style.marginLeft=&#x27;&#x27;;
+    chart.style.marginBottom=userZoom===1?&#x27;&#x27;:`${680*(userZoom-1)}px`;
   }
 }
 function setZoom(z){
@@ -278,44 +391,44 @@ function setZoom(z){
   if(userZoom===1){panX=0;panY=0;}
   fitChart();
 }
-document.getElementById('zoomIn').addEventListener('click',()=>setZoom(userZoom+ZOOM_STEP));
-document.getElementById('zoomOut').addEventListener('click',()=>setZoom(userZoom-ZOOM_STEP));
-document.getElementById('zoomReset').addEventListener('click',()=>{userZoom=1;panX=0;panY=0;fitChart();});
+document.getElementById(&#x27;zoomIn&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setZoom(userZoom+ZOOM_STEP));
+document.getElementById(&#x27;zoomOut&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setZoom(userZoom-ZOOM_STEP));
+document.getElementById(&#x27;zoomReset&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{userZoom=1;panX=0;panY=0;fitChart();});
 
-chart.addEventListener('wheel',e=>{
-  if(e.ctrlKey||e.metaKey){e.preventDefault();setZoom(userZoom+(e.deltaY<0?ZOOM_STEP:-ZOOM_STEP));}
+chart.addEventListener(&#x27;wheel&#x27;,e=&gt;{
+  if(e.ctrlKey||e.metaKey){e.preventDefault();setZoom(userZoom+(e.deltaY&lt;0?ZOOM_STEP:-ZOOM_STEP));}
 },{passive:false});
 
 let pinchStartDistance=null,pinchStartZoom=1;
 let panStartX=null,panStartY=null,panOriginX=0,panOriginY=0;
-chart.addEventListener('touchstart',e=>{
+chart.addEventListener(&#x27;touchstart&#x27;,e=&gt;{
   if(e.touches.length===2){
     pinchStartDistance=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
     pinchStartZoom=userZoom;
     panStartX=panStartY=null;
-  }else if(e.touches.length===1&&userZoom>1){
+  }else if(e.touches.length===1&amp;&amp;userZoom&gt;1){
     panStartX=e.touches[0].clientX;
     panStartY=e.touches[0].clientY;
     panOriginX=panX;
     panOriginY=panY;
   }
 },{passive:true});
-chart.addEventListener('touchmove',e=>{
-  if(e.touches.length===2&&pinchStartDistance){
+chart.addEventListener(&#x27;touchmove&#x27;,e=&gt;{
+  if(e.touches.length===2&amp;&amp;pinchStartDistance){
     e.preventDefault();
     const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
     setZoom(pinchStartZoom*(d/pinchStartDistance));
-  }else if(e.touches.length===1&&userZoom>1&&panStartX!==null){
+  }else if(e.touches.length===1&amp;&amp;userZoom&gt;1&amp;&amp;panStartX!==null){
     e.preventDefault();
     panX=panOriginX+(e.touches[0].clientX-panStartX);
     panY=panOriginY+(e.touches[0].clientY-panStartY);
     fitChart();
   }
 },{passive:false});
-chart.addEventListener('touchend',e=>{
-  if(e.touches.length<2)pinchStartDistance=null;
+chart.addEventListener(&#x27;touchend&#x27;,e=&gt;{
+  if(e.touches.length&lt;2)pinchStartDistance=null;
   if(e.touches.length===0){panStartX=panStartY=null;}
-  else if(e.touches.length===1&&userZoom>1){
+  else if(e.touches.length===1&amp;&amp;userZoom&gt;1){
     panStartX=e.touches[0].clientX;
     panStartY=e.touches[0].clientY;
     panOriginX=panX;
@@ -324,52 +437,78 @@ chart.addEventListener('touchend',e=>{
 },{passive:true});
 
 fitChart();
-window.addEventListener('resize',fitChart,{passive:true});
-window.addEventListener('orientationchange',()=>setTimeout(fitChart,80),{passive:true});
+window.addEventListener(&#x27;resize&#x27;,fitChart,{passive:true});
+window.addEventListener(&#x27;orientationchange&#x27;,()=&gt;setTimeout(fitChart,80),{passive:true});
 
-document.querySelectorAll('.node').forEach(n=>{
+document.querySelectorAll(&#x27;.node&#x27;).forEach(n=&gt;{
   n.tabIndex=0;
-  const activate=()=>{
-    const c=getComputedStyle(n).getPropertyValue('--c').trim();
-    infoName.textContent=n.dataset.name; infoValue.textContent=n.dataset.value; infoCooc.textContent=cooccurrences[n.dataset.name]?'↳ '+cooccurrences[n.dataset.name]:''; infoDot.style.background=c;
+  const activate=()=&gt;{
+    const c=getComputedStyle(n).getPropertyValue(&#x27;--c&#x27;).trim();
+    infoName.textContent=n.dataset.name; infoValue.textContent=n.dataset.value; infoCooc.textContent=cooccurrences[n.dataset.name]?&#x27;↳ &#x27;+cooccurrences[n.dataset.name]:&#x27;&#x27;; infoDot.style.background=c;
   };
-  n.addEventListener('click',activate);
-  n.addEventListener('focus',activate);
-  n.addEventListener('pointerenter',e=>{
-    activate(); tip.textContent=n.dataset.name+' · '+n.dataset.value; tip.classList.add('show');
+  n.addEventListener(&#x27;click&#x27;,activate);
+  n.addEventListener(&#x27;focus&#x27;,activate);
+  n.addEventListener(&#x27;pointerenter&#x27;,e=&gt;{
+    activate(); tip.textContent=n.dataset.name+&#x27; · &#x27;+n.dataset.value; tip.classList.add(&#x27;show&#x27;);
   });
-  n.addEventListener('pointermove',e=>{tip.style.left=e.clientX+'px';tip.style.top=e.clientY+'px'});
-  n.addEventListener('pointerleave',()=>tip.classList.remove('show'));
+  n.addEventListener(&#x27;pointermove&#x27;,e=&gt;{tip.style.left=e.clientX+&#x27;px&#x27;;tip.style.top=e.clientY+&#x27;px&#x27;});
+  n.addEventListener(&#x27;pointerleave&#x27;,()=&gt;tip.classList.remove(&#x27;show&#x27;));
 });
 
-document.querySelectorAll('.ribbon').forEach(r=>{
-  const activate=()=>{
+document.querySelectorAll(&#x27;.ribbon&#x27;).forEach(r=&gt;{
+  const activate=()=&gt;{
     infoName.textContent=r.dataset.relation;
     infoValue.textContent=r.dataset.value;
     infoDot.style.background=r.dataset.color;
   };
-  r.addEventListener('click',e=>{activate(); tip.textContent=r.dataset.relation; tip.style.left=e.clientX+'px'; tip.style.top=e.clientY+'px'; tip.classList.add('show'); setTimeout(()=>tip.classList.remove('show'),1400);});
-  r.addEventListener('focus',activate);
-  r.addEventListener('pointerenter',e=>{activate(); tip.textContent=r.dataset.relation; tip.classList.add('show');});
-  r.addEventListener('pointermove',e=>{tip.style.left=e.clientX+'px';tip.style.top=e.clientY+'px'});
-  r.addEventListener('pointerleave',()=>tip.classList.remove('show'));
+  r.addEventListener(&#x27;click&#x27;,e=&gt;{activate(); tip.textContent=r.dataset.relation; tip.style.left=e.clientX+&#x27;px&#x27;; tip.style.top=e.clientY+&#x27;px&#x27;; tip.classList.add(&#x27;show&#x27;); setTimeout(()=&gt;tip.classList.remove(&#x27;show&#x27;),1400);});
+  r.addEventListener(&#x27;focus&#x27;,activate);
+  r.addEventListener(&#x27;pointerenter&#x27;,e=&gt;{activate(); tip.textContent=r.dataset.relation; tip.classList.add(&#x27;show&#x27;);});
+  r.addEventListener(&#x27;pointermove&#x27;,e=&gt;{tip.style.left=e.clientX+&#x27;px&#x27;;tip.style.top=e.clientY+&#x27;px&#x27;});
+  r.addEventListener(&#x27;pointerleave&#x27;,()=&gt;tip.classList.remove(&#x27;show&#x27;));
 });
 // Área táctil invisible más amplia para las bandas, sin alterar su aspecto.
-document.querySelectorAll('.ribbon').forEach(r=>{
+document.querySelectorAll(&#x27;.ribbon&#x27;).forEach(r=&gt;{
   const hit=r.cloneNode(false);
-  hit.removeAttribute('class');
-  hit.setAttribute('class','ribbon-hit');
-  hit.setAttribute('stroke','transparent');
-  hit.setAttribute('stroke-width',String(Math.max(58,Number(r.getAttribute('stroke-width')||0)+24)));
-  hit.setAttribute('fill','none');
-  hit.style.pointerEvents='stroke';
-  hit.style.cursor='pointer';
-  hit.style.touchAction='manipulation';
+  hit.removeAttribute(&#x27;class&#x27;);
+  hit.setAttribute(&#x27;class&#x27;,&#x27;ribbon-hit&#x27;);
+  hit.setAttribute(&#x27;stroke&#x27;,&#x27;transparent&#x27;);
+  hit.setAttribute(&#x27;stroke-width&#x27;,String(Math.max(58,Number(r.getAttribute(&#x27;stroke-width&#x27;)||0)+24)));
+  hit.setAttribute(&#x27;fill&#x27;,&#x27;none&#x27;);
+  hit.style.pointerEvents=&#x27;stroke&#x27;;
+  hit.style.cursor=&#x27;pointer&#x27;;
+  hit.style.touchAction=&#x27;manipulation&#x27;;
   r.parentNode.insertBefore(hit,r.nextSibling);
-  const activate=()=>{infoName.textContent=r.dataset.relation;infoValue.textContent='Coocurrencia';infoCooc.textContent='';infoDot.style.background=r.dataset.color;};
-  hit.addEventListener('pointerdown',e=>{e.preventDefault();activate();});
-  hit.addEventListener('click',activate);
+  const activate=()=&gt;{infoName.textContent=r.dataset.relation;infoValue.textContent=&#x27;Coocurrencia&#x27;;infoCooc.textContent=&#x27;&#x27;;infoDot.style.background=r.dataset.color;};
+  hit.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{e.preventDefault();activate();});
+  hit.addEventListener(&#x27;click&#x27;,activate);
 });
 
-</script></body>
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;"
+      loading="eager">
+    </iframe>
+  </section>
+
+  <section class="resources">
+    <a class="resource-link" href="etica/">Ontología (SKOS)</a>
+
+    <details class="notes">
+      <summary>Apuntes</summary>
+      <ul class="notes-list">
+        <li><a href="apuntes/ciencias-de-la-decision/">Ciencias de la Decisión</a></li>
+        <li><a href="apuntes/etica-en-investigacion/">Ética en investigación</a></li>
+      </ul>
+    </details>
+  </section>
+
+  <footer>
+    <img src="images/Mosquera.jpeg" alt="Mariano Mosquera" class="footer-image">
+    <a class="footer-link" href="https://marianomosquera.github.io/bio">marianomosquera.github.io/bio</a>
+    <a class="footer-link" href="https://www.marianomosquera.com">www.marianomosquera.com</a>
+  </footer>
+
+</main>
+</body>
 </html>
