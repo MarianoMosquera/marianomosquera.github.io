@@ -307,7 +307,7 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
   /* Panel de lectura independiente del escalado del gráfico. */
   .info{margin:18px auto 0;padding:10px 15px;gap:12px;font-size:14px;width:fit-content;max-width:94vw;white-space:normal;flex-wrap:wrap}
   .dot{width:19px;height:19px;min-width:19px;min-height:19px;flex:0 0 19px}.sep{height:27px}.cooc{flex-basis:100%;text-align:center;margin-top:-4px}
-  .zoom-controls{position:absolute;right:14px;bottom:0;top:auto;z-index:9999;display:flex;visibility:visible;opacity:.88;transform:translateY(100%);margin-top:12px;}
+  .zoom-controls{position:static;z-index:9999;display:flex;visibility:visible;opacity:.88;width:fit-content;margin:10px 14px 0 auto;transform:none;}
 }
 
 /* Corrección puntual: ejes verticales de las cuatro barras equidistantes. */
@@ -376,11 +376,11 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
   &lt;/section&gt;
 
   &lt;div class=&quot;info&quot; id=&quot;info&quot;&gt;&lt;span class=&quot;dot&quot; id=&quot;infoDot&quot;&gt;&lt;/span&gt;&lt;span id=&quot;infoName&quot;&gt;Corrupción&lt;/span&gt;&lt;span class=&quot;sep&quot;&gt;&lt;/span&gt;&lt;span class=&quot;value&quot; id=&quot;infoValue&quot;&gt;0,22&lt;/span&gt;&lt;span class=&quot;cooc&quot; id=&quot;infoCooc&quot;&gt;&lt;/span&gt;&lt;/div&gt;
-&lt;/div&gt;
 &lt;div class=&quot;zoom-controls&quot; aria-label=&quot;Controles de zoom&quot;&gt;
   &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomIn&quot; type=&quot;button&quot; aria-label=&quot;Acercar&quot; title=&quot;Acercar&quot;&gt;⌕+&lt;/button&gt;
   &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomOut&quot; type=&quot;button&quot; aria-label=&quot;Alejar&quot; title=&quot;Alejar&quot;&gt;⌕−&lt;/button&gt;
   &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomReset&quot; type=&quot;button&quot; aria-label=&quot;Restablecer zoom&quot; title=&quot;Restablecer zoom&quot;&gt;↺&lt;/button&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;tip&quot; id=&quot;tip&quot;&gt;&lt;/div&gt;
 &lt;script&gt;
