@@ -193,7 +193,7 @@ footer {
     margin-left: -18px;
     margin-top: 38px;
   }
-  .chart-frame { height: 720px; }
+  .chart-frame { height: 420px; }
   /* Solo responsive: elimina el espacio sobrante entre el final visible del gráfico y los recursos. */
   .chart-frame { margin-bottom: -120px; }
   .resources { margin-top: 12px; }
@@ -624,7 +624,10 @@ setTimeout(refreshEmbeddedChart,700);
   const frame=document.querySelector('.chart-frame');
   window.addEventListener('message',function(e){
     if(!frame || e.source!==frame.contentWindow || !e.data || e.data.type!=='chart-height') return;
-    const h=Math.max(520,Math.min(1100,Number(e.data.height)||860));
+    const reported=Number(e.data.height)||860;
+    const h=window.innerWidth<=700
+      ? Math.max(260,Math.min(1100,reported))
+      : Math.max(520,Math.min(1100,reported));
     frame.style.height=h+'px';
   });
 })();
