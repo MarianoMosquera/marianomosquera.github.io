@@ -376,11 +376,6 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
   &lt;/section&gt;
 
   &lt;div class=&quot;info&quot; id=&quot;info&quot;&gt;&lt;span class=&quot;dot&quot; id=&quot;infoDot&quot;&gt;&lt;/span&gt;&lt;span id=&quot;infoName&quot;&gt;Corrupción&lt;/span&gt;&lt;span class=&quot;sep&quot;&gt;&lt;/span&gt;&lt;span class=&quot;value&quot; id=&quot;infoValue&quot;&gt;0,22&lt;/span&gt;&lt;span class=&quot;cooc&quot; id=&quot;infoCooc&quot;&gt;&lt;/span&gt;&lt;/div&gt;
-&lt;div class=&quot;zoom-controls&quot; aria-label=&quot;Controles de zoom&quot;&gt;
-  &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomIn&quot; type=&quot;button&quot; aria-label=&quot;Acercar&quot; title=&quot;Acercar&quot;&gt;⌕+&lt;/button&gt;
-  &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomOut&quot; type=&quot;button&quot; aria-label=&quot;Alejar&quot; title=&quot;Alejar&quot;&gt;⌕−&lt;/button&gt;
-  &lt;button class=&quot;zoom-btn&quot; id=&quot;zoomReset&quot; type=&quot;button&quot; aria-label=&quot;Restablecer zoom&quot; title=&quot;Restablecer zoom&quot;&gt;↺&lt;/button&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&quot;tip&quot; id=&quot;tip&quot;&gt;&lt;/div&gt;
 &lt;script&gt;
@@ -425,10 +420,6 @@ function setZoom(z){
   if(userZoom===1){panX=0;panY=0;}
   fitChart();
 }
-document.getElementById(&#x27;zoomIn&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setZoom(userZoom+ZOOM_STEP));
-document.getElementById(&#x27;zoomOut&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setZoom(userZoom-ZOOM_STEP));
-document.getElementById(&#x27;zoomReset&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{userZoom=1;panX=0;panY=0;fitChart();});
-
 chart.addEventListener(&#x27;wheel&#x27;,e=&gt;{
   if(e.ctrlKey||e.metaKey){e.preventDefault();setZoom(userZoom+(e.deltaY&lt;0?ZOOM_STEP:-ZOOM_STEP));}
 },{passive:false});
