@@ -86,9 +86,10 @@ h1 {
 .chart-frame {
   display: block;
   width: 100%;
-  height: 790px;
+  height: 860px;
   border: 0;
   background: #fff;
+  overflow: hidden;
 }
 .resources {
   max-width: 850px;
@@ -123,13 +124,38 @@ details.notes summary::-webkit-details-marker { display:none; }
 details.notes summary::after { content:" +"; text-decoration:none; }
 details.notes[open] summary::after { content:" −"; }
 .notes-list {
-  padding: 13px 0 0 18px;
-  margin: 0;
+  position: relative;
+  margin: 10px 0 0 8px;
+  padding: 4px 0 2px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.notes-list::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 13px;
+  width: 1px;
+  background: #bfc7d1;
 }
 .notes-list a {
+  position: relative;
+  display: block;
+  width: fit-content;
   color: #555;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+.notes-list a::before {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  width: 16px;
+  height: 1px;
+  background: #bfc7d1;
 }
 footer {
   margin-top: 58px;
@@ -167,7 +193,7 @@ footer {
     margin-left: -18px;
     margin-top: 38px;
   }
-  .chart-frame { height: 760px; }
+  .chart-frame { height: 720px; }
   .resources { margin-top: 28px; }
 }
 </style>
@@ -198,7 +224,7 @@ footer {
       <div class="definition"><span class="definition-arrow">→</span><div>Gobernanza: Adecuación a la acción, incluye compliance, accountability y engagement.</div></div>
     </div>
 
-    <p><strong>Investigación:</strong> Análisis de documentación especializada para la construcción de una clasificación relacional de conceptos (ontología, OD). Medición de prevalencia, coocurrencia y evolución de la OD. Acceso a <a class="section-link" href="https://marianomosquera.github.io/apuntes/doctec">documento técnico</a> y acceso a <a class="section-link" href="https://github.com/marianomosquera/marianomosquera.github.io">repositorio abierto</a>.</p>
+    <p><strong>Investigación:</strong> Análisis de documentación especializada para la construcción de una clasificación relacional de conceptos (ontología, OD). Medición de prevalencia, coocurrencia y evolución de la OD. Acceso a <a class="section-link" href="https://marianomosquera.github.io/apuntes/doctec">documento técnico</a> y acceso a <a class="section-link" href="https://github.com/MarianoMosquera">repositorio abierto</a>.</p>
 
     <p><strong>Impacto:</strong> Identificación de escenarios de vanguardia y de puntos críticos presentes en el conocimiento experto, para diseñar y desarrollar procesos de mejora en ética institucional y transparencia.</p>
   </section>
@@ -220,8 +246,8 @@ footer {
   --purple:#8347ec; --green:#55c86a; --orange:#ff9138; --sky:#55a9ef;
 }
 *{box-sizing:border-box}
-html{background:#fff;scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:&quot;Rajdhani&quot;,&quot;Orbitron&quot;,&quot;Eurostile&quot;,&quot;Bank Gothic&quot;,&quot;Trebuchet MS&quot;,Arial,sans-serif}
+html{background:#fff;scroll-behavior:smooth;overflow:hidden}
+body{margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:&quot;Rajdhani&quot;,&quot;Orbitron&quot;,&quot;Eurostile&quot;,&quot;Bank Gothic&quot;,&quot;Trebuchet MS&quot;,Arial,sans-serif}
 .wrap{width:min(1600px,96vw);margin:auto;padding:clamp(22px,4vw,54px) clamp(10px,2vw,28px) 32px}
 h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw,57px)}
 .meta{margin:0 0 clamp(28px,4vw,58px);font-size:clamp(9px,.72vw,11px);letter-spacing:.14em;color:var(--muted);font-weight:500}.meta .vsep{display:inline-block;width:1px;height:.9em;background:#aeb7c5;margin:0 9px;vertical-align:-.08em}
@@ -302,14 +328,14 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
         &lt;linearGradient id=&quot;g4&quot;&gt;&lt;stop stop-color=&quot;#8347ec&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#ffbd28&quot;/&gt;&lt;/linearGradient&gt;
       &lt;/defs&gt;
       &lt;!-- Solo las cuatro relaciones del archivo fuente --&gt;
-      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Corrupción → Institucional&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#2f80ed&quot; pathLength=&quot;1&quot; style=&quot;--delay:.35s&quot; d=&quot;M274 52 C500 52 690 174 918 174&quot; stroke=&quot;url(#g1)&quot; stroke-width=&quot;42&quot;/&gt;
-      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Marco de responsabilidad → Igualdad&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#ff5157&quot; pathLength=&quot;1&quot; style=&quot;--delay:.52s&quot; d=&quot;M274 158 C360 158 414 304 516 304&quot; stroke=&quot;url(#g2)&quot; stroke-width=&quot;35&quot;/&gt;
-      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Análisis de riesgo → Propiedad → Teleología&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#18bfae&quot; pathLength=&quot;1&quot; style=&quot;--delay:.69s&quot; d=&quot;M274 322 C365 322 410 390 516 390 C760 390 1030 120 1236 120&quot; stroke=&quot;url(#g3)&quot; stroke-width=&quot;38&quot;/&gt;
-      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Tecnológica → Evidencia&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#8347ec&quot; pathLength=&quot;1&quot; style=&quot;--delay:.86s&quot; d=&quot;M918 360 C1040 360 1110 515 1236 515&quot; stroke=&quot;url(#g4)&quot; stroke-width=&quot;36&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Corrupción → Institucional&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#2f80ed&quot; pathLength=&quot;1&quot; style=&quot;--delay:.35s&quot; d=&quot;&quot; stroke=&quot;url(#g1)&quot; stroke-width=&quot;42&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Marco de responsabilidad → Igualdad&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#ff5157&quot; pathLength=&quot;1&quot; style=&quot;--delay:.52s&quot; d=&quot;&quot; stroke=&quot;url(#g2)&quot; stroke-width=&quot;35&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Análisis de riesgo → Propiedad → Teleología&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#18bfae&quot; pathLength=&quot;1&quot; style=&quot;--delay:.69s&quot; d=&quot;&quot; stroke=&quot;url(#g3)&quot; stroke-width=&quot;38&quot;/&gt;
+      &lt;path class=&quot;ribbon&quot; tabindex=&quot;0&quot; data-relation=&quot;Tecnológica → Evidencia&quot; data-value=&quot;Coocurrencia&quot; data-color=&quot;#8347ec&quot; pathLength=&quot;1&quot; style=&quot;--delay:.86s&quot; d=&quot;&quot; stroke=&quot;url(#g4)&quot; stroke-width=&quot;36&quot;/&gt;
     &lt;/svg&gt;
 
     &lt;div class=&quot;cols&quot;&gt;
-      &lt;div class=&quot;col gov&quot;&gt;&lt;h2&gt;GOBERNANZA&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+      &lt;div class=&quot;col gov&quot; data-col=&quot;gov&quot;&gt;&lt;h2&gt;GOBERNANZA&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Corrupción&quot; data-value=&quot;0,22&quot; style=&quot;--i:0;--y:0px;--h:104px;--c:#2f80ed&quot;&gt;&lt;span class=&quot;label&quot;&gt;Corrupción&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Marco de responsabilidad&quot; data-value=&quot;0,18&quot; style=&quot;--i:1;--y:116px;--h:85.09px;--c:#ff5157&quot;&gt;&lt;span class=&quot;label&quot;&gt;Marco de&lt;br&gt;responsabilidad&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Mecanismos de control&quot; data-value=&quot;0,14&quot; style=&quot;--i:2;--y:213px;--h:66.18px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;label&quot;&gt;Mecanismos&lt;br&gt;de control&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
@@ -320,7 +346,7 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
         &lt;div class=&quot;node&quot; data-name=&quot;Régimen de sanciones&quot; data-value=&quot;0,06&quot; style=&quot;--i:7;--y:528px;--h:28.36px;--c:#55a9ef&quot;&gt;&lt;span class=&quot;label&quot;&gt;Régimen de sanciones&lt;/span&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;/div&gt;
       &lt;/div&gt;&lt;/div&gt;
 
-      &lt;div class=&quot;col val&quot;&gt;&lt;h2&gt;VALORES&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+      &lt;div class=&quot;col val&quot; data-col=&quot;val&quot;&gt;&lt;h2&gt;VALORES&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Justicia&quot; data-value=&quot;0,28&quot; style=&quot;--i:0;--y:0px;--h:118px;--c:#45c96a&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Justicia&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Cooperación&quot; data-value=&quot;0,28&quot; style=&quot;--i:1;--y:130px;--h:118px;--c:#7bd88b&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Cooperación&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Igualdad&quot; data-value=&quot;0,21&quot; style=&quot;--i:2;--y:260px;--h:89px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Igualdad&lt;/span&gt;&lt;/div&gt;
@@ -329,7 +355,7 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
         &lt;div class=&quot;node&quot; data-name=&quot;Competencia&quot; data-value=&quot;0,05&quot; style=&quot;--i:5;--y:501px;--h:21.07px;--c:#a875ef&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Competencia&lt;/span&gt;&lt;/div&gt;
       &lt;/div&gt;&lt;/div&gt;
 
-      &lt;div class=&quot;col age&quot;&gt;&lt;h2&gt;AGENDA&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+      &lt;div class=&quot;col age&quot; data-col=&quot;age&quot;&gt;&lt;h2&gt;AGENDA&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Social&quot; data-value=&quot;0,27&quot; style=&quot;--i:0;--y:0px;--h:108px;--c:#ff5157&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Social&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Institucional&quot; data-value=&quot;0,27&quot; style=&quot;--i:1;--y:120px;--h:108px;--c:#ff5157&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Institucional&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Política&quot; data-value=&quot;0,16&quot; style=&quot;--i:2;--y:240px;--h:64px;--c:#ff777a&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Política&lt;/span&gt;&lt;/div&gt;
@@ -338,7 +364,7 @@ h1{margin:0 0 4px;font-weight:500;letter-spacing:.025em;font-size:clamp(29px,4vw
         &lt;div class=&quot;node&quot; data-name=&quot;Ambiental&quot; data-value=&quot;0,03&quot; style=&quot;--i:5;--y:475px;--h:12px;--c:#55c86a&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Ambiental&lt;/span&gt;&lt;/div&gt;
       &lt;/div&gt;&lt;/div&gt;
 
-      &lt;div class=&quot;col rat&quot;&gt;&lt;h2&gt;RACIONALIDAD&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
+      &lt;div class=&quot;col rat&quot; data-col=&quot;rat&quot;&gt;&lt;h2&gt;RACIONALIDAD&lt;/h2&gt;&lt;div class=&quot;nodes&quot;&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Teleología&quot; data-value=&quot;0,46&quot; style=&quot;--i:0;--y:0px;--h:240px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Teleología&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Teoría&quot; data-value=&quot;0,40&quot; style=&quot;--i:1;--y:252px;--h:208.70px;--c:#ff9138&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Teoría&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;node&quot; data-name=&quot;Evidencia&quot; data-value=&quot;0,14&quot; style=&quot;--i:2;--y:473px;--h:73.04px;--c:#ffbd28&quot;&gt;&lt;span class=&quot;bar&quot;&gt;&lt;/span&gt;&lt;span class=&quot;label&quot;&gt;Evidencia&lt;/span&gt;&lt;/div&gt;
@@ -442,8 +468,8 @@ chart.addEventListener(&#x27;touchend&#x27;,e=&gt;{
 },{passive:true});
 
 fitChart();
-window.addEventListener(&#x27;resize&#x27;,fitChart,{passive:true});
-window.addEventListener(&#x27;orientationchange&#x27;,()=&gt;setTimeout(fitChart,80),{passive:true});
+window.addEventListener(&#x27;resize&#x27;,()=&gt;{fitChart();setTimeout(refreshEmbeddedChart,20)},{passive:true});
+window.addEventListener(&#x27;orientationchange&#x27;,()=&gt;setTimeout(()=&gt;{fitChart();refreshEmbeddedChart()},80),{passive:true});
 
 document.querySelectorAll(&#x27;.node&#x27;).forEach(n=&gt;{
   n.tabIndex=0;
@@ -489,10 +515,84 @@ document.querySelectorAll(&#x27;.ribbon&#x27;).forEach(r=&gt;{
   hit.addEventListener(&#x27;click&#x27;,activate);
 });
 
+
+// Conectores calculados desde la geometría real de las barras.
+function nodeByName(name){
+  return [...document.querySelectorAll(&#x27;.node&#x27;)].find(n=&gt;n.dataset.name===name);
+}
+function barPoint(name, side){
+  const n=nodeByName(name);
+  if(!n) return null;
+  const b=n.querySelector(&#x27;.bar&#x27;).getBoundingClientRect();
+  const svg=document.querySelector(&#x27;.links&#x27;);
+  const sr=svg.getBoundingClientRect();
+  const vb=svg.viewBox.baseVal;
+  const xpx=side===&#x27;left&#x27; ? b.left : side===&#x27;right&#x27; ? b.right : (b.left+b.right)/2;
+  const ypx=(b.top+b.bottom)/2;
+  return {
+    x:(xpx-sr.left)*vb.width/sr.width,
+    y:(ypx-sr.top)*vb.height/sr.height
+  };
+}
+function cubic(a,b,bend=.48){
+  const dx=b.x-a.x;
+  const c1=a.x+dx*bend, c2=b.x-dx*bend;
+  return `M${a.x.toFixed(1)} ${a.y.toFixed(1)} C${c1.toFixed(1)} ${a.y.toFixed(1)} ${c2.toFixed(1)} ${b.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+}
+function multiPath(points){
+  if(points.length&lt;2) return &#x27;&#x27;;
+  let d=`M${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  for(let i=1;i&lt;points.length;i++){
+    const a=points[i-1], b=points[i], dx=b.x-a.x;
+    const c1=a.x+dx*.46, c2=b.x-dx*.46;
+    d+=` C${c1.toFixed(1)} ${a.y.toFixed(1)} ${c2.toFixed(1)} ${b.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+  }
+  return d;
+}
+function updateRibbons(){
+  const ribbons=[...document.querySelectorAll(&#x27;.ribbon&#x27;)];
+  const defs=[
+    [&#x27;Corrupción → Institucional&#x27;, [
+      barPoint(&#x27;Corrupción&#x27;,&#x27;right&#x27;), barPoint(&#x27;Institucional&#x27;,&#x27;left&#x27;)
+    ]],
+    [&#x27;Marco de responsabilidad → Igualdad&#x27;, [
+      barPoint(&#x27;Marco de responsabilidad&#x27;,&#x27;right&#x27;), barPoint(&#x27;Igualdad&#x27;,&#x27;left&#x27;)
+    ]],
+    [&#x27;Análisis de riesgo → Propiedad → Teleología&#x27;, [
+      barPoint(&#x27;Análisis de riesgo&#x27;,&#x27;right&#x27;), barPoint(&#x27;Propiedad&#x27;,&#x27;left&#x27;), barPoint(&#x27;Teleología&#x27;,&#x27;left&#x27;)
+    ]],
+    [&#x27;Tecnológica → Evidencia&#x27;, [
+      barPoint(&#x27;Tecnológica&#x27;,&#x27;right&#x27;), barPoint(&#x27;Evidencia&#x27;,&#x27;left&#x27;)
+    ]]
+  ];
+  defs.forEach(([relation,pts])=&gt;{
+    if(pts.some(p=&gt;!p)) return;
+    const r=ribbons.find(x=&gt;x.dataset.relation===relation);
+    if(r) r.setAttribute(&#x27;d&#x27;, multiPath(pts));
+    const hit=[...document.querySelectorAll(&#x27;.ribbon-hit&#x27;)].find(x=&gt;x.dataset.relation===relation);
+    if(hit) hit.setAttribute(&#x27;d&#x27;, multiPath(pts));
+  });
+}
+function reportHeight(){
+  const h=Math.ceil(document.documentElement.scrollHeight);
+  parent.postMessage({type:&#x27;chart-height&#x27;,height:h},&#x27;*&#x27;);
+}
+function refreshEmbeddedChart(){
+  requestAnimationFrame(()=&gt;{
+    updateRibbons();
+    requestAnimationFrame(reportHeight);
+  });
+}
+window.addEventListener(&#x27;load&#x27;,refreshEmbeddedChart,{once:true});
+window.addEventListener(&#x27;resize&#x27;,refreshEmbeddedChart,{passive:true});
+window.addEventListener(&#x27;orientationchange&#x27;,()=&gt;setTimeout(refreshEmbeddedChart,120),{passive:true});
+setTimeout(refreshEmbeddedChart,80);
+setTimeout(refreshEmbeddedChart,700);
+
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;"
-      loading="eager">
+      loading="eager" scrolling="no">
     </iframe>
   </section>
 
@@ -515,5 +615,17 @@ document.querySelectorAll(&#x27;.ribbon&#x27;).forEach(r=&gt;{
   </footer>
 
 </main>
+
+<script>
+(function(){
+  const frame=document.querySelector('.chart-frame');
+  window.addEventListener('message',function(e){
+    if(!frame || e.source!==frame.contentWindow || !e.data || e.data.type!=='chart-height') return;
+    const h=Math.max(520,Math.min(1100,Number(e.data.height)||860));
+    frame.style.height=h+'px';
+  });
+})();
+</script>
+
 </body>
 </html>
