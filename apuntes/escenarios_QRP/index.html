@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escenarios &amp; QRP — Apuntes</title>
+<meta name="description" content="Escenarios &amp; QRP">
+
+<style>
+:root{--ink:#111;--muted:#777;--rule:#d9d9d9;--paper:#fff;--max:1180px;--reading:720px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.shell{width:min(calc(100% - 64px),var(--max));margin:0 auto}
+.top{display:grid;grid-template-columns:1fr auto;align-items:center;padding:28px 0 18px;border-bottom:1px solid var(--ink);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.top .right{font-family:"Courier New",monospace;color:var(--muted)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:48px;padding:72px 0 66px;border-bottom:1px solid var(--rule)}
+.kicker{font-family:"Courier New",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+h1{font-size:clamp(46px,7vw,92px);line-height:.94;letter-spacing:-.055em;font-weight:500;max-width:900px;margin:0}
+.hero-meta{align-self:end;font-family:"Courier New",monospace;font-size:11px;line-height:1.65;color:var(--muted);text-transform:uppercase}
+.article-grid{display:grid;grid-template-columns:190px minmax(0,var(--reading));gap:48px;justify-content:start;padding:64px 0 90px}
+.index{font-family:"Courier New",monospace;font-size:10px;line-height:1.6;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);position:sticky;top:24px;align-self:start}
+.index span{display:block;border-top:1px solid var(--rule);padding-top:10px;margin-top:10px}
+.prose{font-size:18px;line-height:1.68;letter-spacing:-.012em}
+.prose p{margin:0 0 30px}
+.prose .lead{font-size:23px;line-height:1.5;letter-spacing:-.02em;margin-bottom:42px}
+.inline-link{border-bottom:1px solid var(--ink);padding-bottom:1px;transition:opacity .18s ease}
+.inline-link:hover{opacity:.48}
+.section-title{font-size:25px;line-height:1.25;letter-spacing:-.025em;font-weight:500;margin:62px 0 28px;padding-top:20px;border-top:1px solid var(--ink)}
+.download{margin:54px 0;padding:22px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;font-size:14px}
+.download small{display:block;font-family:"Courier New",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.download .arrow{font-size:24px;font-weight:300;transition:transform .18s ease}
+.download:hover .arrow{transform:translate(4px,-4px)}
+footer{border-top:1px solid var(--ink);padding:22px 0 36px;font-family:"Courier New",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:20px}
+
+@media(max-width:760px){
+.shell{width:min(calc(100% - 36px),var(--max))}
+.top{padding-top:20px}
+.hero{grid-template-columns:1fr;gap:30px;padding:48px 0 44px}
+h1{font-size:clamp(43px,14vw,68px)}
+.hero-meta{display:flex;gap:18px;flex-wrap:wrap}
+.article-grid{grid-template-columns:1fr;gap:28px;padding:38px 0 64px}
+.index{position:static;display:flex;gap:14px;flex-wrap:wrap}
+.index span{border:0;padding:0;margin:0}
+.prose{font-size:17px}
+.prose .lead{font-size:21px}
+.download{grid-template-columns:1fr auto}
+footer{flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<div class="shell">
+
+<header class="top">
+<div>Apuntes</div>
+<div class="right">Ética en investigación / 2026</div>
+</header>
+
+<section class="hero">
+<div>
+<div class="kicker">Universidad Católica de Córdoba</div>
+<h1>Escenarios &amp; QRP</h1>
+</div>
+</section>
+
+<main class="article-grid">
+
+<aside class="index">
+<span>01 / Escenarios &amp; QRP</span>
+<span>02 / Escenarios &amp; BRP</span>
+<span>03 / Sesgo confirmatorio</span>
+</aside>
+
+<article class="prose">
+
+<p class="lead">¿Qué condiciones deben existir para desarrollar prácticas responsables en investigación (RRP)? ¿Qué presiones estructurales favorecen prácticas cuestionables (QRP) y malas prácticas (BRP)? Una importante cantidad de bibliografía se ha interesado por la primera pregunta, pero no desde un punto de vista ético sino buscando esclarecer como se selecciona un buen problema de investigación científica. En este último sentido, se identifican dos elementos centrales: capacidades y agenda.</p>
+
+<p>Las capacidades incluyen: (a) recursos (tiempo, financiamiento, tecnología, entre otras posibilidades) y (b) experiencia (sobre todo como capacidad de identificación de información relevante, adaptación y decisión independiente de intereses ajenos a la ciencia). La agenda, por su parte, se vincula con el tema de investigación y como este es “interesante”, en un sentido que aporta (en diferentes niveles) conocimiento a la sociedad. Una agenda de investigación, por lo tanto, puede ser más o menos exigente.</p>
+
+<p>La coincidencia de capacidades y agenda entre las instituciones (IS) y los investigadores determina una especie de “acuerdo” sobre el problema de investigación. Otra forma de ver el asunto es que las instituciones científicas pueden determinar capacidades y agendas de investigación distintas, adaptadas al perfil de sus investigadores.</p>
+
+<p>En la <a class="inline-link" href="/apuntes/adjuntos/escenarios_QRP.pdf" target="_blank" rel="noopener">infografía</a> puede observarse en color verde tres escenarios de este tipo.</p>
+
+<p>1. Un investigador senior (con importante experiencia) desarrolla una agenda desafiante con importantes recursos económicos de la institución.<br>
+2. Un investigador junior (que se inicia en la investigación científica) se aboca a un problema sencillo con recursos limitados de la institución.<br>
+3. Un investigador postdoc aborda un problema con cierto interés científico y cuenta con fondos postdoctorales, pero no con recursos institucionales importantes.</p>
+
+<h2 class="section-title">Escenarios &amp; QRP</h2>
+
+<p>En la infografía, en color amarillo y rojo, pueden observarse una serie de escenarios donde (a diferencia de las RRP) las capacidades y agendas entre institución e investigador no coinciden. De esta forma, las condiciones se transforman en “presiones” que favorecen las QRP (amarillo) y las BRP (rojo). A continuación, describimos tres escenarios (A, B y C) que derivan en QRP.</p>
+
+<p>A. En este escenario un investigador inexperto acepta la agenda ambiciosa de la institución.<br>
+B. En otro escenario, la institución actúa responsablemente, pero el investigador inexperto por una presión de la carrera de investigador asume una agenda que lo excede.<br>
+C. En un tercer escenario, una institución sin capacidad y un investigador inexperto desarrollan una agenda superior.</p>
+
+<h2 class="section-title">Escenarios &amp; BRP</h2>
+
+<p>Con un investigador experto los escenarios derivan en malas prácticas de investigación (BRP, en rojo en la infografía).</p>
+
+<p>D. Una institución sin capacidad de mantener la independencia o sin recursos suficientes ejerce presión de agenda sobre un investigador experto que acepta desarrollar la investigación y comete fabricación o falsificación.<br>
+E. En este escenario, un investigador experto con suficientes recursos institucionales se aparta de la agenda de la institución intencionalmente (No-IS) por presiones de carrera (por ejemplo, se busca una resolución “rápida” de la investigación por múltiples objetivos del investigador).<br>
+F. Finalmente, una institución y un investigador pueden acordar sub-optimizar la agenda (por ejemplo, en la utilización de subsidios estatales de investigación, entre otras posibilidades fraudulentas).</p>
+
+<h2 class="section-title">Sesgo confirmatorio</h2>
+
+<p>Para finalizar esta publicación resulta de interés destacar una interpretación del denominado sesgo positivo o sesgo confirmatorio en el marco del debate sobre la agenda de investigación.</p>
+
+<p>Un problema (X) dentro de la agenda de IS puede esperar (como hipótesis) un resultado X. Pero, cuando el resultado del problema X es Y, podemos describir una serie de malas prácticas (BRP) y, también, de prácticas responsables en investigación (RRP).</p>
+
+<p>BRP:<br>
+■ Como Y afecta IS, un investigador incumple la máxima de verdad y con opacidad oculta de forma deliberada toda la investigación.<br>
+■ Como Y afecta IS, un investigador incumple la máxima de verdad y transforma Y en X con fabricación, falsificación o selectividad.<br>
+■ Como Y no afecta IS, un investigador cambia la hipótesis (HARKing) manifestando que X buscaba Y. Se trata de opacidad deliberada contra la transparencia del proceso (X resulta en no-X, luego en Y).</p>
+
+<p>RRP:<br>
+■ Como Y no afecta IS, un investigador muestra Y como hallazgo emergente.<br>
+■ Como Y afecta IS, un investigador de todas formas muestra Y como hallazgo emergente. Se trata de un predominio de la ciencia sobre IS. La ciencia que cuestiona el IS.</p>
+
+<p>Obsérvese que esta última opción es una nueva categoría en nuestros esquemas. Es decir, con las QRP los IS (considerados correctos a priori) se mal interpretan y con las BRP se incumplen deliberadamente. En este último caso, la ciencia cuestiona los IS, considerándose esto una RRP.</p>
+
+</article>
+</main>
+
+<footer>
+<span>Apuntes · Ética institucional</span>
+<span>Mariano Mosquera</span>
+</footer>
+
+</div>
+
+</body>
+</html>
