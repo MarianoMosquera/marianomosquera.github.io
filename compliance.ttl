@@ -20,10 +20,15 @@ comp:AnalisisRiesgo a skos:Concept ;
     skos:prefLabel "Análisis de riesgo"@es ;
     skos:broader comp:Compliance ;
     skos:narrower comp:DebidaDiligencia,
+                  comp:Seguros,
                   comp:Capacidad .
 
 comp:DebidaDiligencia a skos:Concept ;
     skos:prefLabel "Debida diligencia"@es ;
+    skos:broader comp:AnalisisRiesgo .
+
+comp:Seguros a skos:Concept ;
+    skos:prefLabel "Seguros"@es ;
     skos:broader comp:AnalisisRiesgo .
 
 comp:Capacidad a skos:Concept ;
