@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mariano Mosquera</title>
+<meta name="description" content="Bio de Mariano Mosquera.">
+
+<style>
+:root{
+  --ink:#111;
+  --muted:#777;
+  --rule:#d9d9d9;
+  --paper:#fff;
+  --max:1180px;
+  --reading:720px;
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.shell{
+  width:min(calc(100% - 64px),var(--max));
+  margin:0 auto;
+}
+
+/* HEADER */
+
+.top{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  min-height:88px;
+  border-bottom:1px solid var(--rule);
+}
+
+.brand{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.section-label{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* HERO */
+
+.hero{
+  padding:92px 0 76px;
+  border-bottom:1px solid var(--rule);
+}
+
+.hero h1{
+  margin:0;
+  max-width:900px;
+  font-size:clamp(54px,8vw,108px);
+  line-height:.9;
+  letter-spacing:-.055em;
+  font-weight:700;
+}
+
+/* CONTENT */
+
+.content{
+  display:grid;
+  grid-template-columns:180px minmax(0,var(--reading));
+  column-gap:72px;
+  padding:72px 0 110px;
+}
+
+.index{
+  font-size:12px;
+  line-height:1.5;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.index-number{
+  display:block;
+  margin-bottom:8px;
+  color:var(--ink);
+}
+
+.article{
+  max-width:var(--reading);
+}
+
+.article h2{
+  margin:0 0 38px;
+  font-size:15px;
+  line-height:1.2;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.article p{
+  margin:0;
+  font-size:21px;
+  line-height:1.62;
+  letter-spacing:-.015em;
+}
+
+.article p + p{
+  margin-top:28px;
+}
+
+/* FOOTER */
+
+.footer{
+  border-top:1px solid var(--rule);
+  padding:24px 0 42px;
+}
+
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:760px){
+
+  .shell{
+    width:min(calc(100% - 36px),var(--max));
+  }
+
+  .top{
+    min-height:70px;
+  }
+
+  .hero{
+    padding:64px 0 54px;
+  }
+
+  .hero h1{
+    font-size:clamp(48px,16vw,76px);
+  }
+
+  .content{
+    grid-template-columns:1fr;
+    gap:42px;
+    padding:50px 0 80px;
+  }
+
+  .index{
+    padding-bottom:20px;
+    border-bottom:1px solid var(--rule);
+  }
+
+  .article p{
+    font-size:19px;
+    line-height:1.58;
+  }
+
+  .footer-inner{
+    flex-direction:column;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="shell top">
+  <div class="brand">Mariano Mosquera</div>
+  <div class="section-label">Bio</div>
+</header>
+
+<main>
+
+  <section class="shell hero">
+    <h1>Mariano<br>Mosquera</h1>
+  </section>
+
+  <section class="shell content">
+
+    <aside class="index">
+      <span class="index-number">01</span>
+      Bio
+    </aside>
+
+    <article class="article">
+
+      <h2>Bio</h2>
+
+      <p>
+        Doctor en Ciencia Política por la Universidad Nacional de Córdoba (Argentina) y Posdoctorado de FLACSO Chile. Director del MBA y del Centro de Bioética de la Universidad Católica de Córdoba. Líder de proyecto para la iniciativa BITSS de la Universidad de Berkeley. Profesor e investigador en ética institucional, transparencia y anticorrupción en universidades de América Latina, España y China.
+      </p>
+
+      <p>
+        Fue becario del Centro de Ética de la Universidad de Harvard y trabajó para organismos internacionales como el Banco Interamericano de Desarrollo (BID) y el Programa de Naciones Unidas para el Desarrollo (PNUD). Fue consultor de la Oficina Anticorrupción de la Nación en Argentina. Autor de dos libros y de numerosos artículos científicos
+      </p>
+
+    </article>
+
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="shell footer-inner">
+    <div>Mariano Mosquera</div>
+    <div>Bio</div>
+  </div>
+</footer>
+
+</body>
+</html>
