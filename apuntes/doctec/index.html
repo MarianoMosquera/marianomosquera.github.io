@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documento técnico — Apuntes</title>
+<meta name="description" content="Documento técnico sobre corpus, ontología SKOS, inteligencia artificial y metodología de análisis de ética institucional.">
+<style>
+:root{--ink:#111;--muted:#777;--rule:#d9d9d9;--paper:#fff;--max:1180px;--reading:720px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.shell{width:min(calc(100% - 64px),var(--max));margin:0 auto}
+.top{display:grid;grid-template-columns:1fr auto;align-items:center;padding:28px 0 18px;border-bottom:1px solid var(--ink);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.top .right{font-family:"Courier New",monospace;color:var(--muted)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:48px;padding:72px 0 66px;border-bottom:1px solid var(--rule)}
+.kicker{font-family:"Courier New",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+h1{font-size:clamp(46px,7vw,92px);line-height:.94;letter-spacing:-.055em;font-weight:500;max-width:900px;margin:0}
+.hero-meta{align-self:end;font-family:"Courier New",monospace;font-size:11px;line-height:1.65;color:var(--muted);text-transform:uppercase}
+.article-grid{display:grid;grid-template-columns:190px minmax(0,var(--reading));gap:48px;justify-content:start;padding:64px 0 90px}
+.index{font-family:"Courier New",monospace;font-size:10px;line-height:1.6;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);position:sticky;top:24px;align-self:start}
+.index span{display:block;border-top:1px solid var(--rule);padding-top:10px;margin-top:10px}
+.prose{font-size:18px;line-height:1.68;letter-spacing:-.012em}
+.prose p{margin:0}
+.prose .lead{font-size:23px;line-height:1.5;letter-spacing:-.02em;margin-bottom:42px}
+.section{margin:0 0 58px}
+.section-title{font-family:"Courier New",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--ink);padding-top:12px;margin:0 0 28px}
+.points{counter-reset:item;margin:0}
+.point{display:grid;grid-template-columns:48px 1fr;gap:12px;padding:20px 0;border-bottom:1px solid var(--rule)}
+.point:before{counter-increment:item;content:"0" counter(item);font-family:"Courier New",monospace;font-size:10px;color:var(--muted);padding-top:5px}
+.point p{margin:0}
+.point strong{font-weight:600}
+footer{border-top:1px solid var(--ink);padding:22px 0 36px;font-family:"Courier New",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:20px}
+@media(max-width:760px){
+.shell{width:min(calc(100% - 36px),var(--max))}
+.top{padding-top:20px}
+.hero{grid-template-columns:1fr;gap:30px;padding:48px 0 44px}
+h1{font-size:clamp(43px,14vw,68px)}
+.hero-meta{display:flex;gap:18px;flex-wrap:wrap}
+.article-grid{grid-template-columns:1fr;gap:28px;padding:38px 0 64px}
+.index{position:static;display:flex;gap:14px;flex-wrap:wrap}
+.index span{border:0;padding:0;margin:0}
+.prose{font-size:17px}
+.prose .lead{font-size:21px}
+.point{grid-template-columns:38px 1fr}
+footer{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<header class="top">
+<div>Apuntes</div>
+<div class="right">Documento técnico / 2026</div>
+</header>
+
+<section class="hero">
+<div>
+<div class="kicker">Ética institucional</div>
+<h1>Documento técnico</h1>
+</div>
+</section>
+
+<main class="article-grid">
+
+<aside class="index">
+<span>01 / Corpus</span>
+<span>02 / SKOS / IA</span>
+<span>03 / UA</span>
+<span>04 / Análisis</span>
+<span>05 / Desambiguación</span>
+<span>06 / Output</span>
+<span>07 / Confiabilidad</span>
+<span>08 / Evolución</span>
+</aside>
+
+<article class="prose">
+
+<section class="section" id="corpus">
+<h2 class="section-title">01 / Corpus</h2>
+
+<div class="points">
+<div class="point">
+<p>Se utiliza una selección de artículos científicos e informes técnicos (<em>corpus</em> de documentos), en español e inglés del año 2026.</p>
+</div>
+
+<div class="point">
+<p>El criterio de selección (en OpenAlex, Elicit, y otras fuentes) refiere a “ética organizacional” y “ética” en un marco de estudios de ciencias sociales, ya que ambos resultan ser cercanos al enfoque de ética institucional.</p>
+</div>
+
+<div class="point">
+<p>En una segunda etapa se incorporan documentos vinculados a “corrupción” (35%) como estrategia para fortalecer la subrepresentación de la dimensión “gobernanza”.</p>
+</div>
+
+<div class="point">
+<p>Se eliminan los documentos sin vinculación directa, por medio de análisis automático y supervisión humana experta.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="skos-ia">
+<h2 class="section-title">02 / SKOS / IA</h2>
+
+<div class="points">
+<div class="point">
+<p>Se construye una versión de prueba de la ontología (O1), basada en estudios sobre ciencias de la decisión. Se utiliza SKOS (<em>Simple Knowledge Organization System</em>) para su sistematización. Algunas relaciones propias de SKOS son adaptadas al modelo (por ejemplo, “broader-narrower” no necesariamente implica “tipo de”, sino que indica una relación “primaria-secundaria” en el dominio semántico).</p>
+</div>
+
+<div class="point">
+<p>Se realizan pruebas del modelo, observando la adecuación de O1 al <em>corpus</em>. Se utiliza la API de OpenAI (Astra).</p>
+</div>
+
+<div class="point">
+<p>Se realizan pruebas de validación mediante supervisión humana experta sobre muestras del <em>corpus</em>, evaluando la consistencia de las clasificaciones y de las evidencias que las sustentan.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="ua">
+<h2 class="section-title">03 / UA</h2>
+
+<div class="points">
+<div class="point">
+<p>La unidad de análisis está constituida por cada documento (cada investigación experta). Es decir, la aparición “al menos una vez” de un elemento semántico de O1 en cada documento se computa como uno (1) mientras que la no-aparición como cero (0). Esto evita que la repetición de elementos por estilo narrativo distorsione el objetivo de identificar la ontología “en” las investigaciones expertas. El enfoque de aparición se diferencia de la orientación.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="analisis">
+<h2 class="section-title">04 / Análisis</h2>
+
+<div class="points">
+<div class="point">
+<p>La “aparición” refiere a la existencia de evidencia contextual suficiente (semántica, de entidades o ambas) correspondiente a una categoría de O1.</p>
+</div>
+
+<div class="point">
+<p>Existe trazabilidad de los positivos, ya que toda aparición (=1) está sustentada por evidencia identificable en el documento. Evidencia semántica (<code>_sem</code>), entidades (<code>_ent</code>) o ambas. No se infieren evidencias.</p>
+</div>
+
+<div class="point">
+<p>El análisis es independiente por documento (no se envía más de un documento por vez a la IA) y por categoría. Es decir, cada documento se procesa como unidad independiente y cada una de las categorías (pertenecientes a dimensiones) se evalúa de forma independiente, sin propagación automática entre categorías.</p>
+</div>
+
+<div class="point">
+<p>El SKOS es marco semántico, no diccionario. Es decir, la clasificación no depende de coincidencias literales, sino del significado contextual, la equivalencia semántica, las relaciones ontológicas, y la representación en entidades.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="desambiguacion">
+<h2 class="section-title">05 / Desambiguación</h2>
+
+<div class="points">
+<div class="point">
+<p>Como confusión entre la investigación y el objeto sustantivo de la investigación (esta confusión es especialmente importante en evidencia y <em>compliance</em> de ética en la investigación).</p>
+</div>
+
+<div class="point">
+<p>Cuando una evidencia puede corresponder a más de una categoría debe evaluarse su función contextual y justificarse independientemente cada asignación. Si la ambigüedad relevante persiste, se adopta un criterio conservador (=0).</p>
+</div>
+
+<div class="point">
+<p>Como distinción concepto-entidad. Una entidad nombrada no activa automáticamente una categoría. La entidad debe cumplir una función semánticamente pertinente.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="output">
+<h2 class="section-title">06 / Output</h2>
+
+<div class="points">
+<div class="point">
+<p>El procesamiento genera una base estadística estructurada de 76 campos y un <em>corpus</em> anotado que conserva las clasificaciones y sus evidencias semánticas y de entidades.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="confiabilidad">
+<h2 class="section-title">07 / Confiabilidad intra-modelo</h2>
+
+<div class="points">
+<div class="point">
+<p>Se incorporan deliberadamente documentos duplicados en el <em>corpus</em> como mecanismo de control de confiabilidad. Cada instancia duplicada es procesada de manera independiente y sin información sobre su duplicación. Se mide el grado de concordancia entre las clasificaciones obtenidas para textos idénticos. Las discrepancias constituyen una medida de variabilidad del análisis de la IA.</p>
+</div>
+</div>
+</section>
+
+
+<section class="section" id="evolucion">
+<h2 class="section-title">08 / Evolución</h2>
+
+<div class="points">
+<div class="point">
+<p>La evolución de la prevalencia y la identificación de conceptos emergentes y decadentes constituyen evidencia para la revisión periódica de O1. Los cambios validados permiten construir sucesivas versiones de una ontología dinámica (OD) para el análisis recurrente de grandes volúmenes documentales.</p>
+</div>
+
+<div class="point">
+<p>De todas formas, cada proceso de análisis se realiza con una versión identificada y estable de la ontología, preservando la trazabilidad y comparabilidad de los resultados.</p>
+</div>
+</div>
+</section>
+
+</article>
+</main>
+
+<footer>
+<span>Apuntes · Ética institucional</span>
+<span>Mariano Mosquera</span>
+</footer>
+
+</div>
+
+</body>
+</html>
