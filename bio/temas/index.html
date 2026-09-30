@@ -159,7 +159,7 @@ a{color:inherit}
       </div>
     </div>
     <div class="viewport">
-      <svg id="graph" viewBox="0 0 1440 1160" role="img" aria-label="Red de temas de Mariano Mosquera: Accountability y Compliance, con sus conceptos SKOS"></svg>
+      <svg id="graph" viewBox="0 0 1800 1500" role="img" aria-label="Red de temas de Mariano Mosquera: Accountability y Compliance, con sus conceptos SKOS"></svg>
     </div>
   </section>
 
@@ -348,12 +348,12 @@ a{color:inherit}
   setSide(A.children[0],-1);
   setSide(A.children[1],1);
 
-  const W=1440,H=1160,CX=720,CY=115;
+  const W=1800,H=1500,CX=900,CY=115;
   A.x=CX; A.y=CY;
 
   function layoutTopic(topic, x0, x1){
     const maxDepth=5;
-    const top=250, bottom=1080;
+    const top=270, bottom=1400;
     let cursor=x0;
     const span=x1-x0;
 
@@ -371,8 +371,8 @@ a{color:inherit}
     assign(topic,1);
   }
 
-  layoutTopic(A.children[0],45,690);
-  layoutTopic(A.children[1],750,1395);
+  layoutTopic(A.children[0],55,850);
+  layoutTopic(A.children[1],950,1745);
 
   function el(name,attrs={}){
     const e=document.createElementNS(SVG_NS,name);
