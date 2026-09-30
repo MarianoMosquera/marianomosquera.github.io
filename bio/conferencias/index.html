@@ -2472,24 +2472,32 @@
 }
 </script>
 <style>
-:root { --ink:#171717; --muted:#6d6d6d; --line:#e8e8e8; --paper:#fff; }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--paper); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
-main { width:min(760px,calc(100% - 40px)); margin:0 auto; padding:72px 0 90px; }
-.back { display:inline-block; margin-bottom:52px; color:var(--muted); text-decoration:none; font-size:14px; }
-.back:hover { color:var(--ink); }
-h1 { margin:0 0 18px; font-size:clamp(38px,7vw,64px); line-height:1; letter-spacing:-.04em; font-weight:650; }
-.lead { max-width:680px; margin:0; font-size:18px; line-height:1.65; color:#353535; }
-.records { margin-top:64px; border-top:1px solid var(--line); }
-.record { padding:24px 0; border-bottom:1px solid var(--line); }
-.record h2 { margin:0 0 8px; font-size:17px; line-height:1.35; font-weight:600; }
-.record p { margin:0; color:var(--muted); font-size:14px; line-height:1.55; }
-.sources { margin-top:8px; font-size:13px; }
-.sources a { color:var(--muted); text-underline-offset:3px; }
-.sources a:hover { color:var(--ink); }
-@media (max-width:600px) {
-  main { width:min(100% - 28px,760px); padding-top:42px; }
-  .back { margin-bottom:38px; }
+:root{--ink:#161616;--muted:#707070;--line:#dedede;--paper:#f7f6f2;--white:#fff;--accent:#232323}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+main{width:min(1180px,calc(100% - 64px));margin:0 auto;padding:0 0 112px}
+.back{display:inline-block;margin:30px 0 0;color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:color .2s ease}
+.back:hover{color:var(--ink)}
+header{margin-top:22px;padding:74px 0 76px;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:72px;align-items:end}
+header:before{content:"MARIANO MOSQUERA  /  FACET";grid-column:1/-1;font-size:11px;letter-spacing:.18em;font-weight:700;color:var(--muted);margin-bottom:-34px}
+h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(58px,8vw,108px);line-height:.88;letter-spacing:-.055em;font-weight:400}
+.lead{max-width:500px;margin:0 0 5px;font-size:18px;line-height:1.62;color:#383838}
+.records{margin-top:72px;border-top:1px solid var(--ink)}
+.record{padding:28px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:120px minmax(0,1fr);gap:32px}
+.record h2{margin:0 0 9px;font-family:Georgia,"Times New Roman",serif;font-size:22px;line-height:1.25;font-weight:400;letter-spacing:-.015em}
+.record p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+.sources{margin-top:10px;font-size:12px;letter-spacing:.01em}
+.sources a{color:var(--ink);text-decoration-color:#aaa;text-underline-offset:4px}
+.sources a:hover{text-decoration-color:var(--ink)}
+@media(max-width:760px){
+ main{width:min(100% - 32px,1180px);padding-bottom:72px}
+ .back{margin-top:22px}
+ header{margin-top:18px;padding:52px 0 48px;grid-template-columns:1fr;gap:28px}
+ header:before{margin-bottom:-8px}
+ h1{font-size:clamp(50px,16vw,78px)}
+ .lead{font-size:17px;max-width:620px}
+ .record{grid-template-columns:1fr;gap:10px;padding:23px 0}
 }
 </style>
 </head>
