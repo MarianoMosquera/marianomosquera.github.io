@@ -7,6 +7,7 @@
 
 comp:Compliance a skos:Concept ;
     skos:prefLabel "Compliance"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q626741> ;
     skos:narrower comp:AnalisisRiesgo,
                   comp:Responsabilidad,
                   comp:Normas,
@@ -18,6 +19,7 @@ comp:Compliance a skos:Concept ;
 
 comp:AnalisisRiesgo a skos:Concept ;
     skos:prefLabel "Análisis de riesgo"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q11679892> ;
     skos:broader comp:Compliance ;
     skos:narrower comp:DebidaDiligencia,
                   comp:Seguros,
@@ -25,6 +27,7 @@ comp:AnalisisRiesgo a skos:Concept ;
 
 comp:DebidaDiligencia a skos:Concept ;
     skos:prefLabel "Debida diligencia"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q794134> ;
     skos:broader comp:AnalisisRiesgo .
 
 comp:Seguros a skos:Concept ;
@@ -121,6 +124,7 @@ comp:FactoresExternos a skos:Concept ;
 
 comp:Responsabilidad a skos:Concept ;
     skos:prefLabel "Responsabilidad"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1274115> ;
     skos:broader comp:Compliance ;
     skos:narrower comp:ResponsabilidadFuncional,
                   comp:ResponsabilidadInstitucional .
@@ -161,6 +165,7 @@ comp:Generales a skos:Concept ;
 comp:CodigosEtica a skos:Concept ;
     skos:prefLabel "Códigos de ética"@es ;
     skos:altLabel "Códigos de conducta"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q2119819> ;
     skos:broader comp:Generales .
 
 comp:PlanesIntegridad a skos:Concept ;
@@ -239,6 +244,7 @@ comp:Rotacion a skos:Concept ;
 
 comp:ConflictoIntereses a skos:Concept ;
     skos:prefLabel "Conflicto de intereses"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q211067> ;
     skos:broader comp:Normas ;
     skos:narrower comp:DeberAbstencion ;
     skos:related comp:GestionIntereses .
@@ -251,6 +257,7 @@ comp:DeberAbstencion a skos:Concept ;
 
 comp:GestionIntereses a skos:Concept ;
     skos:prefLabel "Gestión de intereses"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q187117> ;
     skos:broader comp:Normas ;
     skos:narrower comp:Sponsoreo,
                   comp:Lobby ;
@@ -262,12 +269,14 @@ comp:Sponsoreo a skos:Concept ;
 
 comp:Lobby a skos:Concept ;
     skos:prefLabel "Lobby"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q187117> ;
     skos:broader comp:GestionIntereses .
 
 # --- Capacitación ---
 
 comp:Capacitacion a skos:Concept ;
     skos:prefLabel "Capacitación"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q918385> ;
     skos:broader comp:Normas ;
     skos:narrower comp:ToneAtTheTop .
 
@@ -306,10 +315,13 @@ comp:Investigacion a skos:Concept ;
 
 comp:ConsentimientoInformado a skos:Concept ;
     skos:prefLabel "Consentimiento informado"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q764527> ;
     skos:broader comp:Investigacion .
 
 comp:ProteccionDatosPersonales a skos:Concept ;
     skos:prefLabel "Protección de datos personales"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q23647168> ;
+    skos:related <https://www.wikidata.org/entity/Q3702971> ;
     skos:broader comp:Investigacion .
 
 # =========================================================
@@ -324,11 +336,13 @@ comp:Problemas a skos:Concept ;
 
 comp:Corrupcion a skos:Concept ;
     skos:prefLabel "Corrupción"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q366> ;
     skos:broader comp:Problemas ;
     skos:narrower comp:AbusoPoder .
 
 comp:AbusoPoder a skos:Concept ;
     skos:prefLabel "Abuso de poder"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1975478> ;
     skos:broader comp:Corrupcion .
 
 comp:Maladministration a skos:Concept ;
@@ -338,4 +352,5 @@ comp:Maladministration a skos:Concept ;
 
 comp:Negligencia a skos:Concept ;
     skos:prefLabel "Negligencia"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q160070> ;
     skos:broader comp:Maladministration .
