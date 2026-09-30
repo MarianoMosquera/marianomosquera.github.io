@@ -121,7 +121,8 @@ a{color:inherit}
 .node.root text{font-size:13px;font-weight:650}
 .node.topic text{font-size:12px;font-weight:620}
 .node.branch text{font-weight:560}
-.node{cursor:default}
+.node{cursor:grab}
+.node.dragging{cursor:grabbing}
 .node:hover circle{fill:rgba(0,0,0,.045)}
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
 .resource{padding:16px 0;border-top:1px solid var(--line-soft)}
@@ -146,7 +147,6 @@ a{color:inherit}
 
   <header class="hero">
     <h1>Mariano Mosquera</h1>
-    <div class="mark" aria-hidden="true"></div>
     <p>Temas principales · Accountability y Compliance</p>
   </header>
 
@@ -390,18 +390,24 @@ a{color:inherit}
     return `M ${a.x} ${a.y} C ${a.x} ${mid}, ${b.x} ${mid}, ${b.x} ${b.y}`;
   }
 
+  const edgePaths = [];
   edges.forEach(([a,b])=>{
-    gEdges.appendChild(el("path",{d:pathBetween(a,b),class:"edge"}));
+    const p=el("path",{d:pathBetween(a,b),class:"edge"});
+    gEdges.appendChild(p);
+    edgePaths.push({a,b,p});
   });
 
+  const relatedPaths = [];
   related.forEach(([ia,ib])=>{
     const a=byId.get(ia),b=byId.get(ib);
     if(a&&b){
       const bend=Math.min(a.y,b.y)-28;
-      gRelated.appendChild(el("path",{
+      const p=el("path",{
         d:`M ${a.x} ${a.y} C ${a.x} ${bend}, ${b.x} ${bend}, ${b.x} ${b.y}`,
         class:"edge related"
-      }));
+      });
+      gRelated.appendChild(p);
+      relatedPaths.push({a,b,p});
     }
   });
 
@@ -411,6 +417,22 @@ a{color:inherit}
     if(n.depth===2) return 30;
     if(n.depth===3) return 24;
     return 18;
+  }
+
+  const nodeEls = new Map();
+
+  function redraw(){
+    edgePaths.forEach(({a,b,p})=>p.setAttribute("d",pathBetween(a,b)));
+    relatedPaths.forEach(({a,b,p})=>{
+      const bend=Math.min(a.y,b.y)-28;
+      p.setAttribute("d",`M ${a.x} ${a.y} C ${a.x} ${bend}, ${b.x} ${bend}, ${b.x} ${b.y}`);
+    });
+  }
+
+  function svgPoint(evt){
+    const pt=svg.createSVGPoint();
+    pt.x=evt.clientX; pt.y=evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
   }
 
   nodes.forEach(n=>{
@@ -430,11 +452,32 @@ a{color:inherit}
     }
     g.appendChild(t);
     gNodes.appendChild(g);
-  });
+    nodeEls.set(n.id,g);
 
-  // Pequeño triángulo negro bajo el nodo central Mariano Mosquera.
-  const tri=el("path",{d:`M ${CX-6} ${CY+55} L ${CX+6} ${CY+55} L ${CX} ${CY+65} Z`,fill:"#000"});
-  gNodes.appendChild(tri);
+    let dragging=false, dx=0, dy=0;
+    g.addEventListener("pointerdown",evt=>{
+      dragging=true;
+      g.classList.add("dragging");
+      g.setPointerCapture(evt.pointerId);
+      const p=svgPoint(evt);
+      dx=n.x-p.x; dy=n.y-p.y;
+    });
+    g.addEventListener("pointermove",evt=>{
+      if(!dragging) return;
+      const p=svgPoint(evt);
+      n.x=p.x+dx; n.y=p.y+dy;
+      g.setAttribute("transform",`translate(${n.x},${n.y})`);
+      redraw();
+    });
+    const stop=evt=>{
+      if(!dragging) return;
+      dragging=false;
+      g.classList.remove("dragging");
+      if(g.hasPointerCapture(evt.pointerId)) g.releasePointerCapture(evt.pointerId);
+    };
+    g.addEventListener("pointerup",stop);
+    g.addEventListener("pointercancel",stop);
+  });
 })();
 </script>
 </body>
