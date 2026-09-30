@@ -121,8 +121,9 @@ a{color:inherit}
 .node.root text{font-size:13px;font-weight:650}
 .node.topic text{font-size:12px;font-weight:620}
 .node.branch text{font-weight:560}
-.node{cursor:grab}
+.node{cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
 .node.dragging{cursor:grabbing}
+#graph{user-select:none;-webkit-user-select:none}
 .node:hover circle{fill:rgba(0,0,0,.045)}
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
 .resource{padding:16px 0;border-top:1px solid var(--line-soft)}
@@ -374,59 +375,110 @@ a{color:inherit}
   layoutTopic(A.children[0],55,850);
   layoutTopic(A.children[1],950,1745);
 
-  // Ajuste exclusivamente visual: simulación de fuerzas/colisión para evitar superposición.
+  // Ajuste exclusivamente visual: colisión estricta para impedir contacto entre nodos/etiquetas.
   // Conserva la arquitectura jerárquica como posición objetivo y separa los nodos entre sí.
   nodes.forEach(n=>{ n.targetX=n.x; n.targetY=n.y; n.vx=0; n.vy=0; });
 
-  function visualRadius(n){
+  function visualBox(n){
     const r = n.kind==="root" ? 45 : n.kind==="topic" ? 39 : n.depth===2 ? 30 : n.depth===3 ? 24 : 18;
-    const labelExtra = Math.min(34, Math.max(0, (n.label.length-10)*1.15));
-    return r + 20 + labelExtra;
+    const words=n.label.split(" ");
+    const twoLines=n.label.length>18 && words.length>1;
+    const longest = twoLines
+      ? Math.max(
+          words.slice(0,Math.ceil(words.length/2)).join(" ").length,
+          words.slice(Math.ceil(words.length/2)).join(" ").length
+        )
+      : n.label.length;
+    // Caja de exclusión deliberadamente amplia: círculo + etiqueta + margen.
+    const halfW=Math.max(r+20, longest*6.1+16);
+    const top=r+18;
+    const bottom=r+22+(twoLines?24:12);
+    return {halfW,top,bottom};
   }
 
-  function settleLayout(iterations=520){
+  function settleLayout(iterations=900){
     const movable=nodes.filter(n=>n!==A);
+
     for(let tick=0; tick<iterations; tick++){
-      // Atracción suave a la disposición jerárquica original.
+      // Atracción muy suave: preserva la arquitectura sin vencer a la colisión.
       movable.forEach(n=>{
-        const k = n.kind==="topic" ? 0.055 : 0.032;
+        const k = n.kind==="topic" ? 0.018 : 0.007;
         n.vx += (n.targetX-n.x)*k;
         n.vy += (n.targetY-n.y)*k;
       });
 
-      // Fuerza de colisión/repulsión entre nodos.
+      // Colisión rectangular estricta: considera círculos y textos visibles.
       for(let i=0;i<movable.length;i++){
-        const a=movable[i], ra=visualRadius(a);
+        const a=movable[i], ba=visualBox(a);
         for(let j=i+1;j<movable.length;j++){
-          const b=movable[j], rb=visualRadius(b);
+          const b=movable[j], bb=visualBox(b);
           let dx=b.x-a.x, dy=b.y-a.y;
-          let d2=dx*dx+dy*dy;
-          if(d2<0.01){ dx=(j-i)*0.01; dy=0.01; d2=dx*dx+dy*dy; }
-          const d=Math.sqrt(d2);
-          const minD=ra+rb+10;
-          if(d<minD){
-            const push=(minD-d)/d*0.16;
-            const px=dx*push, py=dy*push;
-            a.vx-=px; a.vy-=py;
-            b.vx+=px; b.vy+=py;
-          } else if(d<190){
-            const repel=(190-d)/190*0.012;
-            a.vx-=dx/d*repel; a.vy-=dy/d*repel;
-            b.vx+=dx/d*repel; b.vy+=dy/d*repel;
+          if(Math.abs(dx)<0.001) dx=(j-i)*0.01;
+          if(Math.abs(dy)<0.001) dy=((j+i)%2?1:-1)*0.01;
+
+          const needX=ba.halfW+bb.halfW+22;
+          const aTop=a.y-ba.top, aBottom=a.y+ba.bottom;
+          const bTop=b.y-bb.top, bBottom=b.y+bb.bottom;
+          const overlapX=needX-Math.abs(dx);
+          const overlapY=Math.min(aBottom,bBottom)-Math.max(aTop,bTop)+22;
+
+          if(overlapX>0 && overlapY>0){
+            // Resuelve por el eje que requiere menor desplazamiento, con empuje fuerte.
+            if(overlapX < overlapY*1.35){
+              const dir=dx>=0?1:-1;
+              const push=overlapX*0.62+1.5;
+              a.vx-=dir*push; b.vx+=dir*push;
+            }else{
+              const dir=dy>=0?1:-1;
+              const push=overlapY*0.62+1.5;
+              a.vy-=dir*push; b.vy+=dir*push;
+            }
           }
         }
       }
 
-      // Mantener ramas izquierda/derecha y límites del lienzo.
       movable.forEach(n=>{
-        if(n.side<0 && n.x>850) n.vx-=(n.x-850)*0.08;
-        if(n.side>0 && n.x<950) n.vx+=(950-n.x)*0.08;
-        n.vx*=0.72; n.vy*=0.72;
+        if(n.side<0 && n.x>850) n.vx-=(n.x-850)*0.12;
+        if(n.side>0 && n.x<950) n.vx+=(950-n.x)*0.12;
+        n.vx*=0.58; n.vy*=0.58;
         n.x+=n.vx; n.y+=n.vy;
-        const pad=visualRadius(n)+18;
-        n.x=Math.max(pad,Math.min(W-pad,n.x));
-        n.y=Math.max(225,Math.min(H-pad,n.y));
+        const b=visualBox(n);
+        n.x=Math.max(b.halfW+12,Math.min(W-b.halfW-12,n.x));
+        n.y=Math.max(225+b.top,Math.min(H-b.bottom-12,n.y));
       });
+    }
+
+    // Barrido final determinista: garantiza separación residual sin depender de la simulación.
+    for(let pass=0; pass<180; pass++){
+      let changed=false;
+      for(let i=0;i<movable.length;i++){
+        const a=movable[i], ba=visualBox(a);
+        for(let j=i+1;j<movable.length;j++){
+          const b=movable[j], bb=visualBox(b);
+          const dx=b.x-a.x, dy=b.y-a.y;
+          const needX=ba.halfW+bb.halfW+22;
+          const aTop=a.y-ba.top, aBottom=a.y+ba.bottom;
+          const bTop=b.y-bb.top, bBottom=b.y+bb.bottom;
+          const ox=needX-Math.abs(dx);
+          const oy=Math.min(aBottom,bBottom)-Math.max(aTop,bTop)+22;
+          if(ox>0 && oy>0){
+            changed=true;
+            if(ox<oy){
+              const dir=dx>=0?1:-1, shift=ox/2+1;
+              a.x-=dir*shift; b.x+=dir*shift;
+            }else{
+              const dir=dy>=0?1:-1, shift=oy/2+1;
+              a.y-=dir*shift; b.y+=dir*shift;
+            }
+          }
+        }
+      }
+      movable.forEach(n=>{
+        const b=visualBox(n);
+        n.x=Math.max(b.halfW+12,Math.min(W-b.halfW-12,n.x));
+        n.y=Math.max(225+b.top,Math.min(H-b.bottom-12,n.y));
+      });
+      if(!changed) break;
     }
   }
 
@@ -514,6 +566,7 @@ a{color:inherit}
 
     let dragging=false, dx=0, dy=0;
     g.addEventListener("pointerdown",evt=>{
+      evt.preventDefault();
       dragging=true;
       g.classList.add("dragging");
       g.setPointerCapture(evt.pointerId);
