@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- MAIN -->
+  <url>
+    <loc>https://marianomosquera.github.io/</loc>
+  </url>
+
+  <!-- ÉTICA -->
+  <url>
+    <loc>https://marianomosquera.github.io/etica/</loc>
+  </url>
+
+  <!-- BIO -->
+  <url>
+    <loc>https://marianomosquera.github.io/bio/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/temas/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/perfiles/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/publicaciones/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/afiliaciones/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/formacion/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/consultor/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/bio/conferencias/</loc>
+  </url>
+
+  <!-- APUNTES -->
+  <url>
+    <loc>https://marianomosquera.github.io/apuntes/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/apuntes/ciencias_decision/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/apuntes/etica_UCC/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/apuntes/QRP/</loc>
+  </url>
+
+  <url>
+    <loc>https://marianomosquera.github.io/apuntes/escenarios_QRP/</loc>
+  </url>
+
+</urlset>
