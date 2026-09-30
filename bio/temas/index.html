@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Temas | Mariano Mosquera</title>
+<meta name="description" content="Temas principales de Mariano Mosquera: Accountability y Compliance. Visualización semántica vinculada con vocabularios RDF/SKOS.">
+<link rel="canonical" href="https://marianomosquera.github.io/bio/temas/">
+
+<!-- Descubrimiento explícito de las representaciones RDF/Turtle -->
+<link rel="alternate" type="text/turtle" title="Accountability — RDF/SKOS" href="https://marianomosquera.github.io/accountability.ttl">
+<link rel="alternate" type="text/turtle" title="Compliance — RDF/SKOS" href="https://marianomosquera.github.io/compliance.ttl">
+
+<script type="application/ld+json">
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "skos": "http://www.w3.org/2004/02/skos/core#"
+  },
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://marianomosquera.github.io/bio/#person",
+      "name": "Mariano Mosquera",
+      "url": "https://marianomosquera.github.io/bio/",
+      "knowsAbout": [
+        { "@id": "https://marianomosquera.github.io/accountability#Accountability" },
+        { "@id": "https://marianomosquera.github.io/compliance#Compliance" }
+      ],
+      "subjectOf": {
+        "@id": "https://marianomosquera.github.io/bio/temas/#topics-page"
+      }
+    },
+    {
+      "@type": ["WebPage", "CollectionPage"],
+      "@id": "https://marianomosquera.github.io/bio/temas/#topics-page",
+      "url": "https://marianomosquera.github.io/bio/temas/",
+      "name": "Temas | Mariano Mosquera",
+      "description": "Representación de los temas principales de Mariano Mosquera y acceso a sus vocabularios RDF/SKOS.",
+      "about": [
+        { "@id": "https://marianomosquera.github.io/bio/#person" },
+        { "@id": "https://marianomosquera.github.io/accountability#Accountability" },
+        { "@id": "https://marianomosquera.github.io/compliance#Compliance" }
+      ],
+      "mainEntity": { "@id": "https://marianomosquera.github.io/bio/#person" }
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://marianomosquera.github.io/accountability#Accountability",
+      "name": "Accountability",
+      "alternateName": "Rendición de cuentas",
+      "inDefinedTermSet": {
+        "@id": "https://marianomosquera.github.io/accountability#AccountabilityScheme"
+      },
+      "url": "https://marianomosquera.github.io/accountability.ttl",
+      "subjectOf": {
+        "@type": "DataDownload",
+        "@id": "https://marianomosquera.github.io/accountability.ttl",
+        "name": "Accountability — RDF/SKOS",
+        "contentUrl": "https://marianomosquera.github.io/accountability.ttl",
+        "encodingFormat": "text/turtle"
+      }
+    },
+    {
+      "@type": "DefinedTermSet",
+      "@id": "https://marianomosquera.github.io/accountability#AccountabilityScheme",
+      "name": "Accountability",
+      "url": "https://marianomosquera.github.io/accountability.ttl"
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://marianomosquera.github.io/compliance#Compliance",
+      "name": "Compliance",
+      "url": "https://marianomosquera.github.io/compliance.ttl",
+      "subjectOf": {
+        "@type": "DataDownload",
+        "@id": "https://marianomosquera.github.io/compliance.ttl",
+        "name": "Compliance — RDF/SKOS",
+        "contentUrl": "https://marianomosquera.github.io/compliance.ttl",
+        "encodingFormat": "text/turtle"
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+:root{
+  --ink:#0b0b0b;
+  --muted:#6d6d6d;
+  --line:rgba(0,0,0,.30);
+  --line-soft:rgba(0,0,0,.12);
+  --paper:#fff;
+}
+*{box-sizing:border-box}
+html{background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+body{margin:0;background:#fff}
+a{color:inherit}
+.page{width:min(1500px,100%);margin:0 auto;padding:34px 28px 48px}
+.back{display:inline-block;margin-bottom:38px;color:#707070;text-decoration:none;font-size:12px;letter-spacing:.06em}
+.back:hover{color:#000}
+.hero{text-align:center;margin:0 auto 22px;max-width:760px}
+.hero h1{font-size:clamp(27px,3.3vw,45px);line-height:1.04;font-weight:520;letter-spacing:-.035em;margin:0}
+.mark{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid #000;margin:11px auto 13px}
+.hero p{font-size:13px;line-height:1.7;color:#666;margin:0 auto;max-width:630px}
+.graph-shell{margin-top:24px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:20px 0 14px}
+.graph-toolbar{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:10px;font-size:11px;color:#777;letter-spacing:.02em}
+.legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:16px;height:10px;border:1px solid rgba(0,0,0,.65);border-radius:8px;background:transparent}
+.legend i.related{border:0;border-top:1px dashed #777;border-radius:0;height:1px}
+.viewport{width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
+#graph{display:block;width:100%;min-width:1180px;height:auto;min-height:980px}
+.edge{fill:none;stroke:var(--line);stroke-width:1}
+.edge.related{stroke:#777;stroke-dasharray:4 4;stroke-width:.9}
+.node circle{fill:rgba(255,255,255,.02);stroke:#050505;stroke-width:1.1}
+.node.root circle{stroke-width:1.7}
+.node.topic circle{stroke-width:1.55}
+.node text{fill:#111;font-size:10.5px;pointer-events:none;text-anchor:middle}
+.node.root text{font-size:13px;font-weight:650}
+.node.topic text{font-size:12px;font-weight:620}
+.node.branch text{font-weight:560}
+.node{cursor:default}
+.node:hover circle{fill:rgba(0,0,0,.045)}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.resource{padding:16px 0;border-top:1px solid var(--line-soft)}
+.resource h2{font-size:13px;font-weight:620;margin:0 0 5px}
+.resource p{font-size:11.5px;color:#707070;line-height:1.55;margin:0 0 7px}
+.resource a{font-size:11px;text-decoration:none;border-bottom:1px solid #bbb;padding-bottom:2px}
+.resource a:hover{border-color:#000}
+.note{margin:20px 0 0;text-align:center;color:#8a8a8a;font-size:10.5px}
+@media(max-width:760px){
+  .page{padding:24px 16px 36px}
+  .back{margin-bottom:28px}
+  .graph-toolbar{align-items:flex-start;flex-direction:column}
+  .meta{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+
+<body>
+<main class="page">
+  <a class="back" href="https://marianomosquera.github.io/bio/" aria-label="Regresar a la bio de Mariano Mosquera">← bio</a>
+
+  <header class="hero">
+    <h1>Mariano Mosquera</h1>
+    <div class="mark" aria-hidden="true"></div>
+    <p>Temas principales · Accountability y Compliance</p>
+  </header>
+
+  <section class="graph-shell" aria-labelledby="graph-title">
+    <div class="graph-toolbar">
+      <span id="graph-title">Arquitectura conceptual</span>
+      <div class="legend" aria-label="Leyenda">
+        <span><i></i> jerarquía SKOS</span>
+        <span><i class="related"></i> relación SKOS</span>
+      </div>
+    </div>
+    <div class="viewport">
+      <svg id="graph" viewBox="0 0 1440 1160" role="img" aria-label="Red de temas de Mariano Mosquera: Accountability y Compliance, con sus conceptos SKOS"></svg>
+    </div>
+  </section>
+
+  <section class="meta" aria-label="Recursos semánticos">
+    <article class="resource">
+      <h2>Accountability</h2>
+      <p>Vocabulario RDF/SKOS vinculado al tema Accountability.</p>
+      <a href="https://marianomosquera.github.io/accountability.ttl" type="text/turtle">accountability.ttl</a>
+    </article>
+    <article class="resource">
+      <h2>Compliance</h2>
+      <p>Vocabulario RDF/SKOS vinculado al tema Compliance.</p>
+      <a href="https://marianomosquera.github.io/compliance.ttl" type="text/turtle">compliance.ttl</a>
+    </article>
+  </section>
+
+  <p class="note">La visualización reproduce las jerarquías y relaciones declaradas en los vocabularios RDF/SKOS.</p>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("graph");
+
+  const A = {
+    id:"Mariano Mosquera", label:"Mariano Mosquera", kind:"root",
+    children:[
+      {
+        id:"acc:Accountability", label:"Accountability", kind:"topic",
+        children:[
+          {id:"acc:Transparencia",label:"Transparencia",children:[
+            {id:"acc:TipoTransparencia",label:"Tipo",children:[
+              {id:"acc:Divulgacion",label:"Divulgación"},
+              {id:"acc:Apertura",label:"Apertura"},
+              {id:"acc:Visibilidad",label:"Visibilidad"},
+              {id:"acc:Publicidad",label:"Publicidad"},
+              {id:"acc:Reporting",label:"Reporting"},
+              {id:"acc:DatosAbiertos",label:"Datos abiertos"}
+            ]},
+            {id:"acc:Justificacion",label:"Justificación",children:[
+              {id:"acc:Answerability",label:"Answerability"},
+              {id:"acc:Explicabilidad",label:"Explicabilidad"},
+              {id:"acc:AccesoInformacion",label:"Acceso a información"}
+            ]},
+            {id:"acc:Restricciones",label:"Restricciones"}
+          ]},
+          {id:"acc:Control",label:"Control",children:[
+            {id:"acc:TipoControl",label:"Tipo",children:[
+              {id:"acc:Auditoria",label:"Auditoría"},
+              {id:"acc:Evaluacion",label:"Evaluación"},
+              {id:"acc:MejoraContinua",label:"Mejora continua"},
+              {id:"acc:Supervision",label:"Supervisión"},
+              {id:"acc:Fiscalizacion",label:"Fiscalización"},
+              {id:"acc:Vigilancia",label:"Vigilancia"}
+            ]},
+            {id:"acc:Periodicidad",label:"Periodicidad"},
+            {id:"acc:Denuncia",label:"Denuncia",children:[
+              {id:"acc:ProteccionDenunciantes",label:"Protección de denunciantes"}
+            ]}
+          ]},
+          {id:"acc:Sancion",label:"Sanción",children:[
+            {id:"acc:Memoria",label:"Memoria",children:[
+              {id:"acc:ListasNegras",label:"Listas negras"}
+            ]}
+          ]},
+          {id:"acc:Problemas",label:"Problemas",children:[
+            {id:"acc:Sobreinformacion",label:"Sobreinformación"}
+          ]},
+          {id:"acc:Actores",label:"Actores",children:[
+            {id:"acc:Expertos",label:"Expertos",children:[
+              {id:"acc:Prensa",label:"Prensa"},{id:"acc:ONG",label:"ONG"},
+              {id:"acc:Watchdog",label:"Watchdog"},{id:"acc:AccionColectiva",label:"Acción colectiva"},
+              {id:"acc:AgenciasEstatales",label:"Agencias estatales"},{id:"acc:Veeduria",label:"Veeduría"},
+              {id:"acc:OposicionPolitica",label:"Oposición política"},{id:"acc:Sindicatos",label:"Sindicatos"},
+              {id:"acc:Pares",label:"Pares"}
+            ]},
+            {id:"acc:Afectados",label:"Afectados",children:[
+              {id:"acc:Ciudadanos",label:"Ciudadanos"},{id:"acc:Consumidores",label:"Consumidores"},
+              {id:"acc:Accionistas",label:"Accionistas"}
+            ]}
+          ]}
+        ]
+      },
+      {
+        id:"comp:Compliance", label:"Compliance", kind:"topic",
+        children:[
+          {id:"comp:AnalisisRiesgo",label:"Análisis de riesgo",children:[
+            {id:"comp:DebidaDiligencia",label:"Debida diligencia"},
+            {id:"comp:Seguros",label:"Seguros"},
+            {id:"comp:Capacidad",label:"Capacidad",children:[
+              {id:"comp:CapacidadInstitucional",label:"Institucional",children:[
+                {id:"comp:Tiempo",label:"Tiempo"},{id:"comp:Presupuesto",label:"Presupuesto"},
+                {id:"comp:Infraestructura",label:"Infraestructura"},{id:"comp:RecursosHumanos",label:"Recursos humanos"},
+                {id:"comp:Procedimientos",label:"Procedimientos"},{id:"comp:Coordinacion",label:"Coordinación"},
+                {id:"comp:Informacion",label:"Información"}
+              ]},
+              {id:"comp:CapacidadPersonal",label:"Personal",children:[
+                {id:"comp:Experiencia",label:"Experiencia"},{id:"comp:Habilidades",label:"Habilidades"},
+                {id:"comp:Motivacion",label:"Motivación"},{id:"comp:Adaptacion",label:"Adaptación"}
+              ]},
+              {id:"comp:FactoresExternos",label:"Factores externos"}
+            ]}
+          ]},
+          {id:"comp:Responsabilidad",label:"Responsabilidad",children:[
+            {id:"comp:ResponsabilidadFuncional",label:"Funcional"},
+            {id:"comp:ResponsabilidadInstitucional",label:"Institucional"}
+          ]},
+          {id:"comp:Normas",label:"Normas",children:[
+            {id:"comp:Generales",label:"Generales",children:[
+              {id:"comp:CodigosEtica",label:"Códigos de ética"},{id:"comp:PlanesIntegridad",label:"Planes de integridad"}
+            ]},
+            {id:"comp:Declaraciones",label:"Declaraciones",children:[
+              {id:"comp:Intereses",label:"Intereses"},{id:"comp:Reuniones",label:"Reuniones"},
+              {id:"comp:Bienes",label:"Bienes"},{id:"comp:Salario",label:"Salario"},
+              {id:"comp:Ingresos",label:"Ingresos"},{id:"comp:Obsequios",label:"Obsequios"}
+            ]},
+            {id:"comp:RiesgoEstandar",label:"Por riesgo estándar",children:[
+              {id:"comp:Incompatibilidades",label:"Incompatibilidades"},
+              {id:"comp:NoRelacionFamiliares",label:"No-relación con familiares"},
+              {id:"comp:NoDelegacion",label:"No-delegación"},{id:"comp:Desconcentracion",label:"Desconcentración"},
+              {id:"comp:Rotacion",label:"Rotación"}
+            ]},
+            {id:"comp:ConflictoIntereses",label:"Conflicto de intereses",children:[
+              {id:"comp:DeberAbstencion",label:"Deber de abstención"}
+            ]},
+            {id:"comp:GestionIntereses",label:"Gestión de intereses",children:[
+              {id:"comp:Sponsoreo",label:"Sponsoreo"},{id:"comp:Lobby",label:"Lobby"}
+            ]},
+            {id:"comp:Capacitacion",label:"Capacitación",children:[
+              {id:"comp:ToneAtTheTop",label:"Tone at the Top"}
+            ]},
+            {id:"comp:Recompensas",label:"Recompensas",children:[
+              {id:"comp:Idoneidad",label:"Idoneidad"},{id:"comp:Merito",label:"Mérito"},
+              {id:"comp:SalarioCompetitivo",label:"Salario competitivo"}
+            ]},
+            {id:"comp:Investigacion",label:"En investigación",children:[
+              {id:"comp:ConsentimientoInformado",label:"Consentimiento informado"},
+              {id:"comp:ProteccionDatosPersonales",label:"Protección de datos personales"}
+            ]}
+          ]},
+          {id:"comp:Problemas",label:"Problemas",children:[
+            {id:"comp:Corrupcion",label:"Corrupción",children:[
+              {id:"comp:AbusoPoder",label:"Abuso de poder"}
+            ]},
+            {id:"comp:Maladministration",label:"Maladministration",children:[
+              {id:"comp:Negligencia",label:"Negligencia"}
+            ]}
+          ]}
+        ]
+      }
+    ]
+  };
+
+  const related = [
+    ["comp:CapacidadInstitucional","comp:FactoresExternos"],
+    ["comp:ConflictoIntereses","comp:GestionIntereses"]
+  ];
+
+  const nodes = [];
+  const edges = [];
+  const byId = new Map();
+
+  function countLeaves(n){
+    if(!n.children || !n.children.length) return 1;
+    return n.children.reduce((s,c)=>s+countLeaves(c),0);
+  }
+
+  function walk(n, depth=0, parent=null, side=0){
+    n.depth=depth; n.parent=parent; n.side=side;
+    n.leaves=countLeaves(n);
+    nodes.push(n); byId.set(n.id,n);
+    if(parent) edges.push([parent,n]);
+    (n.children||[]).forEach(c=>walk(c,depth+1,n,side));
+  }
+
+  walk(A,0,null,0);
+  A.children[0].side=-1;
+  A.children[1].side=1;
+
+  function setSide(n,side){
+    n.side=side;
+    (n.children||[]).forEach(c=>setSide(c,side));
+  }
+  setSide(A.children[0],-1);
+  setSide(A.children[1],1);
+
+  const W=1440,H=1160,CX=720,CY=115;
+  A.x=CX; A.y=CY;
+
+  function layoutTopic(topic, x0, x1){
+    const maxDepth=5;
+    const top=250, bottom=1080;
+    let cursor=x0;
+    const span=x1-x0;
+
+    function assign(n, depth){
+      n.y=top + (depth-1)*(bottom-top)/(maxDepth-1);
+      if(!n.children || !n.children.length){
+        const unit=span/topic.leaves;
+        n.x=cursor+unit/2;
+        cursor+=unit;
+      }else{
+        n.children.forEach(c=>assign(c,depth+1));
+        n.x=n.children.reduce((s,c)=>s+c.x,0)/n.children.length;
+      }
+    }
+    assign(topic,1);
+  }
+
+  layoutTopic(A.children[0],45,690);
+  layoutTopic(A.children[1],750,1395);
+
+  function el(name,attrs={}){
+    const e=document.createElementNS(SVG_NS,name);
+    for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+    return e;
+  }
+
+  const gEdges=el("g");
+  const gRelated=el("g");
+  const gNodes=el("g");
+  svg.append(gEdges,gRelated,gNodes);
+
+  function pathBetween(a,b){
+    const mid=(a.y+b.y)/2;
+    return `M ${a.x} ${a.y} C ${a.x} ${mid}, ${b.x} ${mid}, ${b.x} ${b.y}`;
+  }
+
+  edges.forEach(([a,b])=>{
+    gEdges.appendChild(el("path",{d:pathBetween(a,b),class:"edge"}));
+  });
+
+  related.forEach(([ia,ib])=>{
+    const a=byId.get(ia),b=byId.get(ib);
+    if(a&&b){
+      const bend=Math.min(a.y,b.y)-28;
+      gRelated.appendChild(el("path",{
+        d:`M ${a.x} ${a.y} C ${a.x} ${bend}, ${b.x} ${bend}, ${b.x} ${b.y}`,
+        class:"edge related"
+      }));
+    }
+  });
+
+  function radius(n){
+    if(n.kind==="root") return 45;
+    if(n.kind==="topic") return 39;
+    if(n.depth===2) return 30;
+    if(n.depth===3) return 24;
+    return 18;
+  }
+
+  nodes.forEach(n=>{
+    const g=el("g",{class:`node ${n.kind|| (n.depth===2?"branch":"")}`});
+    g.setAttribute("transform",`translate(${n.x},${n.y})`);
+    const r=radius(n);
+    g.appendChild(el("circle",{r}));
+    const t=el("text",{y:r+16});
+    const words=n.label.split(" ");
+    if(n.label.length>18 && words.length>1){
+      const cut=Math.ceil(words.length/2);
+      const a=el("tspan",{x:"0",dy:"0"}); a.textContent=words.slice(0,cut).join(" ");
+      const b=el("tspan",{x:"0",dy:"12"}); b.textContent=words.slice(cut).join(" ");
+      t.append(a,b);
+    }else{
+      t.textContent=n.label;
+    }
+    g.appendChild(t);
+    gNodes.appendChild(g);
+  });
+
+  // Pequeño triángulo negro bajo el nodo central Mariano Mosquera.
+  const tri=el("path",{d:`M ${CX-6} ${CY+55} L ${CX+6} ${CY+55} L ${CX} ${CY+65} Z`,fill:"#000"});
+  gNodes.appendChild(tri);
+})();
+</script>
+</body>
+</html>
