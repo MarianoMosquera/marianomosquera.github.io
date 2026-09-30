@@ -17,12 +17,263 @@
         <https://marianomosquera.github.io/bio/> ;
 
     # -----------------------------------------------------
+    # IDENTIDAD — PERFILES EXTERNOS
+    # -----------------------------------------------------
+
+    owl:sameAs
+        <https://orcid.org/0000-0002-9037-545X>,
+        <https://scholar.google.com/citations?hl=es&user=sZluquIAAAAJ>,
+        <https://portalcientifico.ucc.edu.ar/investigadores/2295196/detalle>,
+        <https://openalex.org/authors/a5098782595>,
+        <https://openalex.org/authors/a5126983579>,
+        <https://www.semanticscholar.org/author/Mariano-Mosquera/123912580>,
+        <https://dialnet.unirioja.es/servlet/autor?codigo=4573128>,
+        <https://www.lens.org/lens/profile/407919803/scholar>,
+        <https://harvard.academia.edu/MarianoMosquera>,
+        <https://www.marianomosquera.com/>,
+        <https://www.bitss.org/people/mariano-mosquera/> ;
+
+    # -----------------------------------------------------
     # TEMAS
     # -----------------------------------------------------
 
     schema:knowsAbout
         <https://marianomosquera.github.io/accountability#Accountability>,
         <https://marianomosquera.github.io/compliance#Compliance> ;
+
+    # -----------------------------------------------------
+    # AFILIACIONES, CARGOS, DOCENCIA, INVESTIGACIÓN,
+    # TESIS, CONSULTORÍAS Y COOPERACIÓN INSTITUCIONAL
+    # -----------------------------------------------------
+
+    dct:relation
+        <https://marianomosquera.github.io/bio/afiliaciones/#iaju-inspirational-paradigm-business-grand-rounds-grant>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#editor-studia-politicae-numero-especial-2025>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#coordinador-revista-iberoamericana-bioetica-numero-26>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#advisory-board-journal-management-global-sustainability>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#revisor-mural-internacional-uerj-2025>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ribci-cyted-blockchain-ciberseguridad>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#uc-berkeley-bitss-catalyst>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-01>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-02>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-03>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-04>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-05>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-06>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-07>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-08>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-09>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-10>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-11>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-12>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-13>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-14>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-15>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-16>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-17>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-18>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-19>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ficha-20>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ucu-business-school-universidad-catolica-uruguay>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#ucema-asociacion-argentina-etica-compliance>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#pontificia-universidad-catolica-peru-etica-investigacion>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#universidad-nacional-nordeste-auditoria-tecnologica>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#universidad-nacional-lanus-evaluacion-politicas-publicas>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-transparencia-calidad-informacion-colaboracion-publica-privada>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-cooperacion-conexion-interpersonal-distancia-social>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-etica-transparencia-innovacion-organizacional>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-laboratorio-transparencia>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-observatorio-transparencia>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-innovacion-gobernanza-servicios-publicos-hengqin-china>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-indicadores-infraestructura-servicios-publicos-cordoba>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-coparticipacion-provincial-desigualdades-regionales>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#proyecto-institucionalizacion-comunidad-regional-punilla>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#postdoctorado-flacso-chile>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#postdoctorado-secyt-universidad-nacional-cordoba>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tesis-maria-agustina-kruger>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tesis-pablo-ezequiel-flores-kanter>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tesis-gonzalo-matias-chalvo>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tesis-trinidad-eugenia-lobos>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tribunal-tesis-gabriel-antonio-testagrossa>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tribunal-tesis-margot-alejandra-jaymes>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#tribunal-tesis-ana-carina-caramazza>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#jurado-tesis-nicolas-ruesjas>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#jurado-tesis-marco-marcelo-tapia-arias>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#jurado-tesis-maria-eugenia-molina-romoli>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#representacion-eiti-argentina-ucc>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#representacion-ucc-plan-provincial-gobierno-abierto>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#representacion-ucc-legislatura-cordoba>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#comision-reforma-ley-acceso-informacion-cordoba>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#oea-cumbre-americas-transformacion-digital-suramerica>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#auditor-externo-acciones-colectivas-corrupcion-udesa-siemens>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#centro-estudios-comite-gestion-calidad-ama-iram>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#investigador-experto-pnud-oficina-anticorrupcion>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#coordinador-programa-cordoba-transparente>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#consultor-investigador-banco-interamericano-desarrollo>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#fundador-director-presidente-fundacion-ciudadanos-365>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#profim-programa-fortalecimiento-institucional-municipios>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#fundacion-konrad-adenauer-kas>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#consultor-cfi-plan-director-transporte-corrientes>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#coordinador-programa-gobierno-abierto-villa-maria>,
+        <https://marianomosquera.github.io/bio/afiliaciones/#docente-investigador-unsam-evaluacion-politicas-transparencia> ;
+
+    # -----------------------------------------------------
+    # PUBLICACIONES
+    # -----------------------------------------------------
+
+    foaf:made
+        <https://marianomosquera.github.io/bio/publicaciones/#etica-de-la-transparencia-en-hong-kong-estudio-de-politicas-publicas-de-comunicacion-y-col-2026>,
+        <https://marianomosquera.github.io/bio/publicaciones/#paradoja-y-elite-de-transparencia-un-estudio-de-los-compromisos-de-gobierno-abierto-de-la-2026>,
+        <https://marianomosquera.github.io/bio/publicaciones/#transparencia-y-participacion-ciudadana-en-las-cartas-organicas-de-grandes-ciudades-de-la-2026>,
+        <https://marianomosquera.github.io/bio/publicaciones/#transparencia-omnicomprensiva-y-politica-redistributiva-estudio-del-caso-del-ministerio-de-2026>,
+        <https://marianomosquera.github.io/bio/publicaciones/#china-transparencia-y-pragmatismo-2025>,
+        <https://marianomosquera.github.io/bio/publicaciones/#china-oportunidades-y-desafios-2025>,
+        <https://marianomosquera.github.io/bio/publicaciones/#una-mirada-historica-a-las-relaciones-sino-argentinas-desde-lanusse-a-milei-1972-2024-2025>,
+        <https://marianomosquera.github.io/bio/publicaciones/#diplomacia-economica-china-implicancias-en-el-desarrollo-productivo-y-tecnologico-de-argen-2025>,
+        <https://marianomosquera.github.io/bio/publicaciones/#maladministration-enfermedades-de-la-administracion-publica-2024>,
+        <https://marianomosquera.github.io/bio/publicaciones/#buenas-practicas-de-blockchain-en-gobiernos-de-iberoamerica-un-analisis-sobre-dimensiones-2024>,
+        <https://marianomosquera.github.io/bio/publicaciones/#conducta-en-investigacion-desde-la-etica-de-la-transparencia-2023>,
+        <https://marianomosquera.github.io/bio/publicaciones/#evidencia-de-validez-de-contenido-de-una-medida-de-capacidad-de-innovacion-organizacional-2023>,
+        <https://marianomosquera.github.io/bio/publicaciones/#how-do-you-behave-as-a-psychometrician-research-conduct-in-the-context-of-psychometric-res-2023>,
+        <https://marianomosquera.github.io/bio/publicaciones/#analysis-of-the-political-commitment-project-regional-program-for-digital-transformation-a-2022>,
+        <https://marianomosquera.github.io/bio/publicaciones/#aportes-para-la-promocion-de-mayor-transparencia-en-los-estudios-psicometricos-2022>,
+        <https://marianomosquera.github.io/bio/publicaciones/#agenda-and-particularization-in-chinese-political-discourse-evolutive-analysis-over-trade-2021>,
+        <https://marianomosquera.github.io/bio/publicaciones/#un-analisis-del-discurso-chino-en-la-arena-de-la-omc-2021>,
+        <https://marianomosquera.github.io/bio/publicaciones/#atacalar-en-la-nueva-ruta-de-la-seda-2021>,
+        <https://marianomosquera.github.io/bio/publicaciones/#dialogo-medico-paciente-reflexiones-desde-una-perspectiva-interdisciplinar-2020>,
+        <https://marianomosquera.github.io/bio/publicaciones/#la-diplomacia-china-hacia-america-latina-bases-cooperativas-para-la-iniciativa-de-la-franj-2020>,
+        <https://marianomosquera.github.io/bio/publicaciones/#rule-of-law-y-rule-by-law-el-caso-de-la-inversion-extranjera-en-guangdong-y-jiangsu-china-2020>,
+        <https://marianomosquera.github.io/bio/publicaciones/#incrementalismo-dialectico-un-caso-de-innovacion-en-hengqin-china-dialectic-incrementalism-2020>,
+        <https://marianomosquera.github.io/bio/publicaciones/#la-agenda-institucional-de-las-relaciones-internacionales-chinas-analisis-del-documento-of-2020>,
+        <https://marianomosquera.github.io/bio/publicaciones/#la-imagen-de-china-en-el-discurso-economico-de-america-latina-un-estudio-de-frames-en-la-c-2019>,
+        <https://marianomosquera.github.io/bio/publicaciones/#el-discurso-de-xi-analisis-e-impacto-del-xix-congreso-nacional-del-partido-comunista-2019>,
+        <https://marianomosquera.github.io/bio/publicaciones/#primera-decada-de-unasur-2008-2017-un-balance-historico-a-traves-de-sus-presidencias-y-pol-2019>,
+        <https://marianomosquera.github.io/bio/publicaciones/#transparencia-agenda-e-innovacion-un-analisis-de-los-procesos-de-transparencia-activa-en-l-2018>,
+        <https://marianomosquera.github.io/bio/publicaciones/#china-transparencia-y-pragmatismo-2018>,
+        <https://marianomosquera.github.io/bio/publicaciones/#la-estrategia-institucional-de-china-hacia-america-latina-analisis-comparado-entre-los-for-2018>,
+        <https://marianomosquera.github.io/bio/publicaciones/#principios-y-agenda-en-la-politica-exterior-china-un-analisis-constructivista-de-los-discu-2018>,
+        <https://marianomosquera.github.io/bio/publicaciones/#el-triangulo-del-litio-un-modelo-de-explotacion-en-escenarios-alternativos-2018>,
+        <https://marianomosquera.github.io/bio/publicaciones/#a-pragmatic-logic-of-transparency-development-of-a-model-for-a-compared-study-of-public-po-2017>,
+        <https://marianomosquera.github.io/bio/publicaciones/#software-de-transparencia-en-compras-publicas-2016>,
+        <https://marianomosquera.github.io/bio/publicaciones/#lab-dispatches-2014>,
+        <https://marianomosquera.github.io/bio/publicaciones/#logicas-de-la-corrupcion-logics-of-corruption-2014>,
+        <https://marianomosquera.github.io/bio/publicaciones/#negotiation-games-in-the-fight-against-corruption-2014>,
+        <https://marianomosquera.github.io/bio/publicaciones/#ampliacion-de-ciudadania-en-las-democracias-latinoamericanas-revista-copppal-conferencia-p-2013>,
+        <https://marianomosquera.github.io/bio/publicaciones/#arreglos-institucionales-contra-la-corrupcion-el-caso-de-chile-compra-2012>,
+        <https://marianomosquera.github.io/bio/publicaciones/#el-sistema-politico-municipal-eficacia-y-autonomia-en-la-provincia-de-cordoba-2011>,
+        <https://marianomosquera.github.io/bio/publicaciones/#indicadores-de-infraestructura-y-servicios-publicos-municipales-2010>,
+        <https://marianomosquera.github.io/bio/publicaciones/#the-notion-of-political-system-from-the-paradigm-of-poststructural-adjustment-2009>,
+        <https://marianomosquera.github.io/bio/publicaciones/#the-political-science-discipline-in-argentina-the-political-scientist-s-national-associati-2009>,
+        <https://marianomosquera.github.io/bio/publicaciones/#ciudadania-y-democracia-participativa-analisis-y-propuestas-de-intervencion-2008>,
+        <https://marianomosquera.github.io/bio/publicaciones/#participacion-social-y-gestion-asociada-en-torno-a-la-problematica-socio-ambiental-en-la-c-2008> ;
+
+
+    # -----------------------------------------------------
+    # CONFERENCIAS
+    # -----------------------------------------------------
+
+    schema:performerIn
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-transparencia-y-colaboracion-publica-privada-en-compras-publicas-2026-07>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-transparencia-y-colaboracion-publica-privada-2026-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-cordoba-piensa-china-2026-02>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornada-agenda-publica-2025-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-desafios-de-china-en-el-siglo-xxi-2025-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#integridad-y-transparencia-en-compras-publicas-tendencias-y-buenas-practicas-internacionales-2025-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#conversatorio-desafios-geopoliticos-del-escenario-internacional-2025-09>,
+        <https://marianomosquera.github.io/bio/conferencias/#85th-annual-meeting-of-the-academy-of-management-aom-2025-07>,
+        <https://marianomosquera.github.io/bio/conferencias/#compliance-y-canales-de-denuncia-una-mirada-comparada-entre-europa-espana-y-argentina-2025-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#seminario-de-participacion-2025-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#buenas-practicas-en-transparencia-y-anti-corrupcion-en-compras-publicas-2025-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#congreso-internacional-de-participacion-ciudadana-2024-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-provinciales-de-bioetica-2024-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-de-transparencia-2024-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#innovacion-en-mercados-no-tradicionales-2024-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-de-inicio-del-ano-academico-de-la-universidad-cesar-vallejo-2024-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#oportunidades-y-desafios-en-la-vinculacion-con-china-2024-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#disruptive-institutions-practices-for-latin-american-business-2023-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#ix-cumbre-de-las-americas-foro-de-expertos-academicos-actores-sociales-2022-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#congreso-internacional-icon-de-transformacion-digital-2022-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-internacional-de-la-universidad-de-temuco-2021-04>,
+        <https://marianomosquera.github.io/bio/conferencias/#misiones-y-contribuciones-del-partido-comunista-de-china-2021-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#br-br-americas-2021-04>,
+        <https://marianomosquera.github.io/bio/conferencias/#xi-simposio-electronico-internacional-sobre-politica-china-2021-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#puente-a-china-atacalar-y-el-corredor-bioceanico-2021-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#compras-publicas-y-lucha-contra-la-corrupcion-2021-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#the-asian-way-international-seminar-2020-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#new-world-order-2020-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#experiences-of-doing-business-in-china-2020-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#innovation-in-china-opportunities-challenges-2020-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#congreso-internacional-innovacion-y-desarrollo-en-china-oportunidades-para-america-latina-great-2019-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#epic-competition-2019-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#wanshou-global-dialogue-belt-and-road-new-globalization-and-global-governance-2019-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#china-innovacion-y-politicas-publicas-2018-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#seminario-gobierno-abierto-2018-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#china-hacia-america-latina-discurso-estrategia-y-cooperacion-2018-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#segundo-dialogo-de-asia-del-este-sobre-estudios-de-america-latina-2017-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#52a-asamblea-del-consejo-latinoamericano-de-escuelas-de-administracion-cladea-2017-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#seminario-la-imagen-de-china-modelos-de-big-data-2017-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#simposio-open-data-day-2017-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-nacionales-de-acceso-a-la-informacion-publica-2016-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#pre-congreso-de-ciencia-politica-2016-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#poder-corrupcion-e-integridad-cientifica-2016-09>,
+        <https://marianomosquera.github.io/bio/conferencias/#gobierno-abierto-2016-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#innovacion-y-buena-gobernanza-2016-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#cooperacion-para-el-desarrollo-el-modelo-chino-2016-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#primeras-jornadas-cuyanas-de-gobierno-abierto-y-segundas-jornadas-de-la-red-academica-de-gobier-2016-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-internacional-en-etica-en-la-investigacion-2016-04>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornada-etica-y-transparencia-2015-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-nuevos-espacios-de-transparencia-2015-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#gobierno-abierto-y-democracia-2015-07>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornada-parlamento-abierto-2015-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#ending-institutional-corruption-international-conference-2015-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#iii-encuentro-internacional-etica-y-compliance-entre-el-sector-publico-y-privado-2015-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-estado-mercado-y-sociedad-2014-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-logicas-de-la-corrupcion-2014-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#congreso-transparencia-y-anticorrupcion-propuestas-para-prevenir-sancionar-y-erradicar-la-corru-2014-09>,
+        <https://marianomosquera.github.io/bio/conferencias/#transparencia-en-los-negocios-2014-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#cero-corrupcion-100-desarrollo-2014-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#gobierno-abierto-e-innovacion-en-las-organizaciones-2014-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#ii-encuentro-internacional-etica-y-compliance-en-el-sector-publico-y-privado-2014-03>,
+        <https://marianomosquera.github.io/bio/conferencias/#desafios-modernos-de-la-gestion-publica-abordajes-estrategicos-y-practicas-innovadoras-2013-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-transparencia-y-acceso-a-la-informacion-publica-2013-09>,
+        <https://marianomosquera.github.io/bio/conferencias/#primer-seminario-internacional-transparencia-y-acceso-a-informacion-publica-municipal-2013-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#2o-congreso-latinoamericano-etica-transparencia-y-compliance-anticorrupcion-2013-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornada-etica-y-transparencia-como-factor-clave-para-la-competitividad-empresarial-y-la-eficien-2013-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-internas-del-doctorado-en-ciencia-politica-2011-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-de-politicas-vecinales-y-participacion-vecinal-2011-06>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-internacional-el-poder-de-la-transparencia-gobiernos-sociedad-civil-y-empresas-2010-12>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornada-de-organizaciones-de-la-sociedad-civil-2010-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#ix-congreso-nacional-y-ii-congreso-internacional-sobre-democracia-2010-10>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornada-de-experiencias-de-asistencia-tecnica-del-programa-del-centro-latinoamericano-de-estudi-2010-09>,
+        <https://marianomosquera.github.io/bio/conferencias/#conferencia-participacion-ciudadana-y-fortalecimiento-institucional-2010-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#foro-regional-redmuni-2010-la-agenda-local-del-bicentenario-2010-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#comite-de-expertos-del-proyecto-fortalecimiento-de-los-gobiernos-locales-y-las-ong-para-el-desa-2009-07>,
+        <https://marianomosquera.github.io/bio/conferencias/#xxi-ipsa-world-congress-of-political-science-2009-07>,
+        <https://marianomosquera.github.io/bio/conferencias/#iv-congreso-nacional-de-politicas-sociales-2008-11>,
+        <https://marianomosquera.github.io/bio/conferencias/#iv-jornada-de-ciencia-politica-y-relaciones-internacionales-2008-09>,
+        <https://marianomosquera.github.io/bio/conferencias/#jornadas-regionales-de-investigacion-en-humanidades-y-ciencias-sociales-2008-05>,
+        <https://marianomosquera.github.io/bio/conferencias/#iv-congreso-argentino-de-administracion-publica-2007-08>,
+        <https://marianomosquera.github.io/bio/conferencias/#vii-congreso-nacional-de-ciencia-politica-2005-11> ;
+
+    # -----------------------------------------------------
+    # FORMACIÓN
+    # -----------------------------------------------------
+
+    schema:alumniOf
+        <https://marianomosquera.github.io/bio/formacion/#ucc>,
+        <https://marianomosquera.github.io/bio/formacion/#unc>,
+        <https://marianomosquera.github.io/bio/formacion/#flacso-chile> ;
+
+    schema:hasCredential
+        <https://marianomosquera.github.io/bio/formacion/#licenciatura-ciencia-politica-ucc>,
+        <https://marianomosquera.github.io/bio/formacion/#doctorado-ciencia-politica-unc>,
+        <https://marianomosquera.github.io/bio/formacion/#experto-programacion-java-utn>,
+        <https://marianomosquera.github.io/bio/formacion/#certificacion-anticorrupcion-iaca> ;
+
+    dct:relation
+        <https://marianomosquera.github.io/bio/formacion/#posdoctorado-flacso-chile>,
+        <https://marianomosquera.github.io/bio/formacion/#posdoctorado-secyt-unc>,
+        <https://marianomosquera.github.io/bio/formacion/#estadistica-aplicada-unc> ;
 
     # -----------------------------------------------------
     # RECURSOS DEL KNOWLEDGE GRAPH
