@@ -1,0 +1,49 @@
+@prefix schema: <https://schema.org/> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix foaf:   <http://xmlns.com/foaf/0.1/> .
+@prefix dct:    <http://purl.org/dc/terms/> .
+
+# =========================================================
+# MARIANO MOSQUERA — PERSON
+# =========================================================
+
+<https://marianomosquera.github.io/bio/#person>
+    a schema:Person,
+      foaf:Person ;
+
+    schema:name "Mariano Mosquera" ;
+
+    schema:url
+        <https://marianomosquera.github.io/bio/> ;
+
+    # -----------------------------------------------------
+    # TEMAS
+    # -----------------------------------------------------
+
+    schema:knowsAbout
+        <https://marianomosquera.github.io/accountability#Accountability>,
+        <https://marianomosquera.github.io/compliance#Compliance> ;
+
+    # -----------------------------------------------------
+    # RECURSOS DEL KNOWLEDGE GRAPH
+    # -----------------------------------------------------
+
+    schema:subjectOf
+        <https://marianomosquera.github.io/bio/temas/>,
+        <https://marianomosquera.github.io/bio/publicaciones/>,
+        <https://marianomosquera.github.io/bio/conferencias/>,
+        <https://marianomosquera.github.io/bio/afiliaciones/>,
+        <https://marianomosquera.github.io/bio/consultor/> .
+
+# =========================================================
+# DOCUMENTO RDF
+# =========================================================
+
+<https://marianomosquera.github.io/bio/person.ttl>
+    a schema:DataDownload ;
+    schema:name "Mariano Mosquera — RDF" ;
+    schema:about
+        <https://marianomosquera.github.io/bio/#person> ;
+    schema:contentUrl
+        <https://marianomosquera.github.io/bio/person.ttl> ;
+    schema:encodingFormat "text/turtle" .
