@@ -71,7 +71,7 @@
   --ink:#111;
   --muted:#777;
   --rule:#d9d9d9;
-  --paper:#fff;
+  --paper:#F7F6F2;
   --max:1180px;
   --reading:720px;
 }
@@ -184,6 +184,60 @@ a{
   margin-top:28px;
 }
 
+/* FACET INDEX */
+
+.facet-nav{
+  border-top:1px solid var(--rule);
+  padding:34px 0 38px;
+}
+
+.facet-nav-inner{
+  display:grid;
+  grid-template-columns:180px 1fr;
+  column-gap:72px;
+}
+
+.facet-nav-label{
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.facet-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 0;
+  font-size:11px;
+  line-height:1.5;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.facet-links a{
+  transition:color .2s ease;
+}
+
+.facet-links a:hover{
+  color:var(--ink);
+}
+
+.facet-links a:not(:last-of-type)::after{
+  content:" / ";
+  margin:0 9px;
+  color:var(--rule);
+}
+
+.facet-email{
+  width:100%;
+  margin-top:14px;
+  text-transform:none;
+  letter-spacing:.02em;
+  color:var(--muted);
+}
+
 /* FOOTER */
 
 .footer{
@@ -239,6 +293,29 @@ a{
     line-height:1.58;
   }
 
+  .facet-nav-inner{
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+
+  .facet-links{
+    display:block;
+    line-height:2;
+  }
+
+  .facet-links a{
+    display:block;
+  }
+
+  .facet-links a:not(:last-of-type)::after{
+    content:"";
+    margin:0;
+  }
+
+  .facet-email{
+    margin-top:18px;
+  }
+
   .footer-inner{
     flex-direction:column;
   }
@@ -282,6 +359,28 @@ a{
     </article>
 
   </section>
+
+  <nav class="facet-nav" aria-label="Índice">
+    <div class="shell facet-nav-inner">
+
+      <div class="facet-nav-label">Índice</div>
+
+      <div class="facet-links">
+        <a href="/bio/temas/">Temas</a>
+        <a href="/bio/consultor/">Consultor</a>
+        <a href="/bio/afiliaciones/">Afiliaciones</a>
+        <a href="/bio/publicaciones/">Publicaciones</a>
+        <a href="/bio/conferencias/">Conferencias</a>
+        <a href="/bio/perfiles/">Perfiles</a>
+        <a href="/bio/formacion/">Formación</a>
+
+        <div class="facet-email">
+          email: mariano.mosquera@ucc.edu.ar
+        </div>
+      </div>
+
+    </div>
+  </nav>
 
 </main>
 
