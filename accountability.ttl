@@ -17,6 +17,7 @@ acc:AccountabilityScheme a skos:ConceptScheme ;
 acc:Accountability a skos:Concept ;
     skos:prefLabel "Accountability"@es ;
     skos:altLabel "Rendición de cuentas"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q2798912> ;
     skos:topConceptOf acc:AccountabilityScheme ;
     skos:narrower
         acc:Transparencia ,
@@ -31,6 +32,7 @@ acc:Accountability a skos:Concept ;
 
 acc:Transparencia a skos:Concept ;
     skos:prefLabel "Transparencia"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q535347> ;
     skos:broader acc:Accountability ;
     skos:narrower
         acc:TipoTransparencia ,
@@ -52,6 +54,7 @@ acc:TipoTransparencia a skos:Concept ;
 
 acc:Divulgacion a skos:Concept ;
     skos:prefLabel "Divulgación"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q67123584> ;
     skos:broader acc:TipoTransparencia .
 
 acc:Apertura a skos:Concept ;
@@ -72,6 +75,7 @@ acc:Reporting a skos:Concept ;
 
 acc:DatosAbiertos a skos:Concept ;
     skos:prefLabel "Datos abiertos"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q309901> ;
     skos:broader acc:TipoTransparencia .
 
 # Justificación
@@ -86,6 +90,7 @@ acc:Justificacion a skos:Concept ;
 
 acc:Answerability a skos:Concept ;
     skos:prefLabel "Answerability"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q2798912> ;
     skos:broader acc:Justificacion .
 
 acc:Explicabilidad a skos:Concept ;
@@ -94,6 +99,7 @@ acc:Explicabilidad a skos:Concept ;
 
 acc:AccesoInformacion a skos:Concept ;
     skos:prefLabel "Acceso a información"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q26084> ;
     skos:broader acc:Justificacion .
 
 # Restricciones
@@ -127,14 +133,17 @@ acc:TipoControl a skos:Concept ;
 
 acc:Auditoria a skos:Concept ;
     skos:prefLabel "Auditoría"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q181487> ;
     skos:broader acc:TipoControl .
 
 acc:Evaluacion a skos:Concept ;
     skos:prefLabel "Evaluación"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1379672> ;
     skos:broader acc:TipoControl .
 
 acc:MejoraContinua a skos:Concept ;
     skos:prefLabel "Mejora continua"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1318104> ;
     skos:broader acc:TipoControl .
 
 acc:Supervision a skos:Concept ;
@@ -164,6 +173,7 @@ acc:Denuncia a skos:Concept ;
 
 acc:ProteccionDenunciantes a skos:Concept ;
     skos:prefLabel "Protección de denunciantes"@es ;
+    skos:related <https://www.wikidata.org/entity/Q26102> ;
     skos:broader acc:Denuncia .
 
 # =========================================================
@@ -172,6 +182,7 @@ acc:ProteccionDenunciantes a skos:Concept ;
 
 acc:Sancion a skos:Concept ;
     skos:prefLabel "Sanción"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q32098> ;
     skos:broader acc:Accountability ;
     skos:narrower acc:Memoria .
 
@@ -200,6 +211,7 @@ acc:Problemas a skos:Concept ;
 
 acc:Sobreinformacion a skos:Concept ;
     skos:prefLabel "Sobreinformación"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1130191> ;
     skos:broader acc:Problemas .
 
 # =========================================================
@@ -235,18 +247,22 @@ acc:Prensa a skos:Concept ;
 
 acc:ONG a skos:Concept ;
     skos:prefLabel "ONG"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q79913> ;
     skos:broader acc:Expertos .
 
 acc:Watchdog a skos:Concept ;
     skos:prefLabel "Watchdog"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q7973120> ;
     skos:broader acc:Expertos .
 
 acc:AccionColectiva a skos:Concept ;
     skos:prefLabel "Acción colectiva"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1471594> ;
     skos:broader acc:Expertos .
 
 acc:AgenciasEstatales a skos:Concept ;
     skos:prefLabel "Agencias estatales"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q327333> ;
     skos:broader acc:Expertos .
 
 acc:Veeduria a skos:Concept ;
@@ -255,6 +271,7 @@ acc:Veeduria a skos:Concept ;
 
 acc:OposicionPolitica a skos:Concept ;
     skos:prefLabel "Oposición política"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q192852> ;
     skos:broader acc:Expertos .
 
 acc:Sindicatos a skos:Concept ;
@@ -263,6 +280,7 @@ acc:Sindicatos a skos:Concept ;
 
 acc:Pares a skos:Concept ;
     skos:prefLabel "Pares"@es ;
+    skos:closeMatch <https://www.wikidata.org/entity/Q215028> ;
     skos:broader acc:Expertos .
 
 # Afectados
@@ -278,6 +296,7 @@ acc:Afectados a skos:Concept ;
 acc:Ciudadanos a skos:Concept ;
     skos:prefLabel "Ciudadanos"@es ;
     skos:altLabel "Votantes"@es ;
+    skos:exactMatch <https://www.wikidata.org/entity/Q1020994> ;
     skos:broader acc:Afectados .
 
 acc:Consumidores a skos:Concept ;
