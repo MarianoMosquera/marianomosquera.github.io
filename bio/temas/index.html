@@ -374,6 +374,64 @@ a{color:inherit}
   layoutTopic(A.children[0],55,850);
   layoutTopic(A.children[1],950,1745);
 
+  // Ajuste exclusivamente visual: simulación de fuerzas/colisión para evitar superposición.
+  // Conserva la arquitectura jerárquica como posición objetivo y separa los nodos entre sí.
+  nodes.forEach(n=>{ n.targetX=n.x; n.targetY=n.y; n.vx=0; n.vy=0; });
+
+  function visualRadius(n){
+    const r = n.kind==="root" ? 45 : n.kind==="topic" ? 39 : n.depth===2 ? 30 : n.depth===3 ? 24 : 18;
+    const labelExtra = Math.min(34, Math.max(0, (n.label.length-10)*1.15));
+    return r + 20 + labelExtra;
+  }
+
+  function settleLayout(iterations=520){
+    const movable=nodes.filter(n=>n!==A);
+    for(let tick=0; tick<iterations; tick++){
+      // Atracción suave a la disposición jerárquica original.
+      movable.forEach(n=>{
+        const k = n.kind==="topic" ? 0.055 : 0.032;
+        n.vx += (n.targetX-n.x)*k;
+        n.vy += (n.targetY-n.y)*k;
+      });
+
+      // Fuerza de colisión/repulsión entre nodos.
+      for(let i=0;i<movable.length;i++){
+        const a=movable[i], ra=visualRadius(a);
+        for(let j=i+1;j<movable.length;j++){
+          const b=movable[j], rb=visualRadius(b);
+          let dx=b.x-a.x, dy=b.y-a.y;
+          let d2=dx*dx+dy*dy;
+          if(d2<0.01){ dx=(j-i)*0.01; dy=0.01; d2=dx*dx+dy*dy; }
+          const d=Math.sqrt(d2);
+          const minD=ra+rb+10;
+          if(d<minD){
+            const push=(minD-d)/d*0.16;
+            const px=dx*push, py=dy*push;
+            a.vx-=px; a.vy-=py;
+            b.vx+=px; b.vy+=py;
+          } else if(d<190){
+            const repel=(190-d)/190*0.012;
+            a.vx-=dx/d*repel; a.vy-=dy/d*repel;
+            b.vx+=dx/d*repel; b.vy+=dy/d*repel;
+          }
+        }
+      }
+
+      // Mantener ramas izquierda/derecha y límites del lienzo.
+      movable.forEach(n=>{
+        if(n.side<0 && n.x>850) n.vx-=(n.x-850)*0.08;
+        if(n.side>0 && n.x<950) n.vx+=(950-n.x)*0.08;
+        n.vx*=0.72; n.vy*=0.72;
+        n.x+=n.vx; n.y+=n.vy;
+        const pad=visualRadius(n)+18;
+        n.x=Math.max(pad,Math.min(W-pad,n.x));
+        n.y=Math.max(225,Math.min(H-pad,n.y));
+      });
+    }
+  }
+
+  settleLayout();
+
   function el(name,attrs={}){
     const e=document.createElementNS(SVG_NS,name);
     for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
