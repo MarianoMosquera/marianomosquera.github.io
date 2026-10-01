@@ -110,8 +110,8 @@ a{color:inherit}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:16px;height:10px;border:1px solid rgba(0,0,0,.65);border-radius:8px;background:transparent}
 .legend i.related{border:0;border-top:1px dashed #777;border-radius:0;height:1px}
-.viewport{width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
-#graph{display:block;width:100%;min-width:1180px;height:auto;min-height:980px}
+.viewport{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x}
+#graph{display:block;width:100%;min-width:1180px;height:auto;min-height:980px;touch-action:pan-x}
 .edge{fill:none;stroke:var(--line);stroke-width:1}
 .edge.related{stroke:#777;stroke-dasharray:4 4;stroke-width:.9}
 .node circle{fill:rgba(255,255,255,.02);stroke:#050505;stroke-width:1.1}
@@ -122,6 +122,7 @@ a{color:inherit}
 .node.topic text{font-size:12px;font-weight:620}
 .node.branch text{font-weight:560}
 .node{cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+.node circle{pointer-events:all}
 .node.dragging{cursor:grabbing}
 #graph{user-select:none;-webkit-user-select:none}
 .node:hover circle{fill:rgba(0,0,0,.045)}
@@ -564,25 +565,50 @@ a{color:inherit}
     gNodes.appendChild(g);
     nodeEls.set(n.id,g);
 
-    let dragging=false, dx=0, dy=0;
+    let dragging=false, dx=0, dy=0, activePointer=null;
+    const viewport=svg.closest(".viewport");
+    const EDGE_SCROLL=54;
+    const MAX_SCROLL_STEP=18;
+
+    function dragToPointer(evt){
+      const p=svgPoint(evt);
+      const b=visualBox(n);
+      n.x=Math.max(b.halfW+12,Math.min(W-b.halfW-12,p.x+dx));
+      n.y=Math.max(225+b.top,Math.min(H-b.bottom-12,p.y+dy));
+      g.setAttribute("transform",`translate(${n.x},${n.y})`);
+      redraw();
+
+      if(viewport){
+        const rect=viewport.getBoundingClientRect();
+        let step=0;
+        if(evt.clientX<rect.left+EDGE_SCROLL){
+          step=-MAX_SCROLL_STEP*(1-(evt.clientX-rect.left)/EDGE_SCROLL);
+        }else if(evt.clientX>rect.right-EDGE_SCROLL){
+          step=MAX_SCROLL_STEP*(1-(rect.right-evt.clientX)/EDGE_SCROLL);
+        }
+        if(step) viewport.scrollLeft+=step;
+      }
+    }
+
     g.addEventListener("pointerdown",evt=>{
+      if(evt.pointerType==="mouse" && evt.button!==0) return;
       evt.preventDefault();
       dragging=true;
+      activePointer=evt.pointerId;
       g.classList.add("dragging");
       g.setPointerCapture(evt.pointerId);
       const p=svgPoint(evt);
       dx=n.x-p.x; dy=n.y-p.y;
     });
     g.addEventListener("pointermove",evt=>{
-      if(!dragging) return;
-      const p=svgPoint(evt);
-      n.x=p.x+dx; n.y=p.y+dy;
-      g.setAttribute("transform",`translate(${n.x},${n.y})`);
-      redraw();
+      if(!dragging || evt.pointerId!==activePointer) return;
+      evt.preventDefault();
+      dragToPointer(evt);
     });
     const stop=evt=>{
-      if(!dragging) return;
+      if(!dragging || evt.pointerId!==activePointer) return;
       dragging=false;
+      activePointer=null;
       g.classList.remove("dragging");
       if(g.hasPointerCapture(evt.pointerId)) g.releasePointerCapture(evt.pointerId);
     };
