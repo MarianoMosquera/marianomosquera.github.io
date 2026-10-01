@@ -85,12 +85,15 @@
 }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/rdflib@2.2.36/dist/rdflib.min.js"></script>
+
 <style>
 :root{
   --ink:#0b0b0b;
   --muted:#6d6d6d;
-  --line:rgba(0,0,0,.30);
-  --line-soft:rgba(0,0,0,.12);
+  --line:#aaa;
+  --line-soft:#ddd;
   --paper:#fff;
 }
 *{box-sizing:border-box}
@@ -102,42 +105,48 @@ a{color:inherit}
 .back:hover{color:#000}
 .hero{text-align:center;margin:0 auto 22px;max-width:760px}
 .hero h1{font-size:clamp(27px,3.3vw,45px);line-height:1.04;font-weight:520;letter-spacing:-.035em;margin:0}
-.mark{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid #000;margin:11px auto 13px}
-.hero p{font-size:13px;line-height:1.7;color:#666;margin:0 auto;max-width:630px}
+.hero p{font-size:13px;line-height:1.7;color:#666;margin:8px auto 0;max-width:630px}
 .graph-shell{margin-top:24px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:20px 0 14px}
 .graph-toolbar{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:10px;font-size:11px;color:#777;letter-spacing:.02em}
 .legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:16px;height:10px;border:1px solid rgba(0,0,0,.65);border-radius:8px;background:transparent}
 .legend i.related{border:0;border-top:1px dashed #777;border-radius:0;height:1px}
-.viewport{width:100%;overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y}
-#graph{display:block;width:100%;min-width:1180px;height:auto;min-height:980px;touch-action:pan-x pan-y}
-.edge{fill:none;stroke:var(--line);stroke-width:1}
-.edge.related{stroke:#777;stroke-dasharray:4 4;stroke-width:.9}
-.node circle{fill:rgba(255,255,255,.02);stroke:#050505;stroke-width:1.1}
-.node.root circle{stroke-width:1.7}
-.node.topic circle{stroke-width:1.55}
-.node text{fill:#111;font-size:10.5px;pointer-events:none;text-anchor:middle}
-.node.root text{font-size:13px;font-weight:650}
-.node.topic text{font-size:12px;font-weight:620}
-.node.branch text{font-weight:560}
-.node{cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
-.node circle{pointer-events:all}
-.node.dragging{cursor:grabbing}
-#graph{user-select:none;-webkit-user-select:none}
-.node:hover circle{fill:rgba(0,0,0,.045)}
+
+.graph-layout{display:flex;width:100%;height:760px;min-height:620px}
+#graph-wrap{flex:1;min-width:0;background:#fff;overflow:hidden}
+#graph{display:block;width:100%;height:100%;touch-action:none}
+#panel{width:320px;padding:24px;background:#fafafa;border-left:1px solid #ddd;overflow-y:auto;font-size:12px;line-height:1.55}
+#panel h2{margin:0 0 16px;font-size:18px;font-weight:650}
+#panel .label{font-weight:650;margin-top:16px;margin-bottom:3px}
+#panel a{word-break:break-word}
+.link{stroke:#aaa;stroke-width:1.25}
+.related-link{stroke:#bbb;stroke-width:1;stroke-dasharray:5 5}
+.node{cursor:grab}
+.node:active{cursor:grabbing}
+.node circle{stroke:#555;stroke-width:1.1;fill:#e4e8ec}
+.node.transparent circle{fill:transparent;stroke:#222;stroke-width:1.25}
+.node.root circle{stroke-width:1.6}
+.node text{font-size:12px;pointer-events:none;fill:#222}
+.node.transparent text{font-weight:600}
+.node.root text{font-size:15px;font-weight:700}
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
-.resource{padding:16px 0;border-top:1px solid var(--line-soft)}
+.resource{padding:16px 0;border-top:1px solid rgba(0,0,0,.12)}
 .resource h2{font-size:13px;font-weight:620;margin:0 0 5px}
 .resource p{font-size:11.5px;color:#707070;line-height:1.55;margin:0 0 7px}
 .resource a{font-size:11px;text-decoration:none;border-bottom:1px solid #bbb;padding-bottom:2px}
 .resource a:hover{border-color:#000}
 .note{margin:20px 0 0;text-align:center;color:#8a8a8a;font-size:10.5px}
+
 @media(max-width:760px){
   .page{padding:24px 16px 36px}
   .back{margin-bottom:28px}
   .graph-toolbar{align-items:flex-start;flex-direction:column}
+  .graph-layout{flex-direction:column;height:auto}
+  #graph-wrap{width:100%;height:72vh;min-height:520px}
+  #panel{width:100%;border-left:0;border-top:1px solid #ddd;overflow-y:visible}
   .meta{grid-template-columns:1fr}
+  .node text{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
@@ -160,8 +169,15 @@ a{color:inherit}
         <span><i class="related"></i> relación SKOS</span>
       </div>
     </div>
-    <div class="viewport">
-      <svg id="graph" viewBox="0 0 1800 1500" role="img" aria-label="Red de temas de Mariano Mosquera: Accountability y Compliance, con sus conceptos SKOS"></svg>
+
+    <div class="graph-layout">
+      <div id="graph-wrap">
+        <svg id="graph" role="img" aria-label="Red de temas de Mariano Mosquera: Accountability y Compliance, con sus conceptos SKOS"></svg>
+      </div>
+      <aside id="panel">
+        <h2>Concepto</h2>
+        <p>Selecciona un concepto del grafo para consultar su información.</p>
+      </aside>
     </div>
   </section>
 
@@ -184,9 +200,6 @@ a{color:inherit}
 <script>
 (() => {
   "use strict";
-
-  const SVG_NS = "http://www.w3.org/2000/svg";
-  const svg = document.getElementById("graph");
 
   const A = {
     id:"Mariano Mosquera", label:"Mariano Mosquera", kind:"root",
@@ -322,26 +335,34 @@ a{color:inherit}
     ["comp:ConflictoIntereses","comp:GestionIntereses"]
   ];
 
-  const nodes = [];
-  const edges = [];
-  const byId = new Map();
+  const SKOS = {
+    prefLabel:"http://www.w3.org/2004/02/skos/core#prefLabel",
+    altLabel:"http://www.w3.org/2004/02/skos/core#altLabel",
+    broader:"http://www.w3.org/2004/02/skos/core#broader",
+    related:"http://www.w3.org/2004/02/skos/core#related",
+    definition:"http://www.w3.org/2004/02/skos/core#definition",
+    exactMatch:"http://www.w3.org/2004/02/skos/core#exactMatch",
+    closeMatch:"http://www.w3.org/2004/02/skos/core#closeMatch"
+  };
+  const OWL_SAMEAS="http://www.w3.org/2002/07/owl#sameAs";
 
-  function countLeaves(n){
-    if(!n.children || !n.children.length) return 1;
-    return n.children.reduce((s,c)=>s+countLeaves(c),0);
+  const nodes=[];
+  const links=[];
+  const byId=new Map();
+
+  function walk(n,parent=null,depth=0,side=0){
+    n.parent=parent;
+    n.depth=depth;
+    n.side=side;
+    nodes.push(n);
+    byId.set(n.id,n);
+    if(parent) links.push({source:parent.id,target:n.id});
+    (n.children||[]).forEach(c=>walk(c,n,depth+1,side));
   }
 
-  function walk(n, depth=0, parent=null, side=0){
-    n.depth=depth; n.parent=parent; n.side=side;
-    n.leaves=countLeaves(n);
-    nodes.push(n); byId.set(n.id,n);
-    if(parent) edges.push([parent,n]);
-    (n.children||[]).forEach(c=>walk(c,depth+1,n,side));
-  }
-
-  walk(A,0,null,0);
   A.children[0].side=-1;
   A.children[1].side=1;
+  walk(A,null,0,0);
 
   function setSide(n,side){
     n.side=side;
@@ -350,282 +371,289 @@ a{color:inherit}
   setSide(A.children[0],-1);
   setSide(A.children[1],1);
 
-  const W=1800,H=1500,CX=900,CY=115;
-  A.x=CX; A.y=CY;
+  const relatedLinks=related
+    .map(([a,b])=>({source:a,target:b}))
+    .filter(d=>byId.has(d.source)&&byId.has(d.target));
 
-  function layoutTopic(topic, x0, x1){
-    const maxDepth=5;
-    const top=270, bottom=1400;
-    let cursor=x0;
-    const span=x1-x0;
+  const semanticData=new Map();
 
-    function assign(n, depth){
-      n.y=top + (depth-1)*(bottom-top)/(maxDepth-1);
-      if(!n.children || !n.children.length){
-        const unit=span/topic.leaves;
-        n.x=cursor+unit/2;
-        cursor+=unit;
-      }else{
-        n.children.forEach(c=>assign(c,depth+1));
-        n.x=n.children.reduce((s,c)=>s+c.x,0)/n.children.length;
+  function fullURI(id){
+    if(id==="Mariano Mosquera") return "https://marianomosquera.github.io/bio/#person";
+    if(id.startsWith("acc:")) return "https://marianomosquera.github.io/accountability#"+id.slice(4);
+    if(id.startsWith("comp:")) return "https://marianomosquera.github.io/compliance#"+id.slice(5);
+    return id;
+  }
+
+  async function loadTTL(url){
+    const response=await fetch(url);
+    if(!response.ok) throw new Error("No se pudo cargar "+url);
+    const ttl=await response.text();
+    const store=$rdf.graph();
+    $rdf.parse(ttl,store,url,"text/turtle");
+    return store;
+  }
+
+  function hydrateFromStore(store){
+    nodes.forEach(n=>{
+      if(n===A) return;
+      const uri=fullURI(n.id);
+      const subject=$rdf.sym(uri);
+      const altLabels=store.each(subject,$rdf.sym(SKOS.altLabel)).map(x=>x.value);
+      const definition=store.any(subject,$rdf.sym(SKOS.definition));
+      const broader=store.any(subject,$rdf.sym(SKOS.broader));
+      const rels=store.each(subject,$rdf.sym(SKOS.related)).map(x=>x.value);
+
+      const external=[
+        ...store.each(subject,$rdf.sym(SKOS.exactMatch)),
+        ...store.each(subject,$rdf.sym(SKOS.closeMatch)),
+        ...store.each(subject,$rdf.sym(OWL_SAMEAS))
+      ].map(x=>x.value);
+
+      const wikidata=[...new Set(external.filter(u=>/^https?:\/\/www\.wikidata\.org\/entity\/Q\d+$/i.test(u)))];
+
+      if(altLabels.length || definition || broader || rels.length || wikidata.length){
+        semanticData.set(n.id,{
+          altLabels,
+          definition:definition?definition.value:null,
+          broader:broader?broader.value:null,
+          related:rels,
+          wikidata
+        });
       }
-    }
-    assign(topic,1);
-  }
-
-  layoutTopic(A.children[0],55,850);
-  layoutTopic(A.children[1],950,1745);
-
-  // Ajuste exclusivamente visual: colisión estricta para impedir contacto entre nodos/etiquetas.
-  // Conserva la arquitectura jerárquica como posición objetivo y separa los nodos entre sí.
-  nodes.forEach(n=>{ n.targetX=n.x; n.targetY=n.y; n.vx=0; n.vy=0; });
-
-  function visualBox(n){
-    const r = n.kind==="root" ? 45 : n.kind==="topic" ? 39 : n.depth===2 ? 30 : n.depth===3 ? 24 : 18;
-    const words=n.label.split(" ");
-    const twoLines=n.label.length>18 && words.length>1;
-    const longest = twoLines
-      ? Math.max(
-          words.slice(0,Math.ceil(words.length/2)).join(" ").length,
-          words.slice(Math.ceil(words.length/2)).join(" ").length
-        )
-      : n.label.length;
-    // Caja de exclusión deliberadamente amplia: círculo + etiqueta + margen.
-    const halfW=Math.max(r+20, longest*6.1+16);
-    const top=r+18;
-    const bottom=r+22+(twoLines?24:12);
-    return {halfW,top,bottom};
-  }
-
-  function settleLayout(iterations=900){
-    const movable=nodes.filter(n=>n!==A);
-
-    for(let tick=0; tick<iterations; tick++){
-      // Atracción muy suave: preserva la arquitectura sin vencer a la colisión.
-      movable.forEach(n=>{
-        const k = n.kind==="topic" ? 0.018 : 0.007;
-        n.vx += (n.targetX-n.x)*k;
-        n.vy += (n.targetY-n.y)*k;
-      });
-
-      // Colisión rectangular estricta: considera círculos y textos visibles.
-      for(let i=0;i<movable.length;i++){
-        const a=movable[i], ba=visualBox(a);
-        for(let j=i+1;j<movable.length;j++){
-          const b=movable[j], bb=visualBox(b);
-          let dx=b.x-a.x, dy=b.y-a.y;
-          if(Math.abs(dx)<0.001) dx=(j-i)*0.01;
-          if(Math.abs(dy)<0.001) dy=((j+i)%2?1:-1)*0.01;
-
-          const needX=ba.halfW+bb.halfW+22;
-          const aTop=a.y-ba.top, aBottom=a.y+ba.bottom;
-          const bTop=b.y-bb.top, bBottom=b.y+bb.bottom;
-          const overlapX=needX-Math.abs(dx);
-          const overlapY=Math.min(aBottom,bBottom)-Math.max(aTop,bTop)+22;
-
-          if(overlapX>0 && overlapY>0){
-            // Resuelve por el eje que requiere menor desplazamiento, con empuje fuerte.
-            if(overlapX < overlapY*1.35){
-              const dir=dx>=0?1:-1;
-              const push=overlapX*0.62+1.5;
-              a.vx-=dir*push; b.vx+=dir*push;
-            }else{
-              const dir=dy>=0?1:-1;
-              const push=overlapY*0.62+1.5;
-              a.vy-=dir*push; b.vy+=dir*push;
-            }
-          }
-        }
-      }
-
-      movable.forEach(n=>{
-        if(n.side<0 && n.x>850) n.vx-=(n.x-850)*0.12;
-        if(n.side>0 && n.x<950) n.vx+=(950-n.x)*0.12;
-        n.vx*=0.58; n.vy*=0.58;
-        n.x+=n.vx; n.y+=n.vy;
-        const b=visualBox(n);
-        n.x=Math.max(b.halfW+12,Math.min(W-b.halfW-12,n.x));
-        n.y=Math.max(225+b.top,Math.min(H-b.bottom-12,n.y));
-      });
-    }
-
-    // Barrido final determinista: garantiza separación residual sin depender de la simulación.
-    for(let pass=0; pass<180; pass++){
-      let changed=false;
-      for(let i=0;i<movable.length;i++){
-        const a=movable[i], ba=visualBox(a);
-        for(let j=i+1;j<movable.length;j++){
-          const b=movable[j], bb=visualBox(b);
-          const dx=b.x-a.x, dy=b.y-a.y;
-          const needX=ba.halfW+bb.halfW+22;
-          const aTop=a.y-ba.top, aBottom=a.y+ba.bottom;
-          const bTop=b.y-bb.top, bBottom=b.y+bb.bottom;
-          const ox=needX-Math.abs(dx);
-          const oy=Math.min(aBottom,bBottom)-Math.max(aTop,bTop)+22;
-          if(ox>0 && oy>0){
-            changed=true;
-            if(ox<oy){
-              const dir=dx>=0?1:-1, shift=ox/2+1;
-              a.x-=dir*shift; b.x+=dir*shift;
-            }else{
-              const dir=dy>=0?1:-1, shift=oy/2+1;
-              a.y-=dir*shift; b.y+=dir*shift;
-            }
-          }
-        }
-      }
-      movable.forEach(n=>{
-        const b=visualBox(n);
-        n.x=Math.max(b.halfW+12,Math.min(W-b.halfW-12,n.x));
-        n.y=Math.max(225+b.top,Math.min(H-b.bottom-12,n.y));
-      });
-      if(!changed) break;
-    }
-  }
-
-  settleLayout();
-
-  function el(name,attrs={}){
-    const e=document.createElementNS(SVG_NS,name);
-    for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
-    return e;
-  }
-
-  const gEdges=el("g");
-  const gRelated=el("g");
-  const gNodes=el("g");
-  svg.append(gEdges,gRelated,gNodes);
-
-  function pathBetween(a,b){
-    const mid=(a.y+b.y)/2;
-    return `M ${a.x} ${a.y} C ${a.x} ${mid}, ${b.x} ${mid}, ${b.x} ${b.y}`;
-  }
-
-  const edgePaths = [];
-  edges.forEach(([a,b])=>{
-    const p=el("path",{d:pathBetween(a,b),class:"edge"});
-    gEdges.appendChild(p);
-    edgePaths.push({a,b,p});
-  });
-
-  const relatedPaths = [];
-  related.forEach(([ia,ib])=>{
-    const a=byId.get(ia),b=byId.get(ib);
-    if(a&&b){
-      const bend=Math.min(a.y,b.y)-28;
-      const p=el("path",{
-        d:`M ${a.x} ${a.y} C ${a.x} ${bend}, ${b.x} ${bend}, ${b.x} ${b.y}`,
-        class:"edge related"
-      });
-      gRelated.appendChild(p);
-      relatedPaths.push({a,b,p});
-    }
-  });
-
-  function radius(n){
-    if(n.kind==="root") return 45;
-    if(n.kind==="topic") return 39;
-    if(n.depth===2) return 30;
-    if(n.depth===3) return 24;
-    return 18;
-  }
-
-  const nodeEls = new Map();
-
-  function redraw(){
-    edgePaths.forEach(({a,b,p})=>p.setAttribute("d",pathBetween(a,b)));
-    relatedPaths.forEach(({a,b,p})=>{
-      const bend=Math.min(a.y,b.y)-28;
-      p.setAttribute("d",`M ${a.x} ${a.y} C ${a.x} ${bend}, ${b.x} ${bend}, ${b.x} ${b.y}`);
     });
   }
 
-  function svgPoint(evt){
-    const pt=svg.createSVGPoint();
-    pt.x=evt.clientX; pt.y=evt.clientY;
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-  }
+  Promise.all([
+    loadTTL("https://marianomosquera.github.io/accountability.ttl"),
+    loadTTL("https://marianomosquera.github.io/compliance.ttl")
+  ]).then(stores=>stores.forEach(hydrateFromStore))
+    .catch(err=>console.warn("TTL:",err));
 
-  nodes.forEach(n=>{
-    const g=el("g",{class:`node ${n.kind|| (n.depth===2?"branch":"")}`});
-    g.setAttribute("transform",`translate(${n.x},${n.y})`);
-    const r=radius(n);
-    g.appendChild(el("circle",{r}));
-    const t=el("text",{y:r+16});
-    const words=n.label.split(" ");
-    if(n.label.length>18 && words.length>1){
-      const cut=Math.ceil(words.length/2);
-      const a=el("tspan",{x:"0",dy:"0"}); a.textContent=words.slice(0,cut).join(" ");
-      const b=el("tspan",{x:"0",dy:"12"}); b.textContent=words.slice(cut).join(" ");
-      t.append(a,b);
-    }else{
-      t.textContent=n.label;
-    }
-    g.appendChild(t);
-    gNodes.appendChild(g);
-    nodeEls.set(n.id,g);
+  const transparentIDs=new Set([
+    A.id,
+    "acc:Accountability",
+    "comp:Compliance"
+  ]);
 
-    let dragging=false, dx=0, dy=0, activePointer=null;
-    const viewport=svg.closest(".viewport");
-    const EDGE_SCROLL=54;
-    const MAX_SCROLL_STEP=18;
+  const svg=d3.select("#graph");
+  const container=document.getElementById("graph-wrap");
+  const zoomLayer=svg.append("g");
 
-    function dragToPointer(evt){
-      const p=svgPoint(evt);
-      const b=visualBox(n);
-      n.x=p.x+dx;
-      n.y=Math.max(225+b.top,Math.min(H-b.bottom-12,p.y+dy));
+  const zoom=d3.zoom()
+    .scaleExtent([0.35,3.5])
+    .on("zoom",event=>zoomLayer.attr("transform",event.transform));
 
-      const currentViewBox=svg.viewBox.baseVal;
-      const margin=220;
-      let minX=currentViewBox.x;
-      let maxX=currentViewBox.x+currentViewBox.width;
-      if(n.x-b.halfW<minX+margin) minX=n.x-b.halfW-margin;
-      if(n.x+b.halfW>maxX-margin) maxX=n.x+b.halfW+margin;
-      const dynamicWidth=maxX-minX;
-      svg.setAttribute("viewBox",`${minX} 0 ${dynamicWidth} ${H}`);
-      svg.style.minWidth=`${Math.max(1180,dynamicWidth)}px`;
+  svg.call(zoom);
 
-      g.setAttribute("transform",`translate(${n.x},${n.y})`);
-      redraw();
-
-      if(viewport){
-        const rect=viewport.getBoundingClientRect();
-        let step=0;
-        if(evt.clientX<rect.left+EDGE_SCROLL){
-          step=-MAX_SCROLL_STEP*(1-(evt.clientX-rect.left)/EDGE_SCROLL);
-        }else if(evt.clientX>rect.right-EDGE_SCROLL){
-          step=MAX_SCROLL_STEP*(1-(rect.right-evt.clientX)/EDGE_SCROLL);
-        }
-        if(step) viewport.scrollLeft+=step;
-      }
-    }
-
-    g.addEventListener("pointerdown",evt=>{
-      if(evt.pointerType==="mouse" && evt.button!==0) return;
-      evt.preventDefault();
-      dragging=true;
-      activePointer=evt.pointerId;
-      g.classList.add("dragging");
-      g.setPointerCapture(evt.pointerId);
-      const p=svgPoint(evt);
-      dx=n.x-p.x; dy=n.y-p.y;
-    });
-    g.addEventListener("pointermove",evt=>{
-      if(!dragging || evt.pointerId!==activePointer) return;
-      evt.preventDefault();
-      dragToPointer(evt);
-    });
-    const stop=evt=>{
-      if(!dragging || evt.pointerId!==activePointer) return;
-      dragging=false;
-      activePointer=null;
-      g.classList.remove("dragging");
-      if(g.hasPointerCapture(evt.pointerId)) g.releasePointerCapture(evt.pointerId);
+  function size(){
+    return {
+      width:Math.max(320,container.clientWidth),
+      height:Math.max(520,container.clientHeight)
     };
-    g.addEventListener("pointerup",stop);
-    g.addEventListener("pointercancel",stop);
+  }
+
+  let {width,height}=size();
+  svg.attr("viewBox",[0,0,width,height]);
+
+  const cx=width/2;
+  const cy=height/2;
+
+  A.x=cx; A.y=cy;
+  A.fx=cx; A.fy=cy;
+
+  const acc=byId.get("acc:Accountability");
+  const comp=byId.get("comp:Compliance");
+  acc.x=cx-width*0.22; acc.y=cy;
+  comp.x=cx+width*0.22; comp.y=cy;
+
+  nodes.forEach((d,i)=>{
+    if(Number.isFinite(d.x)&&Number.isFinite(d.y)) return;
+    const parent=d.parent;
+    const baseX=parent&&Number.isFinite(parent.x)?parent.x:cx+(d.side||0)*180;
+    const baseY=parent&&Number.isFinite(parent.y)?parent.y:cy;
+    const angle=(i*2.399963229728653)+(d.side<0?Math.PI:0);
+    const r=95+(d.depth*28)+(i%5)*12;
+    d.x=baseX+Math.cos(angle)*r;
+    d.y=baseY+Math.sin(angle)*r;
   });
+
+  function targetX(d){
+    if(d===A) return width/2;
+    if(d.id==="acc:Accountability") return width/2-width*0.23;
+    if(d.id==="comp:Compliance") return width/2+width*0.23;
+    return width/2+(d.side<0?-width*0.25:width*0.25);
+  }
+
+  function targetY(d){
+    if(d===A || d.id==="acc:Accountability" || d.id==="comp:Compliance") return height/2;
+    const level=Math.max(1,d.depth);
+    const spread=Math.min(height*0.38,120+level*58);
+    const seed=(nodes.indexOf(d)*0.61803398875)%1;
+    return height/2+(seed-0.5)*spread*2;
+  }
+
+  const hierarchy=zoomLayer.append("g")
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("class","link");
+
+  const relatedSel=zoomLayer.append("g")
+    .selectAll("line")
+    .data(relatedLinks)
+    .join("line")
+    .attr("class","related-link");
+
+  const node=zoomLayer.append("g")
+    .selectAll("g")
+    .data(nodes)
+    .join("g")
+    .attr("class",d=>"node "+(transparentIDs.has(d.id)?"transparent ":"")+(d===A?"root":""))
+    .call(drag());
+
+  node.append("circle")
+    .attr("r",d=>{
+      if(d===A) return 43;
+      if(d.kind==="topic") return 34;
+      if(d.depth===2) return 24;
+      if(d.depth===3) return 19;
+      return 15;
+    });
+
+  node.append("text")
+    .attr("x",d=>{
+      if(d===A) return 50;
+      if(d.kind==="topic") return 40;
+      if(d.depth===2) return 30;
+      if(d.depth===3) return 25;
+      return 21;
+    })
+    .attr("y",4)
+    .text(d=>d.label);
+
+  node.on("click",(event,d)=>{
+    event.stopPropagation();
+    showPanel(d);
+  });
+
+  function collisionRadius(d){
+    if(d===A) return 72;
+    if(d.kind==="topic") return 62;
+    if(d.depth===2) return 48;
+    if(d.depth===3) return 40;
+    return 34;
+  }
+
+  const simulation=d3.forceSimulation(nodes)
+    .force("link",d3.forceLink(links).id(d=>d.id)
+      .distance(d=>{
+        const s=typeof d.source==="object"?d.source:byId.get(d.source);
+        const t=typeof d.target==="object"?d.target:byId.get(d.target);
+        if(s===A||t===A) return Math.max(170,width*0.18);
+        if((s&&s.kind==="topic")||(t&&t.kind==="topic")) return 125;
+        return 82;
+      }).strength(0.82))
+    .force("charge",d3.forceManyBody().strength(d=>transparentIDs.has(d.id)?-520:-300))
+    .force("x",d3.forceX(targetX).strength(d=>d===A?0.5:transparentIDs.has(d.id)?0.12:0.018))
+    .force("y",d3.forceY(targetY).strength(d=>d===A?0.5:transparentIDs.has(d.id)?0.12:0.014))
+    .force("center",d3.forceCenter(width/2,height/2).strength(0.025))
+    .force("collision",d3.forceCollide().radius(collisionRadius).strength(0.9));
+
+  simulation.on("tick",()=>{
+    hierarchy
+      .attr("x1",d=>d.source.x).attr("y1",d=>d.source.y)
+      .attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
+
+    relatedSel
+      .attr("x1",d=>(typeof d.source==="object"?d.source:byId.get(d.source)).x)
+      .attr("y1",d=>(typeof d.source==="object"?d.source:byId.get(d.source)).y)
+      .attr("x2",d=>(typeof d.target==="object"?d.target:byId.get(d.target)).x)
+      .attr("y2",d=>(typeof d.target==="object"?d.target:byId.get(d.target)).y);
+
+    node.attr("transform",d=>`translate(${d.x},${d.y})`);
+  });
+
+  function drag(){
+    function started(event,d){
+      if(d===A) return;
+      if(!event.active) simulation.alphaTarget(0.18).restart();
+      d.fx=d.x; d.fy=d.y;
+    }
+    function dragged(event,d){
+      if(d===A) return;
+      d.fx=event.x; d.fy=event.y;
+    }
+    function ended(event,d){
+      if(d===A) return;
+      if(!event.active) simulation.alphaTarget(0);
+      d.fx=null; d.fy=null;
+    }
+    return d3.drag().on("start",started).on("drag",dragged).on("end",ended);
+  }
+
+  function esc(s){
+    return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+  }
+
+  function labelForURI(uri){
+    for(const n of nodes) if(fullURI(n.id)===uri) return n.label;
+    return uri;
+  }
+
+  function showPanel(d){
+    const panel=document.getElementById("panel");
+
+    if(d===A){
+      panel.innerHTML=`
+        <h2>Mariano Mosquera</h2>
+        <div class="label">Entidad</div>
+        <div>Persona</div>
+        <div class="label">URI</div>
+        <div><a href="https://marianomosquera.github.io/bio/#person">https://marianomosquera.github.io/bio/#person</a></div>`;
+      return;
+    }
+
+    const sem=semanticData.get(d.id)||{};
+    const broader=sem.broader ? labelForURI(sem.broader) : (d.parent?d.parent.label:"—");
+    const rels=(sem.related||[]).map(labelForURI);
+    const wikidata=sem.wikidata||[];
+
+    panel.innerHTML=`
+      <h2>${esc(d.label)}</h2>
+
+      <div class="label">Etiqueta preferida</div>
+      <div>${esc(d.label)}</div>
+
+      <div class="label">Definición</div>
+      <div>${sem.definition?esc(sem.definition):"—"}</div>
+
+      <div class="label">Etiquetas alternativas</div>
+      <div>${sem.altLabels&&sem.altLabels.length?sem.altLabels.map(esc).join(", "):"—"}</div>
+
+      <div class="label">Concepto superior</div>
+      <div>${esc(broader)}</div>
+
+      <div class="label">Conceptos relacionados</div>
+      <div>${rels.length?rels.map(esc).join(", "):"—"}</div>
+
+      ${wikidata.length?`
+        <div class="label">Wikidata</div>
+        <div>${wikidata.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(u.split("/").pop())}</a>`).join("<br>")}</div>
+      `:""}
+    `;
+  }
+
+  window.addEventListener("resize",()=>{
+    const s=size();
+    width=s.width; height=s.height;
+    svg.attr("viewBox",[0,0,width,height]);
+    A.fx=width/2; A.fy=height/2;
+    simulation.force("center",d3.forceCenter(width/2,height/2).strength(0.025));
+    simulation.force("x",d3.forceX(targetX).strength(d=>d===A?0.5:transparentIDs.has(d.id)?0.12:0.018));
+    simulation.force("y",d3.forceY(targetY).strength(d=>d===A?0.5:transparentIDs.has(d.id)?0.12:0.014));
+    simulation.alpha(0.35).restart();
+  });
+
 })();
 </script>
 </body>
