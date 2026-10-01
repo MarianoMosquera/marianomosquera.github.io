@@ -358,7 +358,7 @@
 "@type": "WebPage",
 "@id": "https://marianomosquera.github.io/bio/formacion/#evidencia-programa-estadistica-unc",
 "name": "Programa Estadística Aplicada a la Investigación - Facultad de Ciencias Económicas UNC",
-"description": "Programa oficial publicado por la Facultad de Ciencias Económicas de la Universidad Nacional de Córdoba. Esta fuente documenta el programa y no constituye por sí sola evidencia nominal de participación.",
+"description": "Programa oficial publicado por la Facultad de Ciencias Económicas de la Universidad Nacional de Córdoba.",
 "url": "https://www.eco.unc.edu.ar/files/distancia/programa_eai_2015.pdf"
 },
 {
@@ -373,14 +373,14 @@
 "@type": "WebPage",
 "@id": "https://marianomosquera.github.io/bio/formacion/#evidencia-utn-programacion",
 "name": "UTN Buenos Aires - Programación y Desarrollo",
-"description": "Página institucional de UTN Buenos Aires sobre formación de Experto Universitario en Programación y Desarrollo. Esta fuente contextualiza el tipo de formación y no constituye por sí sola evidencia nominal de participación.",
+"description": "Página institucional de UTN Buenos Aires sobre formación de Experto Universitario en Programación y Desarrollo.",
 "url": "https://sceu.frba.utn.edu.ar/e-learning/listado/Tipo%5B4120%7Cdiplomatura%7Cexperto-universitario%5D/Categorias%5Bprogramacion-y-desarrollo%5D"
 },
 {
 "@type": "WebPage",
 "@id": "https://marianomosquera.github.io/bio/formacion/#evidencia-medusapp",
 "name": "Boletín Oficial - MedusApp",
-"description": "Registro posterior de Carlos Mariano Mosquera Sadleir como titular o autor de una obra de género Programa Computación. Se incorpora como contexto de actividad vinculada con programación y no como evidencia del título UTN.",
+"description": "Registro posterior de Carlos Mariano Mosquera Sadleir como titular o autor de una obra de género Programa Computación.",
 "url": "https://www.boletinoficial.gob.ar/pdf/aviso/primera/155695/20161214",
 "about": { "@id": "https://marianomosquera.github.io/bio/#person" }
 },
@@ -425,7 +425,7 @@
 
 <style>
 :root {
-  --bg: #ffffff;
+  --bg: #F7F6F2;
   --text: #171717;
   --muted: #6f6f6f;
   --line: #e8e8e8;
@@ -460,7 +460,7 @@ main {
   padding: 92px 0 80px;
 }
 
-header {
+main > header {
   margin-bottom: 48px;
 }
 
@@ -472,6 +472,19 @@ header {
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
+
+.facet-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:78px;
+  border-bottom:1px solid var(--line);
+  font-size:.78rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.facet-brand{font-weight:700;letter-spacing:.12em}
+.facet-section-label{color:var(--muted)}
 
 h1 {
   margin: 0 0 28px;
@@ -513,12 +526,16 @@ h1 {
 }
 
 @media (max-width: 600px) {
+  .facet-top{min-height:66px}
+  .facet-brand{font-size:.72rem}
+  .facet-section-label{font-size:.68rem}
+
   main {
     width: min(100% - 32px, 760px);
     padding-top: 64px;
   }
 
-  header {
+  main > header {
     margin-bottom: 36px;
   }
 
@@ -532,6 +549,11 @@ h1 {
 </head>
 
 <body>
+
+<header class="facet-top" style="width:min(100% - 40px,760px);margin:0 auto;">
+  <div class="facet-brand">MARIANO MOSQUERA</div>
+  <div class="facet-section-label">Formación</div>
+</header>
 
 <main>
 
