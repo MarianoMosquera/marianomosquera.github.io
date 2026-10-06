@@ -32,6 +32,7 @@ from mallm.models.personas.InformedGenerator import InformedGenerator
 from mallm.models.personas.IPIPPersonaGenerator import IPIPPersonaGenerator
 from mallm.models.personas.MockGenerator import MockGenerator
 from mallm.models.personas.NoPersonaGenerator import NoPersonaGenerator
+from mallm.models.personas.PredefinedPersonaGenerator import PredefinedPersonaGenerator
 from mallm.models.personas.PersonaGenerator import PersonaGenerator
 
 DECISION_PROTOCOLS: dict[str, type[DecisionProtocol]] = {
@@ -61,6 +62,7 @@ PERSONA_GENERATORS: dict[str, type[PersonaGenerator]] = {
     "nopersona": NoPersonaGenerator,
     "mock": MockGenerator,
     "informed": InformedGenerator,
+    "predefined": PredefinedPersonaGenerator,
 }
 
 RESPONSE_GENERATORS: dict[str, type[ResponseGenerator]] = {
