@@ -1,0 +1,33 @@
+{
+  "common": {
+    "endpoint_url": "https://api.openai.com",
+    "model_name": "gpt-3.5-turbo",
+    "api_key": "your-api-key-here",
+    "num_neutral_agents": 0,
+    "max_turns": 10,
+    "skip_decision_making": false,
+    "discussion_paradigm": "memory",
+    "decision_protocol": "hybrid_consensus",
+    "visible_turns_in_memory": 2,
+    "concurrent_api_requests": 100,
+    "use_baseline": false,
+    "use_chain_of_thought": true,
+    "num_agents": 3,
+    "agent_generator": "expert",
+    "input_json_file_path": "data/datasets/etpc_debugging.json",
+    "shuffle_input_samples": true
+  },
+  "runs": [
+    {
+      "output_json_file_path": "test_output1.json",
+      "task_instruction_prompt": "Instruction for run 1"
+    },
+    {
+      "output_json_file_path": "test_output2.json",
+      "task_instruction_prompt": "Instruction for run 2",
+      "model_name": "gpt-4",
+      "max_turns": 15,
+      "num_agents": 5
+    }
+  ]
+}
