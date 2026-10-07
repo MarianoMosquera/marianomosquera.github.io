@@ -150,19 +150,17 @@ class Chat(LLM):    # type: ignore
                     messages=merged_messages,
                     stream=True,
                     stop=self.stop_tokens,
-                    max_tokens=request_max_tokens,
-                    logprobs=True,
+                    max_completion_tokens=request_max_tokens,
+                    reasoning_effort="max",
                 )
                 # iterate and print stream
                 collected_messages = []
-                log_prob_sum = 0.0
                 for message in chat_completion:
                     message_str = message.choices[0].delta.content
-                    if message.choices[0].logprobs:
-                        log_prob_sum += message.choices[0].logprobs.content[0].logprob
                     if message_str and message_str not in self.stop_tokens:
                         collected_messages.append(message_str)
-                log_prob_sum = log_prob_sum / len(collected_messages)
+
+                log_prob_sum = float("-inf")
                 break
             except (APIError, APIConnectionError, RateLimitError) as e:
                 # Handle API error here, e.g. retry or log
@@ -222,7 +220,8 @@ class Chat(LLM):    # type: ignore
             messages=prompt,
             stream=True,
             stop=self.stop_tokens,
-            max_tokens=self.max_tokens,
+            max_completion_tokens=self.max_tokens,
+            reasoning_effort="max",
         )
         # iterate and print stream
         for message in chat_completion:
