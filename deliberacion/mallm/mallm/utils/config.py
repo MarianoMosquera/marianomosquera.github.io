@@ -28,7 +28,7 @@ class Config:
     decision_protocol: str = "approval_voting"
     visible_turns_in_memory: int = 10
     debate_rounds: int = 2
-    max_tokens: int = 1024
+    max_tokens: int = 24000
     concurrent_api_requests: int = 100
     use_baseline: bool = False
     use_chain_of_thought: bool = False
