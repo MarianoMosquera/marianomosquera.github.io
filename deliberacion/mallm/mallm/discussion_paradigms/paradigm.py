@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
+import json
 import logging
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from rich.panel import Panel
@@ -28,6 +31,125 @@ class DiscussionParadigm(ABC):
         self.draft = ""
         self.agreements: list[Agreement] = []
 
+    def _save_round1_checkpoint(
+        self,
+        checkpoint_path: str,
+        coordinator: Coordinator,
+    ) -> None:
+        path = Path(checkpoint_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        agent_order = [
+            {
+                "index": i,
+                "persona": agent.persona,
+            }
+            for i, agent in enumerate(coordinator.agents)
+            if isinstance(agent, Panelist)
+        ]
+
+        data = {
+            "version": 1,
+            "turn": self.turn,
+            "unique_id": self.unique_id,
+            "agent_order": agent_order,
+            "globalMemory": [
+                dataclasses.asdict(memory) for memory in coordinator.memory
+            ],
+            "agreements": [
+                dataclasses.asdict(agreement) for agreement in self.agreements
+            ],
+        }
+
+        temporary_path = path.with_suffix(path.suffix + ".tmp")
+        temporary_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        temporary_path.replace(path)
+
+    def _load_round1_checkpoint(
+        self,
+        checkpoint_path: str,
+        coordinator: Coordinator,
+    ) -> int:
+        path = Path(checkpoint_path)
+        if not path.exists():
+            return 0
+
+        data = json.loads(path.read_text(encoding="utf-8"))
+        saved_order = data.get("agent_order", [])
+        current_panelists = [
+            agent for agent in coordinator.agents if isinstance(agent, Panelist)
+        ]
+
+        if len(saved_order) != len(current_panelists):
+            raise ValueError(
+                "Round 1 checkpoint does not match the current number of panelists."
+            )
+
+        old_to_new_agent_id: dict[str, str] = {}
+        for saved, current in zip(saved_order, current_panelists):
+            if saved["persona"] != current.persona:
+                raise ValueError(
+                    "Round 1 checkpoint persona order does not match current agents."
+                )
+
+        restored_memories: list[Memory] = []
+        for raw_memory in data.get("globalMemory", []):
+            raw_memory = dict(raw_memory)
+            old_id = raw_memory["agent_id"]
+
+            matching_index = next(
+                (
+                    saved["index"]
+                    for saved in saved_order
+                    if saved["persona"] == raw_memory["persona"]
+                ),
+                None,
+            )
+            if matching_index is None:
+                raise ValueError(
+                    f'Cannot restore memory for persona: {raw_memory["persona"]}'
+                )
+
+            new_id = coordinator.agents[matching_index].id
+            old_to_new_agent_id[old_id] = new_id
+            raw_memory["agent_id"] = new_id
+            restored_memories.append(Memory(**raw_memory))
+
+        restored_agreements: list[Agreement] = []
+        for raw_agreement in data.get("agreements", []):
+            raw_agreement = dict(raw_agreement)
+            old_id = raw_agreement["agent_id"]
+            if old_id not in old_to_new_agent_id:
+                matching_index = next(
+                    (
+                        saved["index"]
+                        for saved in saved_order
+                        if saved["persona"] == raw_agreement["persona"]
+                    ),
+                    None,
+                )
+                if matching_index is None:
+                    raise ValueError(
+                        f'Cannot restore agreement for persona: {raw_agreement["persona"]}'
+                    )
+                old_to_new_agent_id[old_id] = coordinator.agents[matching_index].id
+
+            raw_agreement["agent_id"] = old_to_new_agent_id[old_id]
+            restored_agreements.append(Agreement(**raw_agreement))
+
+        coordinator.memory = restored_memories
+        for agent in coordinator.agents:
+            agent.memory = {}
+        coordinator.update_memories(restored_memories, coordinator.agents)
+
+        self.agreements = restored_agreements
+        self.unique_id = int(data.get("unique_id", len(restored_memories)))
+
+        return len(restored_memories)
+
     def discuss(
         self,
         coordinator: Coordinator,
@@ -45,6 +167,19 @@ class DiscussionParadigm(ABC):
 
         if console is None:
             console = Console()
+
+        round1_completed_agents = 0
+        if config.round1_checkpoint_path:
+            round1_completed_agents = self._load_round1_checkpoint(
+                config.round1_checkpoint_path,
+                coordinator,
+            )
+            if round1_completed_agents:
+                if round1_completed_agents == len(coordinator.panelists):
+                    self.turn = 1
+                else:
+                    self.turn = 0
+
         while (
             not self.decision or config.skip_decision_making
         ) and self.turn < config.max_turns:
@@ -52,6 +187,13 @@ class DiscussionParadigm(ABC):
             logger.debug(f"Ongoing. Current turn: {self.turn}")
 
             for i, agent in enumerate(coordinator.agents):
+                if (
+                    self.turn == 1
+                    and config.round1_checkpoint_path
+                    and i < round1_completed_agents
+                ):
+                    continue
+
                 discussion_history, memory_ids, current_draft = (
                     agent.get_discussion_history(
                         context_length=config.visible_turns_in_memory,
@@ -102,6 +244,32 @@ class DiscussionParadigm(ABC):
                     raise Exception("Agent type not recognized.")
                 self.unique_id += 1
                 self.memories = []
+
+                if (
+                    self.turn == 1
+                    and config.round1_checkpoint_path
+                    and config.round1_agents_per_run
+                ):
+                    self._save_round1_checkpoint(
+                        config.round1_checkpoint_path,
+                        coordinator,
+                    )
+                    round1_completed_agents += 1
+
+                    if (
+                        round1_completed_agents % config.round1_agents_per_run == 0
+                    ):
+                        logger.info(
+                            "Round 1 checkpoint saved after agent "
+                            f"{round1_completed_agents}/{len(coordinator.panelists)}."
+                        )
+                        return (
+                            self.draft,
+                            self.turn,
+                            self.agreements,
+                            False,
+                            voting_results_per_turn,
+                        )
 
 
             if coordinator.decision_protocol is None:

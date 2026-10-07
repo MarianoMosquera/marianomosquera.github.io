@@ -49,6 +49,8 @@ class Config:
     all_agents_generate_first_draft: bool = True
     skos_enabled: bool = True
     skos_ontology_dir: Optional[str] = "../.."
+    round1_checkpoint_path: Optional[str] = None
+    round1_agents_per_run: Optional[int] = None
     all_agents_generate_draft: bool = False
     voting_protocols_with_alterations: bool = False
     calculate_persona_diversity: bool = False
