@@ -63,6 +63,10 @@ class DiscussionParadigm(ABC):
                 ) or config.all_agents_generate_draft:
                     current_draft = None
                     discussion_history = None
+                elif self.turn == 2 and config.all_agents_generate_first_draft:
+                    # Start deliberation from all independent second drafts
+                    # without privileging the last agent as Current Solution.
+                    current_draft = None
 
                 template_filling = TemplateFilling(
                     task_instruction=task_instruction,
@@ -102,6 +106,14 @@ class DiscussionParadigm(ABC):
                     logger.error("No decision protocol module found.")
                     raise Exception("No decision protocol module found.")
 
+                # Turn 1 is an independent-position phase:
+                # first draft -> SKOS reinterpretation -> second draft.
+                # No collective decision is allowed until all agents have
+                # completed this phase.
+                if self.turn == 1 and config.all_agents_generate_first_draft:
+                    voting_results_per_turn[self.turn] = None
+                    continue
+
                 (
                     self.draft,
                     self.decision,
@@ -119,7 +131,9 @@ class DiscussionParadigm(ABC):
                 if self.decision:
                     break
 
-            if coordinator.judge:
+            if coordinator.judge and not (
+                self.turn == 1 and config.all_agents_generate_first_draft
+            ):
                 template_filling = TemplateFilling(
                     task_instruction=task_instruction,
                     input_str=input_str,

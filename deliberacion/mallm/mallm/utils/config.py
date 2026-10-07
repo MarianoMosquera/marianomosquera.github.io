@@ -47,6 +47,8 @@ class Config:
     use_ablation: bool = False
     shuffle_input_samples: bool = False
     all_agents_generate_first_draft: bool = False
+    skos_enabled: bool = False
+    skos_ontology_dir: Optional[str] = None
     all_agents_generate_draft: bool = False
     voting_protocols_with_alterations: bool = False
     calculate_persona_diversity: bool = False

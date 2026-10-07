@@ -15,6 +15,7 @@ from mallm.agents.panelist import Panelist
 from mallm.decision_protocols.protocol import DecisionProtocol
 from mallm.discussion_paradigms.paradigm import DiscussionParadigm
 from mallm.models.Chat import Chat
+from mallm.models.skos.SKOSProcessor import SKOSProcessor
 from mallm.models.discussion.ResponseGenerator import ResponseGenerator
 from mallm.models.discussion.SimpleResponseGenerator import SimpleResponseGenerator
 from mallm.utils.config import Config
@@ -70,6 +71,7 @@ class Coordinator:
         self.memory: list[Memory] = []
         self.console = console or Console()
         self.judge_llm = judge_model
+        self.skos_processor: Optional[SKOSProcessor] = None
 
     def init_agents(
         self,
@@ -245,6 +247,13 @@ class Coordinator:
         self.response_generator = RESPONSE_GENERATORS[config.response_generator](
             self.llm
         )
+
+        if config.skos_enabled:
+            if not config.skos_ontology_dir:
+                raise ValueError("skos_ontology_dir is required when skos_enabled=True")
+            self.skos_processor = SKOSProcessor(config.skos_ontology_dir)
+        else:
+            self.skos_processor = None
 
         self.init_agents(
             sample_instruction,

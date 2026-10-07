@@ -13,7 +13,7 @@ from mallm.models.discussion.ResponseGenerator import ResponseGenerator
 if TYPE_CHECKING:
     from mallm.coordinator import Coordinator
 
-from mallm.utils.types import Agreement, Memory, TemplateFilling
+from mallm.utils.types import Agreement, Memory, Response, TemplateFilling
 
 logger = logging.getLogger("mallm")
 
@@ -67,10 +67,43 @@ class Agent:
         response = self.response_generator.generate_improve(
             template_filling, self.chain_of_thought
         )
+        first_draft_response: Response | None = None
+        skos_prompt: str | None = None
+        second_draft_response: Response | None = None
+
+        if (
+            turn == 1
+            and template_filling.current_draft is None
+            and self.coordinator.skos_processor is not None
+        ):
+            first_draft_response = response
+
+            skos_prompt = self.coordinator.skos_processor.build_semantic_prompt(
+                first_draft=first_draft_response.message,
+                persona=self.persona,
+                persona_description=self.persona_description,
+            )
+
+            second_draft_response = self.response_generator.generate_response(
+                [{"role": "user", "content": skos_prompt}],
+                template_filling.task_instruction,
+                template_filling.input_str,
+                self.chain_of_thought,
+                None,
+                False,
+                True,
+            )
+            response = second_draft_response
+
         logger.debug(
             f"Agent [bold blue]{self.short_id}[/] {'agreed' if response.agreement else 'disagreed'} with the solution."
         )
-        agree = False if unique_id == 0 else response.agreement
+        # First-turn SKOS second drafts are independent positions,
+        # not agreement/disagreement votes on a collective solution.
+        if second_draft_response is not None:
+            agree = False
+        else:
+            agree = False if unique_id == 0 else response.agreement
         agreements.append(
             Agreement(
                 agreement=agree,
@@ -82,6 +115,16 @@ class Agent:
             )
         )
 
+        additional_args = dataclasses.asdict(template_filling)
+        if first_draft_response is not None and second_draft_response is not None:
+            additional_args["skos"] = {
+                "first_draft_message": first_draft_response.message,
+                "first_draft_solution": first_draft_response.solution,
+                "semantic_prompt": skos_prompt,
+                "second_draft_message": second_draft_response.message,
+                "second_draft_solution": second_draft_response.solution,
+            }
+
         memory = Memory(
             message_id=unique_id,
             turn=turn,
@@ -92,7 +135,7 @@ class Agent:
             agreement=agreements[-1].agreement,
             solution=response.solution if not agree else agreements[-2].solution,
             memory_ids=memory_ids,
-            additional_args=dataclasses.asdict(template_filling),
+            additional_args=additional_args,
         )
         self.coordinator.memory.append(memory)
         return response.message, memory, agreements
