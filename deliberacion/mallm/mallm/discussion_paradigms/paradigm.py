@@ -64,9 +64,9 @@ class DiscussionParadigm(ABC):
                 ) or config.all_agents_generate_draft:
                     current_draft = None
                     discussion_history = None
-                elif self.turn == 2 and config.all_agents_generate_first_draft:
-                    # Start deliberation from all independent second drafts
-                    # without privileging the last agent as Current Solution.
+                elif config.decision_protocol == "approval_voting" and self.turn >= 2:
+                    # Keep deliberation informationally symmetric across rounds
+                    # without privileging any agent as Current Solution.
                     current_draft = None
 
                 template_filling = TemplateFilling(

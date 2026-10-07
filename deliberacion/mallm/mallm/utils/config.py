@@ -25,7 +25,7 @@ class Config:
     skip_decision_making: bool = False
     discussion_paradigm: str = "memory"
     response_generator: str = "critical"
-    decision_protocol: str = "hybrid_consensus"
+    decision_protocol: str = "approval_voting"
     visible_turns_in_memory: int = 10
     debate_rounds: int = 2
     max_tokens: int = 1024
