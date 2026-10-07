@@ -253,25 +253,16 @@ class Agent:
         )
         context_memory = []
         for memory in memories:
-            if (
-                context_length
-                and turn
-                and memory.turn >= turn - context_length
-                and (turn > memory.turn or include_this_turn)
+            if turn is not None and not include_this_turn and memory.turn >= turn:
+                continue
+
+            context_memory.append(memory)
+            memory_ids.append(int(memory.message_id))
+
+            if memory.contribution == "draft" or (
+                memory.contribution == "improve" and memory.agreement is False
             ):
-                context_memory.append(memory)
-                memory_ids.append(int(memory.message_id))
-                if memory.contribution == "draft" or (
-                    memory.contribution == "improve" and memory.agreement is False
-                ):
-                    current_draft = memory.solution
-            else:
-                context_memory.append(memory)
-                memory_ids.append(int(memory.message_id))
-                if memory.contribution == "draft" or (
-                    memory.contribution == "improve" and memory.agreement is False
-                ):
-                    current_draft = memory.solution
+                current_draft = memory.solution
 
         return context_memory, memory_ids, current_draft
 

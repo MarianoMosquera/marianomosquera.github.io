@@ -24,17 +24,17 @@ class Config:
     max_turns: int = 10
     skip_decision_making: bool = False
     discussion_paradigm: str = "memory"
-    response_generator: str = "simple"
+    response_generator: str = "critical"
     decision_protocol: str = "hybrid_consensus"
-    visible_turns_in_memory: int = 2
+    visible_turns_in_memory: int = 10
     debate_rounds: int = 2
     max_tokens: int = 1024
     concurrent_api_requests: int = 100
     use_baseline: bool = False
-    use_chain_of_thought: bool = True
-    num_agents: int = 3
+    use_chain_of_thought: bool = False
+    num_agents: int = 8
     num_neutral_agents: int = 0
-    agent_generator: str = "expert"
+    agent_generator: str = "predefined"
     agent_generators_list: list[str] = field(default_factory=list[str])
     trust_remote_code: bool = False
     num_samples: Optional[int] = None
@@ -46,9 +46,9 @@ class Config:
     hf_dataset_context_column: Optional[str] = None
     use_ablation: bool = False
     shuffle_input_samples: bool = False
-    all_agents_generate_first_draft: bool = False
-    skos_enabled: bool = False
-    skos_ontology_dir: Optional[str] = None
+    all_agents_generate_first_draft: bool = True
+    skos_enabled: bool = True
+    skos_ontology_dir: Optional[str] = "../.."
     all_agents_generate_draft: bool = False
     voting_protocols_with_alterations: bool = False
     calculate_persona_diversity: bool = False
@@ -115,7 +115,7 @@ class Config:
             and len(self.agent_generators_list) != self.num_agents
         ):
             logger.warning(
-                f"The length of the provided agent generators ({self.agent_generators_list}) does not match the number of agents (3). Setting num_agents={len(self.agent_generators_list)}."
+                f"The length of the provided agent generators ({self.agent_generators_list}) does not match the configured number of agents. Setting num_agents={len(self.agent_generators_list)}."
             )
             self.num_agents = len(self.agent_generators_list)
         if self.endpoint_url.endswith("/"):

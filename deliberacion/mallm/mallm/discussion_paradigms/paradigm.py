@@ -56,6 +56,7 @@ class DiscussionParadigm(ABC):
                     agent.get_discussion_history(
                         context_length=config.visible_turns_in_memory,
                         turn=self.turn,
+                        include_this_turn=False,
                     )
                 )
                 if (
@@ -102,18 +103,15 @@ class DiscussionParadigm(ABC):
                 self.unique_id += 1
                 self.memories = []
 
-                if coordinator.decision_protocol is None:
-                    logger.error("No decision protocol module found.")
-                    raise Exception("No decision protocol module found.")
 
-                # Turn 1 is an independent-position phase:
-                # first draft -> SKOS reinterpretation -> second draft.
-                # No collective decision is allowed until all agents have
-                # completed this phase.
-                if self.turn == 1 and config.all_agents_generate_first_draft:
-                    voting_results_per_turn[self.turn] = None
-                    continue
+            if coordinator.decision_protocol is None:
+                logger.error("No decision protocol module found.")
+                raise Exception("No decision protocol module found.")
 
+            # Evaluate consensus only after all agents have completed the round.
+            if self.turn == 1 and config.all_agents_generate_first_draft:
+                voting_results_per_turn[self.turn] = None
+            else:
                 (
                     self.draft,
                     self.decision,
@@ -121,15 +119,17 @@ class DiscussionParadigm(ABC):
                     voting_process_string,
                     additional_voting_results,
                 ) = coordinator.decision_protocol.make_decision(
-                    self.agreements, self.turn, i, task_instruction, input_str, config
+                    self.agreements,
+                    self.turn,
+                    len(coordinator.agents) - 1,
+                    task_instruction,
+                    input_str,
+                    config,
                 )
                 if additional_voting_results:
                     voting_results_per_turn[self.turn] = additional_voting_results
                 else:
                     voting_results_per_turn[self.turn] = None
-
-                if self.decision:
-                    break
 
             if coordinator.judge and not (
                 self.turn == 1 and config.all_agents_generate_first_draft
