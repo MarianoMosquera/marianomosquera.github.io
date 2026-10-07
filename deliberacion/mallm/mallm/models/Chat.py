@@ -42,7 +42,7 @@ class Chat(LLM):    # type: ignore
         "<|eot_id|>",
         "<|reserved_special_token",
     ]
-    max_tokens: int = 1024
+    max_tokens: int = 24000
 
     @staticmethod
     def _context_limited_max_tokens(error: Exception, current_max_tokens: int) -> Optional[int]:
