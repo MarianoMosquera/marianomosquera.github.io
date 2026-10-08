@@ -51,6 +51,9 @@ class Config:
     skos_ontology_dir: Optional[str] = "../.."
     round1_checkpoint_path: Optional[str] = None
     round1_agents_per_run: Optional[int] = None
+    round2_checkpoint_path: Optional[str] = None
+    stop_after_round2: bool = False
+    resume_from_round2: bool = False
     all_agents_generate_draft: bool = False
     voting_protocols_with_alterations: bool = False
     calculate_persona_diversity: bool = False

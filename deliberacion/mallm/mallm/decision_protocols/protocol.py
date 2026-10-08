@@ -97,7 +97,6 @@ class DecisionProtocol(ABC):
                 ),
                 confidence_callback=confidence_callback,
             )
-            prev_answer.solution = response
             final_answers_with_confidence.append((response, int(confidence * 100)))
             voting_process_string += f"{panelist.persona} final answer: {response}\n"
         return final_answers_with_confidence, voting_process_string

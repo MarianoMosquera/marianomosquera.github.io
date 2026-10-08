@@ -13,7 +13,7 @@ from rich.text import Text
 
 from mallm.agents.draftProposer import DraftProposer
 from mallm.agents.panelist import Panelist
-from mallm.utils.types import Agreement, Memory, TemplateFilling, VotingResultList
+from mallm.utils.types import Agreement, Memory, TemplateFilling, VotingResult, VotingResultList
 
 if TYPE_CHECKING:
     from mallm.coordinator import Coordinator
@@ -67,6 +67,159 @@ class DiscussionParadigm(ABC):
             encoding="utf-8",
         )
         temporary_path.replace(path)
+
+    def _save_round2_checkpoint(
+        self,
+        checkpoint_path: str,
+        coordinator: Coordinator,
+        voting_results: Optional[VotingResultList],
+        voting_process_string: str,
+    ) -> None:
+        path = Path(checkpoint_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        agent_order = [
+            {
+                "index": i,
+                "persona": agent.persona,
+                "agent_id": agent.id,
+            }
+            for i, agent in enumerate(coordinator.agents)
+            if isinstance(agent, Panelist)
+        ]
+
+        data = {
+            "version": 1,
+            "checkpoint_type": "round2_complete",
+            "turn": self.turn,
+            "unique_id": self.unique_id,
+            "draft": self.draft,
+            "decision": self.decision,
+            "agent_order": agent_order,
+            "globalMemory": [
+                dataclasses.asdict(memory) for memory in coordinator.memory
+            ],
+            "agreements": [
+                dataclasses.asdict(agreement) for agreement in self.agreements
+            ],
+            "voting_results": (
+                dataclasses.asdict(voting_results)
+                if voting_results is not None
+                else None
+            ),
+            "voting_process_string": voting_process_string,
+        }
+
+        temporary_path = path.with_suffix(path.suffix + ".tmp")
+        temporary_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        temporary_path.replace(path)
+
+    def _load_round2_checkpoint(
+        self,
+        checkpoint_path: str,
+        coordinator: Coordinator,
+    ) -> Optional[VotingResultList]:
+        path = Path(checkpoint_path)
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Round 2 checkpoint not found: {checkpoint_path}"
+            )
+
+        data = json.loads(path.read_text(encoding="utf-8"))
+
+        if data.get("checkpoint_type") != "round2_complete":
+            raise ValueError("Invalid Round 2 checkpoint.")
+
+        if int(data.get("turn", -1)) != 2:
+            raise ValueError("Round 2 checkpoint has an invalid turn.")
+
+        saved_order = [item["persona"] for item in data["agent_order"]]
+        current_panelists = [
+            agent for agent in coordinator.agents if isinstance(agent, Panelist)
+        ]
+        current_order = [agent.persona for agent in current_panelists]
+
+        if saved_order != current_order:
+            raise ValueError(
+                "Round 2 checkpoint agent order does not match current configuration."
+            )
+
+        saved_agent_ids = {
+            item["persona"]: item.get("agent_id")
+            for item in data["agent_order"]
+            if item.get("agent_id") is not None
+        }
+        current_agent_ids = {
+            agent.persona: agent.id for agent in current_panelists
+        }
+        id_map = {
+            saved_agent_ids[persona]: current_agent_ids[persona]
+            for persona in saved_agent_ids
+            if persona in current_agent_ids
+        }
+
+        restored_memories = []
+        for raw_memory in data["globalMemory"]:
+            raw_memory = dict(raw_memory)
+            raw_memory["agent_id"] = id_map.get(
+                raw_memory["agent_id"], raw_memory["agent_id"]
+            )
+            restored_memories.append(Memory(**raw_memory))
+
+        coordinator.memory = []
+        for agent in coordinator.agents:
+            agent.memory = []
+
+        coordinator.update_memories(restored_memories, coordinator.agents)
+
+        round2_memories = [
+            memory for memory in restored_memories if memory.turn == 2
+        ]
+        if len(round2_memories) != len(current_panelists):
+            raise ValueError(
+                "Round 2 checkpoint does not contain exactly one Round 2 memory "
+                "per panelist."
+            )
+
+        restored_agreements = []
+        for raw_agreement in data["agreements"]:
+            raw_agreement = dict(raw_agreement)
+            raw_agreement["agent_id"] = id_map.get(
+                raw_agreement["agent_id"], raw_agreement["agent_id"]
+            )
+            restored_agreements.append(Agreement(**raw_agreement))
+
+        if len(restored_agreements) != len(current_panelists):
+            raise ValueError(
+                "Round 2 checkpoint does not contain exactly one Round 2 "
+                "agreement per panelist."
+            )
+
+        self.agreements = restored_agreements
+
+        self.turn = int(data["turn"])
+        self.unique_id = int(data["unique_id"])
+        self.draft = data.get("draft")
+        self.decision = bool(data.get("decision", False))
+
+        raw_voting_results = data.get("voting_results")
+        if raw_voting_results is None:
+            return None
+
+        alterations = {
+            key: VotingResult(**value)
+            for key, value in raw_voting_results["alterations"].items()
+        }
+
+        return VotingResultList(
+            answers=raw_voting_results["answers"],
+            type=raw_voting_results["type"],
+            voting_process_string=raw_voting_results["voting_process_string"],
+            alterations=alterations,
+        )
 
     def _load_round1_checkpoint(
         self,
@@ -168,17 +321,32 @@ class DiscussionParadigm(ABC):
         if console is None:
             console = Console()
 
-        round1_completed_agents = 0
-        if config.round1_checkpoint_path:
-            round1_completed_agents = self._load_round1_checkpoint(
-                config.round1_checkpoint_path,
+        if config.resume_from_round2:
+            if not config.round2_checkpoint_path:
+                raise ValueError(
+                    "resume_from_round2 requires round2_checkpoint_path."
+                )
+            round2_voting_results = self._load_round2_checkpoint(
+                config.round2_checkpoint_path,
                 coordinator,
             )
-            if round1_completed_agents:
-                if round1_completed_agents == len(coordinator.panelists):
-                    self.turn = 1
-                else:
-                    self.turn = 0
+            voting_results_per_turn[2] = round2_voting_results
+            if round2_voting_results is not None:
+                voting_process_string = (
+                    round2_voting_results.voting_process_string
+                )
+        else:
+            round1_completed_agents = 0
+            if config.round1_checkpoint_path:
+                round1_completed_agents = self._load_round1_checkpoint(
+                    config.round1_checkpoint_path,
+                    coordinator,
+                )
+                if round1_completed_agents:
+                    if round1_completed_agents == len(coordinator.panelists):
+                        self.turn = 1
+                    else:
+                        self.turn = 0
 
         while (
             not self.decision or config.skip_decision_making
@@ -298,6 +466,17 @@ class DiscussionParadigm(ABC):
                     voting_results_per_turn[self.turn] = additional_voting_results
                 else:
                     voting_results_per_turn[self.turn] = None
+
+                if self.turn == 2 and config.round2_checkpoint_path:
+                    self._save_round2_checkpoint(
+                        config.round2_checkpoint_path,
+                        coordinator,
+                        additional_voting_results,
+                        voting_process_string,
+                    )
+
+                    if config.stop_after_round2:
+                        break
 
             if coordinator.judge and not (
                 self.turn == 1 and config.all_agents_generate_first_draft
