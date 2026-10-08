@@ -21,7 +21,7 @@ class Config:
     endpoint_url: str = "https://api.openai.com/v1"
     model_name: str = "gpt-3.5-turbo"
     api_key: str = "-"
-    max_turns: int = 10
+    max_turns: int = 4
     skip_decision_making: bool = False
     discussion_paradigm: str = "memory"
     response_generator: str = "critical"
