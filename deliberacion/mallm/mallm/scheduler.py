@@ -732,7 +732,7 @@ def main() -> None:
     if fire is None:
         print("Fire is not available. Please run via batch_mallm.py or provide a Config programmatically.")
         return
-    config = fire.Fire(Config, serialize=print)
+    config = fire.Fire(Config, serialize=lambda x: "Configuración cargada correctamente.")
     print("\n" + "=" * width)
     print("END OF CONFIGURATION PARAMETERS".center(width))
     print("=" * width + "\n")

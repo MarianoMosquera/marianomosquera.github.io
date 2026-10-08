@@ -151,7 +151,7 @@ class Chat(LLM):    # type: ignore
                     stream=True,
                     stop=self.stop_tokens,
                     max_completion_tokens=request_max_tokens,
-                    reasoning_effort="max",
+                    reasoning_effort="xhigh",
                 )
                 # iterate and print stream
                 collected_messages = []
@@ -163,6 +163,7 @@ class Chat(LLM):    # type: ignore
                 log_prob_sum = float("-inf")
                 break
             except (APIError, APIConnectionError, RateLimitError) as e:
+                logger.error("OPENAI ERROR DETAIL: %r", e)
                 # Handle API error here, e.g. retry or log
                 adjusted_max_tokens = self._context_limited_max_tokens(e, request_max_tokens)
                 if adjusted_max_tokens is not None and adjusted_max_tokens < request_max_tokens:
@@ -221,7 +222,7 @@ class Chat(LLM):    # type: ignore
             stream=True,
             stop=self.stop_tokens,
             max_completion_tokens=self.max_tokens,
-            reasoning_effort="max",
+            reasoning_effort="xhigh",
         )
         # iterate and print stream
         for message in chat_completion:
