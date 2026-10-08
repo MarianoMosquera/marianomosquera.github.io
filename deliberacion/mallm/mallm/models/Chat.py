@@ -149,7 +149,6 @@ class Chat(LLM):    # type: ignore
                     model=self.model,
                     messages=merged_messages,
                     stream=True,
-                    stop=self.stop_tokens,
                     max_completion_tokens=request_max_tokens,
                     reasoning_effort="xhigh",
                 )
@@ -220,7 +219,6 @@ class Chat(LLM):    # type: ignore
             model=self.model,
             messages=prompt,
             stream=True,
-            stop=self.stop_tokens,
             max_completion_tokens=self.max_tokens,
             reasoning_effort="xhigh",
         )
