@@ -24,7 +24,7 @@ class ApprovalVoting(DecisionProtocol):
         panelists: list[Panelist],
         num_neutral_agents: int,
         worker_functions: WorkerFunctions,
-        vote_turn: int = 3,
+        vote_turn: int = 2,
     ) -> None:
         super().__init__(panelists, num_neutral_agents, worker_functions)
         self.vote_turn = vote_turn
