@@ -41,7 +41,7 @@ First Draft depende de una respuesta previa de otro agente.
 
 Después de cada First Draft se incorporó una etapa de procesamiento
 mediante una ontología externa **SKOS/RDF (TTL)**, distribuida en once
-archivos y organizada en cuatro dimensiones: **Gobernanza, Valores,
+archivos TTL y organizada en cuatro dimensiones: **Gobernanza, Valores,
 Agenda y Racionalidad**.
 
 SKOS no prescribe la posición del agente. Opera después de la respuesta
@@ -187,9 +187,8 @@ aprobó únicamente su propia opción.
 ## 8. Alternativa ganadora
 
 La Final Answer originada en la Mesa Técnica fue el **"Protocolo de
-Descarte Temprano y Verificación Pública"**. No constituye una novena
-síntesis generada después de la votación: es una de las ocho
-alternativas derivadas de R2 y resultó ganadora por aprobación unánime.
+Descarte Temprano y Verificación Pública"**. Es una de las ocho
+alternativas "síntesis" derivadas de R2 y resultó ganadora por aprobación unánime.
 
 Su aporte central consiste en desplazar el objeto del acuerdo. En lugar
 de exigir una decisión inmediata a favor o en contra de la explotación,
