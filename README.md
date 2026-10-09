@@ -12,4 +12,4 @@ It integrates structured data, semantic vocabularies (SKOS/RDF), academic public
 
 Repositorio académico archivado en Zenodo.
 
-DOI: https://doi.org/10.5281/zenodo.23250925
+DOI: https://doi.org/10.5281/zenodo.23250924
