@@ -1,0 +1,10 @@
+{
+  "metodo": "Distancia coseno media entre pares",
+  "modelo": "text-embedding-3-large",
+  "agentes": 8,
+  "pares": 28,
+  "diversidad_first_draft": 0.1344350664694706,
+  "diversidad_second_draft": 0.12762373904484775,
+  "diferencia_absoluta": -0.006811327424622843,
+  "variacion_porcentual": -5.066630012169968
+}

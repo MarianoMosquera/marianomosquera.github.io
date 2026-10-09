@@ -1,0 +1,61 @@
+{
+  "metodo": "Distancia coseno media entre pares",
+  "control": "Second Draft truncado a la longitud del First Draft por agente",
+  "modelo": "text-embedding-3-large",
+  "agentes": 8,
+  "pares": 28,
+  "diversidad_first_draft": 0.1344350664694706,
+  "diversidad_second_draft_ajustado": 0.13851826693651562,
+  "diferencia_absoluta": 0.004083200467045023,
+  "variacion_porcentual": 3.0373031191027033,
+  "longitudes": [
+    {
+      "agente": "Manhattan Minerals",
+      "first_tokens": 2117,
+      "second_original_tokens": 3382,
+      "second_ajustado_tokens": 2117
+    },
+    {
+      "agente": "Centromin Perú",
+      "first_tokens": 1840,
+      "second_original_tokens": 2837,
+      "second_ajustado_tokens": 1840
+    },
+    {
+      "agente": "Ministerio de Energía y Minas",
+      "first_tokens": 2362,
+      "second_original_tokens": 3395,
+      "second_ajustado_tokens": 2362
+    },
+    {
+      "agente": "Municipalidad",
+      "first_tokens": 1739,
+      "second_original_tokens": 2848,
+      "second_ajustado_tokens": 1739
+    },
+    {
+      "agente": "Frente de Defensa del Valle de San Lorenzo y Tambogrande",
+      "first_tokens": 1797,
+      "second_original_tokens": 3129,
+      "second_ajustado_tokens": 1797
+    },
+    {
+      "agente": "Productores agrícolas y Junta de Regantes del Valle de San Lorenzo",
+      "first_tokens": 2007,
+      "second_original_tokens": 3262,
+      "second_ajustado_tokens": 2007
+    },
+    {
+      "agente": "Mesa Técnica",
+      "first_tokens": 2031,
+      "second_original_tokens": 3158,
+      "second_ajustado_tokens": 2031
+    },
+    {
+      "agente": "Sociedad Nacional de Minería, Petróleo y Energía",
+      "first_tokens": 2007,
+      "second_original_tokens": 3065,
+      "second_ajustado_tokens": 2007
+    }
+  ]
+}
