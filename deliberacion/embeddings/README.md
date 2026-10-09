@@ -37,7 +37,6 @@ En los textos completos se observa menor dispersión semántica después de SKOS
 - Los Second Drafts completos son más extensos que los First Drafts; la longitud y el contenido adicional pueden afectar las representaciones.
 - La prueba de robustez **no aísla únicamente el efecto de longitud**: al truncar desde el final también se omiten argumentos y se privilegia el comienzo de los documentos. Es un análisis de sensibilidad al procedimiento de recorte, no un control definitivo.
 - La distancia coseno de embeddings no equivale directamente a pluralismo de valores, desacuerdo político, contradicción o calidad deliberativa.
-- Se trata de un único caso con ocho agentes y sin replicaciones ni grupo de control; no se realiza inferencia causal ni prueba de significación estadística.
 - Los resultados dependen del modelo `text-embedding-3-large`, de los textos concretos y de las decisiones de procesamiento.
 
 ## Reproducción
@@ -50,7 +49,7 @@ python embeddings/comparar.py
 python embeddings/robustez.py
 ```
 
-La extracción no consume API; las dos mediciones posteriores sí generan solicitudes de embeddings. No almacenar claves en el repositorio. El archivo `drafts_extraidos.json` se genera localmente y está excluido por `.gitignore`.
+El archivo `drafts_extraidos.json` se genera localmente y está excluido por `.gitignore`.
 
 ## Referencias académicas
 
