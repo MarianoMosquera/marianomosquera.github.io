@@ -1,0 +1,17 @@
+.venv/
+.env
+.env.*
+.streamlit/secrets.toml
+__pycache__/
+*.pyc
+.DS_Store
+*.docx
+*.pdf
+*.zip
+*.json
+*.enc
+*.tsr
+*.log
+registros/
+datos/
+temporales/
