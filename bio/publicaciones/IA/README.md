@@ -14,7 +14,7 @@ El sistema registra el uso de un AUTOR de Astra en manuscritos académicos y ent
 - Cada iteración con Astra parte de la última versión, salvo selección explícita de una versión anterior. «Nueva llamada al mismo módulo» reutiliza el documento ya cargado. La consola inicia Streamlit local; las llamadas se realizan desde el navegador.
 - El AUTOR puede descargar la versión de trabajo, editarla offline y reimportarla con el mismo Paper ID. El sistema conserva el archivo anterior, registra la nueva versión y compara ambos DOCX para identificar cambios introducidos durante el trabajo offline como cambios HUMANOS declarados; el análisis automático de diferencias no demuestra por sí solo autoría humana.
 
-## 3. Nivel 1: SEIS INSTRUCCIONES del AUTOR
+## 3. SEIS INSTRUCCIONES del AUTOR
 
 | INSTRUCCIÓN | Alcance |
 |---|---|
