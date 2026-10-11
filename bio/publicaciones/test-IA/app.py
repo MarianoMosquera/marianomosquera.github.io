@@ -7,7 +7,7 @@ from iteraciones import (
 from anotaciones import crear_documento_anotado
 from exportacion import crear_zip_auditoria
 from versiones import crear_version_original, crear_version_prueba
-from auditoria import crear_registro, registrar_decision
+from auditoria import crear_registro, registrar_decision, registro_desde_intervencion
 import io
 import streamlit as st
 from docx import Document
@@ -229,10 +229,30 @@ else:
             key="descargar_anotado_test_ia",
         )
 
+        intervenciones = st.session_state.get(
+            "intervenciones_iterativas", []
+        )
+
+        registros_unificados = list(registros)
+        ids_registrados = {
+            registro["id"] for registro in registros_unificados
+        }
+
+        for intervencion in intervenciones:
+            if intervencion["id"] not in ids_registrados:
+                registros_unificados.append(
+                    registro_desde_intervencion(
+                        intervencion,
+                        INSTRUCCIONES[intervencion["categoria"]]["prompt"],
+                    )
+                )
+                ids_registrados.add(intervencion["id"])
+
         contenido_zip = crear_zip_auditoria(
             original,
             versiones,
-            registros,
+            registros_unificados,
+            intervenciones,
         )
 
         st.download_button(

@@ -5,7 +5,7 @@ from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 
 
-def crear_zip_auditoria(original, versiones, registros):
+def crear_zip_auditoria(original, versiones, registros, iteraciones=None):
     """Construye un ZIP descargable sin escribir archivos en disco."""
     salida = BytesIO()
 
@@ -20,6 +20,15 @@ def crear_zip_auditoria(original, versiones, registros):
                 f'documentos/version_{version["numero"]}.docx',
                 version["contenido"],
             )
+
+        zip_file.writestr(
+            "auditoria/iteraciones.json",
+            json.dumps(
+                iteraciones if iteraciones is not None else [],
+                ensure_ascii=False,
+                indent=2,
+            ),
+        )
 
         zip_file.writestr(
             "auditoria/registro.json",

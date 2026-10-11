@@ -43,3 +43,29 @@ def registrar_decision(registro, decision, observaciones=""):
     actualizado["decision_autor"] = decision
     actualizado["observaciones_autor"] = observaciones
     return actualizado
+
+
+def registro_desde_intervencion(intervencion, instruccion_general=""):
+    """Representa una intervención iterativa en la auditoría."""
+    historial = intervencion.get("iteraciones", [])
+    ultima = historial[-1] if historial else {}
+
+    decision = ultima.get("decision", "Pendiente")
+    if decision == "Modificar":
+        decision = "Modificada"
+
+    return {
+        "id": intervencion["id"],
+        "fecha_utc": intervencion["creada_en"],
+        "documento": intervencion.get("documento", ""),
+        "categoria": intervencion["categoria"],
+        "instruccion_general": instruccion_general,
+        "instruccion_especifica": intervencion["instruccion"],
+        "ubicacion": intervencion.get("ubicacion", ""),
+        "alcance": intervencion["alcance"],
+        "fragmento": intervencion.get("fragmento", ""),
+        "propuesta_ia": ultima.get("propuesta", ""),
+        "decision_autor": decision,
+        "observaciones_autor": ultima.get("observaciones_autor", ""),
+        "iteraciones": historial,
+    }
