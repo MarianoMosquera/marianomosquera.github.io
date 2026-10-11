@@ -1,3 +1,9 @@
+from iteraciones import (
+    crear_intervencion,
+    agregar_propuesta,
+    decidir_propuesta,
+    preparar_nueva_iteracion,
+)
 from anotaciones import crear_documento_anotado
 from exportacion import crear_zip_auditoria
 from versiones import crear_version_original, crear_version_prueba
@@ -236,3 +242,150 @@ else:
             mime="application/zip",
             key="descargar_zip_test_ia",
         )
+
+
+st.divider()
+st.subheader("Revisión iterativa de propuestas")
+
+st.caption(
+    "Modo de prueba: las propuestas son simuladas. "
+    "Todavía no se realizan consultas a Astra."
+)
+
+alcance_iterativo = st.radio(
+    "Alcance del análisis",
+    ["Manuscrito completo", "Fragmento"],
+    horizontal=True,
+    key="alcance_iterativo",
+)
+
+if alcance_iterativo == "Fragmento":
+    fragmento_iterativo = st.text_area(
+        "Fragmento que se analizará",
+        key="fragmento_iterativo",
+        height=130,
+    )
+else:
+    fragmento_iterativo = ""
+
+if "intervenciones_iterativas" not in st.session_state:
+    st.session_state["intervenciones_iterativas"] = []
+
+if st.button("Crear propuesta de prueba", key="crear_propuesta_iterativa"):
+    if archivo is None:
+        st.warning("Primero cargá un documento Word.")
+    elif not instruccion_especifica.strip():
+        st.warning("Primero escribí una instrucción específica.")
+    elif alcance_iterativo == "Fragmento" and not fragmento_iterativo.strip():
+        st.warning("Indicá el fragmento que se analizará.")
+    else:
+        intervencion = crear_intervencion(
+            categoria=categoria,
+            instruccion=instruccion_especifica,
+            alcance=alcance_iterativo,
+            ubicacion=ubicacion_intervencion.strip(),
+        )
+
+        intervencion["documento"] = archivo.name
+        intervencion["fragmento"] = fragmento_iterativo
+
+        intervencion = agregar_propuesta(
+            intervencion,
+            "SIMULACIÓN: propuesta inicial para probar el circuito.",
+            modelo="simulacion",
+        )
+
+        st.session_state["intervenciones_iterativas"].append(intervencion)
+        st.rerun()
+
+for indice, intervencion in enumerate(
+    st.session_state["intervenciones_iterativas"]
+):
+    identificador = intervencion["id"]
+    ultima = intervencion["iteraciones"][-1]
+
+    with st.expander(
+        f'Intervención {indice + 1} — '
+        f'{intervencion["categoria"]} — {intervencion["estado"]}',
+        expanded=True,
+    ):
+        st.write("**Alcance:**", intervencion["alcance"])
+        st.write("**Ubicación:**", intervencion["ubicacion"])
+        st.write("**Propuesta actual:**", ultima["propuesta"])
+
+        st.write("**Historial de propuestas**")
+        for paso in intervencion["iteraciones"]:
+            st.write(
+                f'Iteración {paso["numero"]}: '
+                f'{paso["decision"]}'
+            )
+            st.write(paso["propuesta"])
+            if paso["observaciones_autor"]:
+                st.write(
+                    "Instrucciones del autor:",
+                    paso["observaciones_autor"],
+                )
+
+        if ultima["decision"] == "Pendiente":
+            decision_iterativa = st.selectbox(
+                "Decisión sobre esta propuesta",
+                ["Aceptada", "Rechazada", "Modificar"],
+                key=f"decision_iterativa_{identificador}_{ultima['numero']}",
+            )
+
+            observaciones_iterativas = st.text_area(
+                "Instrucciones u observaciones del autor",
+                key=f"observaciones_iterativas_{identificador}_{ultima['numero']}",
+            )
+
+            if st.button(
+                "Guardar evaluación",
+                key=f"evaluar_iterativa_{identificador}_{ultima['numero']}",
+            ):
+                try:
+                    actualizado = decidir_propuesta(
+                        intervencion,
+                        decision_iterativa,
+                        observaciones_iterativas,
+                    )
+                    st.session_state["intervenciones_iterativas"][indice] = (
+                        actualizado
+                    )
+                    st.rerun()
+                except ValueError as error:
+                    st.error(str(error))
+
+        elif ultima["decision"] == "Modificar":
+            st.info(
+                "El autor solicitó una modificación. "
+                "Puede generarse una nueva propuesta de prueba."
+            )
+
+            if st.button(
+                "Generar nueva propuesta simulada",
+                key=f"nueva_iterativa_{identificador}_{ultima['numero']}",
+            ):
+                solicitud = preparar_nueva_iteracion(intervencion)
+                numero = len(intervencion["iteraciones"]) + 1
+
+                propuesta = (
+                    f"SIMULACIÓN: propuesta {numero}. "
+                    "Instrucción recibida: "
+                    f'{solicitud["instrucciones_autor"]}'
+                )
+
+                actualizado = agregar_propuesta(
+                    intervencion,
+                    propuesta,
+                    modelo="simulacion",
+                )
+
+                st.session_state["intervenciones_iterativas"][indice] = (
+                    actualizado
+                )
+                st.rerun()
+
+        else:
+            st.success(
+                f'Intervención cerrada: {ultima["decision"]}.'
+            )
