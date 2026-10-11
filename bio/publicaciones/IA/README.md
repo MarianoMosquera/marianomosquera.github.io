@@ -128,7 +128,7 @@ El archivo `Paper_Final.docx` será el PF final limpio destinado al EDITOR.
 - El EDITOR recibe Paper ID y clave por canal seguro separado; abre la interfaz estática de GitHub Pages y verifica/desencripta el expediente localmente en su navegador.
 - El EDITOR carga el PF recibido y el sistema comprueba coincidencia criptográfica con la huella del PF sellado. Si no coincide, muestra error de integridad y no lo presenta como versión certificada.
 - El sistema contrasta manuscrito original, iteraciones registradas, modificaciones humanas —incluidas las offline reimportadas— y PF sellado.
-- En `Paper_anotado.docx` del EDITOR: verde = texto de Astra conservado literalmente; amarillo = aporte conceptual realmente nuevo de Astra conservado tras reescritura humana, con evidencia e incertidumbre; sin marca = descartado o atribución insuficiente.
+- En `Paper_anotado.docx` del EDITOR: verde = texto de Astra conservado literalmente; amarillo = posible aporte conceptual nuevo de Astra conservado tras reescritura humana, con evidencia e incertidumbre; sin marca = descartado o atribución insuficiente.
 - El Word editorial solo contiene resaltados; las explicaciones se muestran en fichas interactivas. Cada ficha representa una contribución; «Ver las iteraciones» despliega todas sus llamadas, prompts, respuestas y diferencias, sin omitir rechazos.
 - Una sola descarga editorial: ZIP con `Paper_anotado.docx`, historial íntegro de intervenciones —incluidas las descartadas—, informe derivado de comparación, declaración de integridad del AUTOR y token(es) RFC 3161.
 
