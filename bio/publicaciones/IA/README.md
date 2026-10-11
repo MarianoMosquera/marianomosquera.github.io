@@ -204,7 +204,7 @@ GitHub Pages publica únicamente interfaz y metadatos no sensibles, `auditoria.e
 | `orquestador/config.py`; `requirements.txt` | Modelo, API y dependencias. |
 | `orquestador/modulos/` | `traduccion.py`, `correccion.py`, `bibliografia.py`, `datos_resultados.py`, `argumentacion.py`, `coherencia_integral.py`. |
 | `orquestador/auditoria/` | `registro.py`, `diferencias.py`, `cifrado.py`, `sellado_rfc3161.py`. |
-| `registros/PUB-AAAA-NNNN/` | `metadata.json`, `auditoria.enc`, `auditoria.tsr`; etapas adicionales vinculadas. |
+| `registros/PUB-AAAA-NNNN/` | `metadata.json`, `auditoria.enc`, `auditoria.tsr`. |
 
 «Astra High» es denominación funcional. El identificador y parámetros reales del modelo deberán confirmarse en la API durante la implementación. Las rutas son la estructura técnica prevista y no acreditan que los archivos ya existan.
 
