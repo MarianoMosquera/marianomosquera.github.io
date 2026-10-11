@@ -215,4 +215,4 @@ GitHub Pages publica únicamente interfaz y metadatos no sensibles, `auditoria.e
 - Probar AES-GCM, gestión de claves, dependencias web, ausencia de telemetría y privacidad del PF.
 - Verificar conservación fiel de tablas, notas, referencias y resaltados en DOCX.
 - Probar captura de errores/reintentos, importación offline, control de versiones, fallo de sellado, rechazo de cambios posteriores y coincidencia del PF recibido por el EDITOR.
-- No afirmar que el software está implementado, certificado o validado hasta completar pruebas en bio/test-IA.
+- No afirmar que el software está implementado, certificado o validado hasta completar pruebas en bio/publicaciones/test-IA.
