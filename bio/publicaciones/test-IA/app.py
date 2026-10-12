@@ -10,6 +10,7 @@ from flujo import solicitar_iteracion, comparar_offline, validar_evaluacion_fina
 from cierre import cerrar_autoria
 from tablero import resumir_atribuciones
 from finalizacion import solicitar_cierre, cierre_evaluado, reabrir_revision
+from recuperacion import recuperar_zip_auditoria
 
 MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 st.set_page_config(page_title='TEST-IA', page_icon='🧪', layout='wide')
@@ -27,8 +28,50 @@ def seccion(numero, titulo, descripcion, color, fondo):
     st.markdown(f'<div class="testia-section" style="--accent:{color};--bg:{fondo}"><h2>{numero}. {titulo}</h2><p>{descripcion}</p></div>', unsafe_allow_html=True)
 
 
+# Gestión de expedientes: nunca se escriben manuscritos ni ZIP en el servidor.
+# Los widgets de carga deben recrearse con claves nuevas al cambiar de paper.
+def limpiar_paper():
+    for clave in list(st.session_state):
+        if clave != '_testia_paper_nonce':
+            del st.session_state[clave]
+    st.session_state['_testia_paper_nonce'] = st.session_state.get('_testia_paper_nonce', 0) + 1
+
+
+nonce = st.session_state.get('_testia_paper_nonce', 0)
+st.subheader('Gestión de papers')
+col_nuevo, col_recuperar = st.columns(2)
+with col_nuevo:
+    if st.button('Nuevo paper', key=f'nuevo_paper_{nonce}'):
+        st.session_state['_testia_confirmar_nuevo'] = True
+    if st.session_state.get('_testia_confirmar_nuevo'):
+        st.warning('Si no descargaste el expediente, perderás el trabajo de este paper al abandonarlo.')
+        if st.button('Abandonar y comenzar nuevo paper', key=f'confirmar_nuevo_{nonce}'):
+            limpiar_paper()
+            st.rerun()
+        if st.button('Cancelar', key=f'cancelar_nuevo_{nonce}'):
+            st.session_state['_testia_confirmar_nuevo'] = False
+            st.rerun()
+with col_recuperar:
+    zip_subido = st.file_uploader('Recuperar paper (ZIP de TEST-IA)', type=['zip'],
+                                  key=f'recuperar_zip_{nonce}')
+    if zip_subido is not None:
+        st.caption('La recuperación reemplaza el paper actual. No se envía el ZIP a GitHub.')
+        if st.button('Verificar y recuperar paper', key=f'confirmar_recuperar_{nonce}'):
+            try:
+                recuperado = recuperar_zip_auditoria(zip_subido.getvalue())
+            except ValueError as exc:
+                st.error(f'No se recuperó el expediente: {exc}')
+            else:
+                limpiar_paper()
+                st.session_state.update(recuperado)
+                st.session_state['original_firma'] = None
+                st.session_state['_testia_recuperado'] = True
+                st.rerun()
+if st.session_state.pop('_testia_recuperado', False):
+    st.success('Paper recuperado: versiones y eventos restaurados; la atribución final se muestra únicamente si estaba validada en el expediente.')
+
 seccion(1, 'Instrucciones', 'Definí la intervención y el alcance sobre el manuscrito.', '#3566ad', 'rgba(53,102,173,.09)')
-archivo = st.file_uploader('Manuscrito original (.docx)', type=['docx'], key='original_upload')
+archivo = st.file_uploader('Manuscrito original (.docx)', type=['docx'], key=f'original_upload_{nonce}')
 if archivo is not None:
     contenido = archivo.getvalue()
     if st.session_state.get('original_firma') != (archivo.name, contenido):
@@ -61,9 +104,9 @@ categoria = st.selectbox('Instrucción', list(INSTRUCCIONES))
 st.write(INSTRUCCIONES[categoria]['descripcion'])
 with st.expander('Prompt general que recibirá Astra'):
     st.write(INSTRUCCIONES[categoria]['prompt'])
-especifica = st.text_area('Prompt específico del AUTOR', key='especifica', height=110)
+especifica = st.text_area('Prompt específico del AUTOR', key=f'especifica_{nonce}', height=110)
 alcance = st.radio('Alcance', ['Manuscrito completo', 'Fragmento'], horizontal=True)
-ubicacion = st.text_input('Ubicación', key='ubicacion')
+ubicacion = st.text_input('Ubicación', key=f'ubicacion_{nonce}')
 if st.button('Llamar Astra', type='primary'):
     if not ultima:
         st.warning('Primero cargá el manuscrito.')
@@ -88,7 +131,7 @@ else:
     for version in versiones:
         st.download_button(f'Versión {version["numero"]} · {version["tipo"]}',
                            version['contenido'], file_name=version['nombre'],
-                           mime=MIME, key=f'v_{version["numero"]}')
+                           mime=MIME, key=f'v_{nonce}_{version["numero"]}')
     st.caption('Las intervenciones editoriales de Astra se identifican mediante anotaciones de sugerencia.')
     st.caption('En traducciones completas no se resaltará todo el manuscrito. Las evaluaciones de coherencia integral pueden incorporarse como observaciones al final.')
 
@@ -106,7 +149,7 @@ else:
     if not cierre:
         st.markdown('**Edición offline y nuevas instrucciones**')
     subida = st.file_uploader('Subir Word editado offline (.docx)', type=['docx'],
-                              key=f'offline_{ultima["numero"]}')
+                              key=f'offline_{nonce}_{ultima["numero"]}')
     if subida is not None and st.button('Incorporar como nueva versión vigente', disabled=bool(cierre)):
         try:
             nuevo = crear_version(ultima, subida.getvalue(), 'autor_offline')
@@ -122,13 +165,13 @@ else:
         except Exception as exc:
             st.error(f'No se incorporó el documento: {exc}')
     st.markdown('**Solicitar nuevos cambios a Astra**')
-    categoria_iter = st.selectbox('Instrucción de la nueva iteración', list(INSTRUCCIONES), key='categoria_iter')
+    categoria_iter = st.selectbox('Instrucción de la nueva iteración', list(INSTRUCCIONES), key=f'categoria_iter_{nonce}')
     nuevas_instrucciones = st.text_area('Nuevos cambios solicitados por el AUTOR',
-                                        height=180, key='nuevas_instrucciones',
+                                        height=180, key=f'nuevas_instrucciones_{nonce}',
                                         placeholder='Ej.: Reforzar el argumento del apartado 3 y revisar las citas.')
     alcance_iter = st.radio('Alcance de la nueva iteración',
-                           ['Manuscrito completo', 'Fragmento'], horizontal=True, key='alcance_iter')
-    ubicacion_iter = st.text_input('Ubicación del fragmento (si corresponde)', key='ubicacion_iter')
+                           ['Manuscrito completo', 'Fragmento'], horizontal=True, key=f'alcance_iter_{nonce}')
+    ubicacion_iter = st.text_input('Ubicación del fragmento (si corresponde)', key=f'ubicacion_iter_{nonce}')
     if st.button('Llamar Astra · nueva iteración', disabled=bool(cierre)):
         try:
             solicitud = solicitar_iteracion(ultima, categoria_iter,
@@ -192,7 +235,14 @@ else:
                                file_name='TEST-IA_final.docx', mime=MIME)
         except ValueError as exc:
             st.error(f'Evaluación final inválida: {exc}')
-    if evaluacion_vigente and word_final is not None:
-        zip_bytes = crear_zip_auditoria(original, versiones, eventos, evaluacion, word_final)
-        st.download_button('Descargar ZIP de auditoría', zip_bytes,
+    try:
+        zip_bytes = crear_zip_auditoria(
+            original, versiones, eventos,
+            evaluacion if evaluacion_vigente and word_final is not None else None,
+            word_final if evaluacion_vigente else None)
+        st.download_button('Descargar ZIP del paper (guardar o recuperar)', zip_bytes,
                            file_name='TEST-IA_auditoria.zip', mime='application/zip')
+        if not evaluacion_vigente:
+            st.caption('Expediente provisional: conserva versiones y eventos, sin atribución final validada.')
+    except ValueError as exc:
+        st.error(f'No se pudo preparar el expediente: {exc}')

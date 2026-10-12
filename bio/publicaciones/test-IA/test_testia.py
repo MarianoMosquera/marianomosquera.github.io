@@ -274,4 +274,6 @@ class TestFinalizacionExplicita(unittest.TestCase):
         self.assertIn('Finalizar revisión y evaluar atribución', codigo)
         self.assertIn('El Tablero presenta los resultados de atribución del documento final', codigo)
         self.assertNotIn('El tablero se completa con la evaluación de atribución del documento vigente', codigo)
-        self.assertIn('if evaluacion_vigente and word_final is not None:', codigo)
+        self.assertIn('Descargar ZIP del paper (guardar o recuperar)', codigo)
+        self.assertIn('Nuevo paper', codigo)
+        self.assertIn('Recuperar paper', codigo)
