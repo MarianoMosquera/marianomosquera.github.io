@@ -114,8 +114,9 @@ if st.button('Llamar Astra', type='primary'):
             st.error('Solicitud inválida o documento demasiado grande. Revisá los datos y el archivo.')
         except Exception:
             st.error('No se completó la revisión. No se aplicaron cambios.')
-if st.session_state.pop('_testia_aviso', None):
-    st.info('Resultado de Astra registrado. Revisá las versiones y el expediente.')
+aviso_revision = st.session_state.pop('_testia_aviso', None)
+if aviso_revision:
+    st.info(aviso_revision)
 
 st.divider()
 seccion(2, 'Versiones', 'Consultá y descargá cada estado del documento.', '#16836b', 'rgba(22,131,107,.09)')

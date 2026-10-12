@@ -27,7 +27,9 @@ class TestConexion(unittest.TestCase):
     def test_incluye_texto_y_tablas_reales(self):
         p=json.loads(preparar_envio_revision(self.base,self.solicitud))
         self.assertIn('El estudio presenta un resultado.',p['contenido_word'])
-        self.assertIn('Variable | Valor',p['contenido_word'])
+        self.assertIn('[T0001R0001C0001P0001] Variable',p['contenido_word'])
+        self.assertIn('[T0001R0001C0002P0001] Valor',p['contenido_word'])
+        self.assertNotIn('bloques_word', p)
         self.assertNotIn('OPENAI_API_KEY',json.dumps(p))
 
     def test_version_inconsistente_no_se_envia(self):
@@ -50,7 +52,7 @@ class TestConexion(unittest.TestCase):
     def test_revision_y_trazabilidad(self):
         client=Mock()
         respuesta={'cambios':[{'original':'resultado','nuevo':'hallazgo',
-                    'motivo':'Precisión','ubicacion':'párrafo 1'}],'informe':'Corrección puntual'}
+                    'motivo':'Precisión','ubicacion':'P0001'}],'informe':'Corrección puntual'}
         client.responses.create.return_value.output_text=json.dumps(respuesta)
         e,n,aviso=procesar_revision(self.base,self.solicitud,api_key='ficticia',cliente=client)
         self.assertIsNotNone(n)

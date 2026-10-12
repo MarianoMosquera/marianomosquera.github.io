@@ -33,6 +33,8 @@ def procesar_revision(version, solicitud, *, api_key, model=DEFAULT_MODEL, clien
         evento['resultado_sha256'] = nueva['sha256'] if nueva else version['sha256']
         if not nueva:
             evento['nota_aplicacion'] = 'Respuesta registrada; sin cambios aplicables al Word.'
+            return evento, None, ('Astra respondió, pero no propuso cambios aplicables al Word. '
+                                  'Revisá el informe íntegro en el expediente; no se generó una versión.')
         return evento, nueva, None
     except (ValueError, KeyError, TypeError):
         evento['version_resultante'] = None

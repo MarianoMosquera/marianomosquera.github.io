@@ -8,6 +8,7 @@ from io import BytesIO
 from hashlib import sha256
 from docx import Document
 from protocolos import PROTOCOLO_ITERACION, PROTOCOLO_FINAL
+from anclajes_word import texto_estructurado
 
 MAX_DOCX_BYTES = 8 * 1024 * 1024
 MAX_INPUT_CHARS = 125_000
@@ -54,11 +55,13 @@ def _limitar(texto):
 
 
 def preparar_envio_revision(version, solicitud):
-    texto = extraer_word(version['contenido'])
+    if not isinstance(version['contenido'], bytes) or len(version['contenido']) > MAX_DOCX_BYTES:
+        raise ValueError('El Word excede el límite de 8 MB o es inválido.')
     if version['sha256'] != sha256(version['contenido']).hexdigest():
         raise ValueError('La versión Word no supera la comprobación SHA-256.')
     if solicitud['base_version'] != version['numero'] or solicitud['base_sha256'] != version['sha256']:
         raise ValueError('La solicitud no corresponde a la versión vigente.')
+    texto = texto_estructurado(version['contenido'])
     paquete = {
         'protocolo': PROTOCOLO_ITERACION,
         'categoria': solicitud['categoria'],
@@ -68,14 +71,22 @@ def preparar_envio_revision(version, solicitud):
         'version': version['numero'], 'sha256': version['sha256'],
         'contenido_word': texto,
         'formato_respuesta': {
-            'cambios': [{'original': 'texto literal único del Word', 'nuevo': 'texto propuesto',
-                         'motivo': 'justificación', 'ubicacion': 'párrafo/sección'}],
+            'cambios': [{'original': 'texto literal exacto dentro del bloque', 'nuevo': 'texto propuesto',
+                         'motivo': 'justificación', 'ubicacion': 'ID exacto del contenido_word, ej. P0001'}],
             'informe': 'observaciones sin modificación',
         },
         'regla': ('Responder SOLO JSON válido con claves cambios (lista) e informe (texto). '
                   'No afirmar verificación bibliográfica externa: no hay herramientas web. '
-                  'Cada cambio debe anclarse en un solo run y ser inequívoco. '
-                  'Si no hay cambios seguros, cambios=[] y explicar en informe. '
+                  'Usar exclusivamente los ID entre corchetes de contenido_word en ubicacion; el texto original '
+                  'debe coincidir literalmente dentro de ese bloque, incluso si abarca varios runs. '
+                  'Para cualquier categoría (Traducción, Corrección, Revisión bibliográfica, '
+                  'Datos y resultados, Argumentación y Coherencia integral), cuando se soliciten '
+                  'modificaciones del manuscrito, proponerlas en cambios con el ID del bloque. '
+                  'Para reescribir un párrafo, usar su texto completo como original '
+                  'y su texto completo revisado como nuevo. No omitir cambios del Word '
+                  'trasladándolos al informe. Si la solicitud es solo analítica y no requiere '
+                  'modificación textual, usar cambios=[] y documentar los hallazgos en informe; '
+                  'si no se puede editar con seguridad, explicar la limitación en informe. '
                   'No inventar datos ni referencias.'),
     }
     return _limitar(json.dumps(paquete, ensure_ascii=False))

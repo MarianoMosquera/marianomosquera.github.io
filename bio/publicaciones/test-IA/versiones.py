@@ -46,49 +46,106 @@ def crear_version_prueba(original, numero):
 
 
 def crear_version_astra(base, cambios, instrucciones):
-    """Prepara una versión verde desde cambios estructurados ya verificados.
+    """Aplica sustituciones no solapadas por ID, de forma transaccional.
 
-    Cada cambio: {'original': str, 'nuevo': str}. Solo se admiten anclajes
-    únicos contenidos en un run; ante ambigüedad no se genera la versión.
-    La función no llama a Astra ni simula sus respuestas.
+    Preserva el formato de cada tramo sin editar y el formato inicial del
+    tramo reemplazado. Rechaza anclajes inválidos y XML complejo. No llama API.
     """
     from copy import deepcopy
     from docx.enum.text import WD_COLOR_INDEX
+    from docx.oxml.ns import qn
+    from docx.text.run import Run
+    from anclajes_word import recorrer_bloques
 
     doc = Document(BytesIO(base['contenido']))
-    def runs():
-        for p in doc.paragraphs:
-            yield from p.runs
-        for tabla in doc.tables:
-            for fila in tabla.rows:
-                for celda in fila.cells:
-                    for p in celda.paragraphs:
-                        yield from p.runs
-    # Validar todo antes de cambiar nada.
-    ubicaciones = []
+    bloques = dict(recorrer_bloques(doc))
+    por_bloque = {}
+    if not isinstance(cambios, list) or not cambios:
+        raise ValueError('No hay cambios para aplicar')
+
     for cambio in cambios:
         anterior, nuevo = cambio['original'], cambio['nuevo']
+        referencia = cambio.get('ubicacion')
+        if referencia is None:
+            coincidencias = [
+                identificador
+                for identificador, bloque in bloques.items()
+                if anterior and bloque.text.count(anterior) == 1
+            ]
+            if len(coincidencias) != 1:
+                raise ValueError('Cambio histórico sin anclaje único')
+            referencia = coincidencias[0]
+        elif not isinstance(referencia, str) or referencia not in bloques:
+            raise ValueError('ID de bloque inexistente o no admitido')
         if not anterior or not nuevo or anterior == nuevo:
             raise ValueError('Cambio vacío o idéntico')
-        encontrados = [r for r in runs() if anterior in r.text]
-        if len(encontrados) != 1:
-            raise ValueError('El texto de origen no tiene un anclaje único dentro de un run')
-        ubicaciones.append((encontrados[0], anterior, nuevo))
-    if len({id(r) for r, _, _ in ubicaciones}) != len(ubicaciones):
-        raise ValueError('Dos cambios comparten un run; dividir o revisar manualmente')
-    for run, anterior, nuevo in ubicaciones:
-        antes, despues = run.text.split(anterior, 1)
-        run.text = antes
-        insertado = run._parent.add_run(nuevo)
-        if run._r.rPr is not None:
-            insertado._r.insert(0, deepcopy(run._r.rPr))
-        insertado.font.highlight_color = WD_COLOR_INDEX.BRIGHT_GREEN
-        run._r.addnext(insertado._r)
-        if despues:
-            final = run._parent.add_run(despues)
-            if run._r.rPr is not None:
-                final._r.insert(0, deepcopy(run._r.rPr))
-            insertado._r.addnext(final._r)
+        parrafo = bloques[referencia]
+        inicio = parrafo.text.find(anterior)
+        if inicio < 0 or parrafo.text.find(anterior, inicio + 1) != -1:
+            raise ValueError('El texto original no tiene un anclaje único en el bloque')
+        por_bloque.setdefault(referencia, []).append((inicio, inicio + len(anterior), nuevo))
+
+    # Prevalidar TODOS los bloques antes de modificar el documento en memoria.
+    for identificador, operaciones in por_bloque.items():
+        operaciones.sort(key=lambda x: (x[0], x[1]))
+        if any(a[1] > b[0] for a, b in zip(operaciones, operaciones[1:])):
+            raise ValueError('Los cambios se superponen en un mismo párrafo')
+        parrafo = bloques[identificador]
+        if any(hijo.tag not in (qn('w:pPr'), qn('w:r')) for hijo in parrafo._p.iterchildren()):
+            raise ValueError('El párrafo contiene elementos Word complejos')
+        if not parrafo.runs or ''.join(r.text for r in parrafo.runs) != parrafo.text:
+            raise ValueError('El párrafo no es editable con seguridad')
+        for run in parrafo.runs:
+            if any(hijo.tag not in (qn('w:t'), qn('w:rPr')) for hijo in run._r.iterchildren()):
+                raise ValueError('El párrafo contiene dibujos, campos, saltos u otros elementos')
+
+    def copia_fragmento(run, texto):
+        if not texto:
+            return None
+        elemento = deepcopy(run._r)
+        nuevo_run = Run(elemento, run._parent)
+        nuevo_run.text = texto
+        return elemento
+
+    resaltar = instrucciones.get('categoria') != 'Traducción'
+    for identificador, operaciones in por_bloque.items():
+        parrafo = bloques[identificador]
+        originales = list(parrafo.runs)
+        segmentos = []
+        posicion = 0
+        for run in originales:
+            segmentos.append((run, posicion, posicion + len(run.text)))
+            posicion += len(run.text)
+
+        piezas = []
+        def conservar(desde, hasta):
+            for run, a, b in segmentos:
+                inicio = max(desde, a)
+                fin = min(hasta, b)
+                if inicio < fin:
+                    pieza = copia_fragmento(run, run.text[inicio-a:fin-a])
+                    if pieza is not None:
+                        piezas.append(pieza)
+
+        cursor = 0
+        for inicio, fin, nuevo in operaciones:
+            conservar(cursor, inicio)
+            primero = next((r for r, a, b in segmentos if a <= inicio < b), None)
+            if primero is None:
+                raise ValueError('No se encontró un run de origen')
+            insertado = copia_fragmento(primero, nuevo)
+            if insertado is None:
+                raise ValueError('Sustitución inválida')
+            if resaltar:
+                Run(insertado, parrafo).font.highlight_color = WD_COLOR_INDEX.BRIGHT_GREEN
+            piezas.append(insertado)
+            cursor = fin
+        conservar(cursor, posicion)
+        for run in originales:
+            parrafo._p.remove(run._r)
+        for pieza in piezas:
+            parrafo._p.append(pieza)
+
     salida = BytesIO()
     doc.save(salida)
     return crear_version(base, salida.getvalue(), 'astra', instrucciones=instrucciones)
