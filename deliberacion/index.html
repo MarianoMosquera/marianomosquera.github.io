@@ -1,0 +1,59 @@
+    alcance_iter = st.radio('Alcance de la nueva iteración',
+                            ['Manuscrito completo', 'Fragmento'], horizontal=True, key=f'alcance_iter_{nonce}')
+-    ubicacion_iter = st.text_input('Ubicación del fragmento (si corresponde)', key=f'ubicacion_iter_{nonce}')
++    ubicacion_iter = st.text_input('Ubicación', key=f'ubicacion_iter_{nonce}')
+
+(.venv) mariano@MacBook-Air-de-Mariano test-IA % cd /tmp/test-ia-publicacion/bio/publicaciones/test-IA
+
+python - <<'PY'
+from pathlib import Path
+
+p = Path("test_testia.py")
+s = p.read_text(encoding="utf-8")
+
+viejo = "Descargar ZIP del paper (guardar o recuperar)"
+nuevo = "Descargar ZIP del expediente"
+
+if s.count(viejo) != 1:
+    raise SystemExit("No se modificó nada: prueba inesperada.")
+
+p.write_text(s.replace(viejo, nuevo), encoding="utf-8")
+print("Prueba actualizada correctamente.")
+PY
+
+python -m unittest discover -p 'test_*.py' -q
+git status --short
+git diff --check
+git diff --stat
+Prueba actualizada correctamente.
+----------------------------------------------------------------------
+Ran 46 tests in 1.201s
+
+OK
+ M app.py
+ M test_testia.py
+ bio/publicaciones/test-IA/app.py         | 5 ++---
+ bio/publicaciones/test-IA/test_testia.py | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+(.venv) mariano@MacBook-Air-de-Mariano test-IA % cd /tmp/test-ia-publicacion/bio/publicaciones/test-IA || exit 1
+
+git fetch origin main &&
+test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" &&
+git add -- app.py test_testia.py &&
+git diff --cached --check &&
+git commit -m "TEST-IA: ajustes finales de interfaz" &&
+git push origin HEAD:main
+From https://github.com/MarianoMosquera/marianomosquera.github.io
+ * branch            main       -> FETCH_HEAD
+[detached HEAD 58b252e] TEST-IA: ajustes finales de interfaz
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 639 bytes | 639.00 KiB/s, done.
+Total 7 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/MarianoMosquera/marianomosquera.github.io.git
+   9ae9a1d..58b252e  HEAD -> main
+(.venv) mariano@MacBook-Air-de-Mariano test-IA % 
