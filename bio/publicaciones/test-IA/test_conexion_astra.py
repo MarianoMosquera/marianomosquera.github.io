@@ -64,7 +64,14 @@ class TestConexion(unittest.TestCase):
         e,n,aviso=procesar_revision(self.base,self.solicitud,api_key='ficticia',cliente=client)
         self.assertIsNone(n)
         self.assertIn('rechazados',e['nota_aplicacion'])
-        self.assertEqual(e['version_resultante'],0)
+        self.assertIsNone(e['version_resultante'])
+        from exportacion import crear_zip_auditoria
+        from io import BytesIO
+        from zipfile import ZipFile
+        archivo = crear_zip_auditoria(self.base, [], [e])
+        with ZipFile(BytesIO(archivo)) as z:
+            self.assertIsNone(z.testzip())
+            self.assertIn('documentos/original.docx', z.namelist())
 
     def test_error_proveedor_sin_detalles(self):
         client=Mock()

@@ -29,13 +29,13 @@ def procesar_revision(version, solicitud, *, api_key, model=DEFAULT_MODEL, clien
                                                   {'id_solicitud': solicitud['id']})
         else:
             nueva = None
-        evento['version_resultante'] = nueva['numero'] if nueva else version['numero']
+        evento['version_resultante'] = nueva['numero'] if nueva else None
         evento['resultado_sha256'] = nueva['sha256'] if nueva else version['sha256']
         if not nueva:
             evento['nota_aplicacion'] = 'Respuesta registrada; sin cambios aplicables al Word.'
         return evento, nueva, None
     except (ValueError, KeyError, TypeError):
-        evento['version_resultante'] = version['numero']
+        evento['version_resultante'] = None
         evento['resultado_sha256'] = version['sha256']
         evento['nota_aplicacion'] = 'Respuesta íntegra registrada; cambios rechazados por validación.'
         return evento, None, 'Astra respondió, pero sus cambios no superaron la validación del Word. No se modificó el documento.'
