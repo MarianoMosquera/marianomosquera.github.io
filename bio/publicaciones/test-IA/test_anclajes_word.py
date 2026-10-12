@@ -163,3 +163,40 @@ class TestAnclajesWord(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def test_last_rendered_page_break_regresion():
+    from io import BytesIO
+    from docx import Document
+    from docx.oxml import OxmlElement
+    from versiones import crear_version_original, crear_version_astra
+
+    doc = Document()
+    p = doc.add_paragraph()
+    p.add_run("La evidencia permite ")
+    run = p.add_run("formular una conclusión.")
+    run._r.append(OxmlElement("w:lastRenderedPageBreak"))
+
+    salida = BytesIO()
+    doc.save(salida)
+
+    base = crear_version_original("prueba.docx", salida.getvalue())
+    nueva = crear_version_astra(
+        base,
+        [{
+            "ubicacion": "P0001",
+            "original": "formular una conclusión.",
+            "nuevo": "formular una conclusión más sólida."
+        }],
+        {"categoria": "Argumentación"}
+    )
+
+    resultado = Document(BytesIO(nueva["contenido"]))
+    assert "conclusión más sólida" in resultado.paragraphs[0].text
+
+
+import unittest as _unittest
+
+class TestRegresionPaginacionWord(_unittest.TestCase):
+    def test_last_rendered_page_break_regresion(self):
+        test_last_rendered_page_break_regresion()

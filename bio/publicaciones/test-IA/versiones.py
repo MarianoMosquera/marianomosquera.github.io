@@ -96,7 +96,7 @@ def crear_version_astra(base, cambios, instrucciones):
         if not parrafo.runs or ''.join(r.text for r in parrafo.runs) != parrafo.text:
             raise ValueError('El párrafo no es editable con seguridad')
         for run in parrafo.runs:
-            if any(hijo.tag not in (qn('w:t'), qn('w:rPr')) for hijo in run._r.iterchildren()):
+            if any(hijo.tag not in (qn('w:t'), qn('w:rPr'), qn('w:lastRenderedPageBreak')) for hijo in run._r.iterchildren()):
                 raise ValueError('El párrafo contiene dibujos, campos, saltos u otros elementos')
 
     def copia_fragmento(run, texto):
