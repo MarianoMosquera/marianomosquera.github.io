@@ -148,7 +148,7 @@ def ejecutar_api(payload, *, api_key, model=DEFAULT_MODEL, client=None):
         raise ConexionErrorSegura('Falta identificar el modelo.')
     if client is None:
         from openai import OpenAI
-        client = OpenAI(api_key=api_key, timeout=90.0, max_retries=0)
+        client = OpenAI(api_key=api_key, timeout=600.0, max_retries=0)
     try:
         respuesta = client.responses.create(
             model=model, instructions='Sos un revisor académico. Devolvé exclusivamente JSON válido.',
