@@ -1,11 +1,10 @@
-"""Resumen descriptivo de estimaciones explícitas de Astra, sin inferir valores."""
-from math import isfinite
+"""Tablero de atribución: únicamente cuartiles explícitos para incertidumbre."""
 
-RANGOS = ((0, 25), (25, 50), (50, 75), (75, 100))
+CUARTILES = ('Q1', 'Q2', 'Q3', 'Q4')
 
 
 def resumir_atribuciones(evaluacion):
-    """Cuatro intervalos disjuntos: [0,25], (25,50], (50,75], (75,100]."""
+    """Cuenta contribuciones por color y cuartil; no calcula porcentajes."""
     resumen = {'verde': 0, 'amarillo': 0, 'cuartiles': [0, 0, 0, 0],
                'sin_porcentaje': 0, 'total': 0, 'porcentajes': []}
     if evaluacion is None:
@@ -16,21 +15,10 @@ def resumir_atribuciones(evaluacion):
             raise ValueError('Color de contribución inválido')
         resumen[color] += 1
         resumen['total'] += 1
-        p = contribucion.get('porcentaje_estimado')
         if color == 'verde':
-            continue  # La atribución total no participa de los cuartiles.
+            continue
         cuartil = contribucion.get('cuartil')
-        if cuartil is not None:
-            if cuartil not in ('Q1', 'Q2', 'Q3', 'Q4'):
-                raise ValueError('Cuartil de atribución inválido')
-            resumen['cuartiles'][int(cuartil[1]) - 1] += 1
-            continue
-        if p is None:
-            resumen['sin_porcentaje'] += 1
-            continue
-        if isinstance(p, bool) or not isinstance(p, (int, float)) or not isfinite(p) or not 0 <= p <= 100:
-            raise ValueError('Porcentaje de atribución inválido')
-        indice = 0 if p <= 25 else 1 if p <= 50 else 2 if p <= 75 else 3
-        resumen['cuartiles'][indice] += 1
-        resumen['porcentajes'].append(p)
+        if cuartil not in CUARTILES:
+            raise ValueError('La atribución amarilla requiere Q1, Q2, Q3 o Q4')
+        resumen['cuartiles'][CUARTILES.index(cuartil)] += 1
     return resumen

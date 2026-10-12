@@ -47,6 +47,14 @@ class TestProtocolos(unittest.TestCase):
         self.assertEqual(resumen['cuartiles'], [0, 0, 1, 0])
         self.assertEqual(resumen['sin_porcentaje'], 0)
 
+    def test_porcentaje_antiguo_no_sustituye_cuartil(self):
+        ev = {'contribuciones': [{'texto': 'Texto', 'color': 'amarillo',
+               'porcentaje_estimado': 40, 'justificacion': 'Influencia parcial'}]}
+        with self.assertRaises(ValueError):
+            validar_evaluacion_final(ev, word('Texto'))
+        with self.assertRaises(ValueError):
+            resumir_atribuciones(ev)
+
     def test_cuartil_invalido_rechazado(self):
         ev = {'contribuciones': [{'texto': 'Texto', 'color': 'amarillo',
                'cuartil': 'Q5', 'justificacion': 'x'}]}

@@ -92,7 +92,7 @@ class TestFlujoExtendido(unittest.TestCase):
         from flujo import validar_evaluacion_final
         with self.assertRaises(ValueError):
             validar_evaluacion_final(None, docx('Texto'))
-        ev = {'contribuciones': [{'texto':'Texto', 'color':'amarillo', 'justificacion':'Rastro parcial', 'porcentaje_estimado':3}]}
+        ev = {'contribuciones': [{'texto':'Texto', 'color':'amarillo', 'justificacion':'Rastro parcial', 'cuartil':'Q1'}]}
         salida = validar_evaluacion_final(ev, docx('Texto'))
         self.assertEqual(Document(io.BytesIO(salida)).paragraphs[0].runs[1].font.highlight_color, WD_COLOR_INDEX.YELLOW)
 
@@ -151,7 +151,7 @@ class TestCierreAutoria(unittest.TestCase):
                 'sha256_evaluado': version['sha256'],
                 'justificacion_global': 'Comparación con el historial completo',
                 'contribuciones': [{'texto': 'Texto', 'color': 'amarillo',
-                    'porcentaje_estimado': 3, 'justificacion': 'Influencia parcial documentada'}]}
+                    'cuartil': 'Q1', 'justificacion': 'Influencia parcial documentada'}]}
 
     def test_cierre_verificable(self):
         from cierre import cerrar_autoria
@@ -190,8 +190,8 @@ class TestCierreAutoria(unittest.TestCase):
 class TestTableroCuartiles(unittest.TestCase):
     def test_cuartiles_limites_y_conteos(self):
         from tablero import resumir_atribuciones
-        porcentajes = [0, 25, 25.01, 50, 50.01, 75, 75.01, 100]
-        e = {'contribuciones': [{'color': 'amarillo', 'porcentaje_estimado': p} for p in porcentajes]}
+        cuartiles = ['Q1', 'Q1', 'Q2', 'Q2', 'Q3', 'Q3', 'Q4', 'Q4']
+        e = {'contribuciones': [{'color': 'amarillo', 'cuartil': q} for q in cuartiles]}
         r = resumir_atribuciones(e)
         self.assertEqual(r['cuartiles'], [2, 2, 2, 2])
         self.assertEqual(r['amarillo'], 8)
@@ -204,7 +204,7 @@ class TestTableroCuartiles(unittest.TestCase):
     def test_porcentaje_invalido(self):
         from tablero import resumir_atribuciones
         with self.assertRaises(ValueError):
-            resumir_atribuciones({'contribuciones':[{'color':'amarillo', 'porcentaje_estimado':float('nan')}]})
+            resumir_atribuciones({'contribuciones':[{'color':'amarillo', 'cuartil':'Q5'}]})
 
 class TestInterfazEstatica(unittest.TestCase):
     def test_rotulos_y_cinco_secciones(self):
@@ -221,16 +221,16 @@ class TestNomenclaturaYCuartiles(unittest.TestCase):
     def test_solo_incertidumbre_participa_en_cuartiles(self):
         from tablero import resumir_atribuciones
         e = {'contribuciones': [
-            {'color': 'verde', 'porcentaje_estimado': 100},
-            {'color': 'amarillo', 'porcentaje_estimado': 15},
-            {'color': 'amarillo', 'porcentaje_estimado': 67},
+            {'color': 'verde'},
+            {'color': 'amarillo', 'cuartil': 'Q1'},
+            {'color': 'amarillo', 'cuartil': 'Q3'},
             {'color': 'verde'},
         ]}
         r = resumir_atribuciones(e)
         self.assertEqual(r['verde'], 2)
         self.assertEqual(r['amarillo'], 2)
         self.assertEqual(r['cuartiles'], [1, 0, 1, 0])
-        self.assertEqual(r['porcentajes'], [15, 67])
+        self.assertEqual(r['porcentajes'], [])
 
     def test_rotulos_actualizados(self):
         from pathlib import Path
