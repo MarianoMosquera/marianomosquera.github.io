@@ -28,7 +28,6 @@ def configuracion_astra():
         return '', DEFAULT_MODEL
 
 api_key, modelo_astra = configuracion_astra()
-st.caption('Astra: conexión configurada' if api_key else 'Astra: pendiente de configurar en Streamlit Secrets')
 autorizacion = st.checkbox('Autorizo enviar el contenido del manuscrito a OpenAI para esta sesión.',
                            key='autorizar_envio_openai')
 
@@ -168,7 +167,7 @@ else:
                                         placeholder='Ej.: Reforzar el argumento del apartado 3 y revisar las citas.')
     alcance_iter = st.radio('Alcance de la nueva iteración',
                            ['Manuscrito completo', 'Fragmento'], horizontal=True, key=f'alcance_iter_{nonce}')
-    ubicacion_iter = st.text_input('Ubicación del fragmento (si corresponde)', key=f'ubicacion_iter_{nonce}')
+    ubicacion_iter = st.text_input('Ubicación', key=f'ubicacion_iter_{nonce}')
     if st.button('Llamar Astra · nueva iteración', disabled=bool(cierre)):
         if not autorizacion or not api_key:
             st.warning('Debés autorizar el envío y configurar la API key en Secrets.')
@@ -260,7 +259,7 @@ else:
             original, versiones, eventos,
             evaluacion if evaluacion_vigente and word_final is not None else None,
             word_final if evaluacion_vigente else None)
-        st.download_button('Descargar ZIP del paper (guardar o recuperar)', zip_bytes,
+        st.download_button('Descargar ZIP del expediente', zip_bytes,
                            file_name='TEST-IA_auditoria.zip', mime='application/zip')
         if not evaluacion_vigente:
             st.caption('Expediente provisional: conserva versiones y eventos, sin atribución final validada.')
