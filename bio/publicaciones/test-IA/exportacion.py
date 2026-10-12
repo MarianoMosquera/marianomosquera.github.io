@@ -39,6 +39,10 @@ def crear_zip_auditoria(original, versiones, eventos, evaluacion=None, word_fina
                 if ejecucion.get('respuesta_completa') is not None:
                     agregar(f'{carpeta}/respuesta_completa.txt', ejecucion['respuesta_completa'].encode('utf-8'))
                 agregar(f'{carpeta}/ejecucion.json', json.dumps(ejecucion, ensure_ascii=False, indent=2).encode('utf-8'))
+        for indice, evento in enumerate(eventos, 1):
+            if evento.get('tipo') == 'Evaluación final de Astra' and isinstance(evento.get('respuesta_completa'), str):
+                agregar(f'auditoria/atribucion_final/{indice:04d}_respuesta_completa.txt',
+                        evento['respuesta_completa'].encode('utf-8'))
         agregar('auditoria/estado_integridad.json', json.dumps(diagnostico, ensure_ascii=False, indent=2).encode('utf-8'))
         agregar('auditoria/historial.json', json.dumps(manifest, ensure_ascii=False, indent=2).encode('utf-8'))
         agregar('auditoria/inventario.json', json.dumps({'archivos': inventario}, ensure_ascii=False, indent=2).encode('utf-8'))

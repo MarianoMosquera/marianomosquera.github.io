@@ -1,5 +1,6 @@
-"""TEST-IA: interfaz de versiones y trazabilidad, sin API conectada."""
+"""TEST-IA: interfaz de versiones y trazabilidad con conexión Astra opcional."""
 import io
+from hashlib import sha256
 import streamlit as st
 from docx import Document
 from instrucciones import INSTRUCCIONES
@@ -11,11 +12,26 @@ from cierre import cerrar_autoria
 from tablero import resumir_atribuciones
 from finalizacion import solicitar_cierre, cierre_evaluado, reabrir_revision
 from recuperacion import recuperar_zip_auditoria
+from integracion import procesar_revision, procesar_atribucion
+from conexion_astra import ConexionErrorSegura, DEFAULT_MODEL
+from expediente import registrar_respuesta
 
 MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 st.set_page_config(page_title='TEST-IA', page_icon='🧪', layout='wide')
 st.title('TEST-IA')
 st.caption('Entorno de uso de IA y auditoría')
+# La credencial se obtiene del servicio de secretos, nunca de campos visibles.
+def configuracion_astra():
+    try:
+        return str(st.secrets.get('OPENAI_API_KEY', '')), str(st.secrets.get('OPENAI_MODEL', DEFAULT_MODEL))
+    except Exception:
+        return '', DEFAULT_MODEL
+
+api_key, modelo_astra = configuracion_astra()
+st.caption('Astra: conexión configurada' if api_key else 'Astra: pendiente de configurar en Streamlit Secrets')
+autorizacion = st.checkbox('Autorizo enviar el contenido del manuscrito a OpenAI para esta sesión.',
+                           key='autorizar_envio_openai')
+
 st.markdown("""<style>
 .block-container {max-width: 1180px; padding-top: 2rem;}
 h1 {letter-spacing: -.035em;}
@@ -46,7 +62,7 @@ if archivo is not None:
         try:
             original_nuevo = crear_version_original(archivo.name, contenido)
         except Exception as exc:
-            st.error(f'No se pudo leer el documento: {exc}')
+            st.error('No se pudo leer el documento Word.')
             st.stop()
         st.session_state['original'] = original_nuevo
         st.session_state['versiones'] = []
@@ -78,16 +94,29 @@ ubicacion = st.text_input('Ubicación', key=f'ubicacion_{nonce}')
 if st.button('Llamar Astra', type='primary'):
     if not ultima:
         st.warning('Primero cargá el manuscrito.')
+    elif not autorizacion:
+        st.warning('Debés autorizar expresamente el envío a OpenAI.')
+    elif not api_key:
+        st.warning('Configurá OPENAI_API_KEY en Streamlit Secrets antes de llamar a Astra.')
     else:
         try:
             solicitud = crear_solicitud(ultima, categoria,
                 INSTRUCCIONES[categoria]['prompt'], especifica, alcance, ubicacion)
-            st.session_state['eventos'].append(solicitud)
+            with st.spinner('Procesando la revisión académica...'):
+                evento, nueva, aviso = procesar_revision(ultima, solicitud, api_key=api_key, model=modelo_astra)
+            st.session_state.setdefault('eventos', []).append(evento)
+            if nueva is not None:
+                st.session_state.setdefault('versiones', []).append(nueva)
             st.session_state['cierre'] = None
             st.session_state['evaluacion'] = None
-            st.success('Instrucción registrada para la versión vigente.')
-        except ValueError as exc:
-            st.error(str(exc))
+            st.session_state['_testia_aviso'] = aviso or ('Nueva versión Astra registrada.' if nueva else 'Respuesta registrada; sin cambios en Word.')
+            st.rerun()
+        except ValueError:
+            st.error('Solicitud inválida o documento demasiado grande. Revisá los datos y el archivo.')
+        except Exception:
+            st.error('No se completó la revisión. No se aplicaron cambios.')
+if st.session_state.pop('_testia_aviso', None):
+    st.info('Resultado de Astra registrado. Revisá las versiones y el expediente.')
 
 st.divider()
 seccion(2, 'Versiones', 'Consultá y descargá cada estado del documento.', '#16836b', 'rgba(22,131,107,.09)')
@@ -131,7 +160,7 @@ else:
                 st.session_state['evaluacion'] = None
                 st.rerun()
         except Exception as exc:
-            st.error(f'No se incorporó el documento: {exc}')
+            st.error('No se incorporó el documento Word. Verificá el archivo.')
     st.markdown('**Solicitar nuevos cambios a Astra**')
     categoria_iter = st.selectbox('Instrucción de la nueva iteración', list(INSTRUCCIONES), key=f'categoria_iter_{nonce}')
     nuevas_instrucciones = st.text_area('Nuevos cambios solicitados por el AUTOR',
@@ -141,27 +170,50 @@ else:
                            ['Manuscrito completo', 'Fragmento'], horizontal=True, key=f'alcance_iter_{nonce}')
     ubicacion_iter = st.text_input('Ubicación del fragmento (si corresponde)', key=f'ubicacion_iter_{nonce}')
     if st.button('Llamar Astra · nueva iteración', disabled=bool(cierre)):
-        try:
-            solicitud = solicitar_iteracion(ultima, categoria_iter,
-                INSTRUCCIONES[categoria_iter]['prompt'], nuevas_instrucciones,
-                alcance_iter, ubicacion_iter)
-            st.session_state['eventos'].append(solicitud)
-            st.session_state['evaluacion'] = None
-            st.success(f'Instrucciones registradas sobre la Versión {ultima["numero"]}.')
-        except ValueError as exc:
-            st.error(str(exc))
+        if not autorizacion or not api_key:
+            st.warning('Debés autorizar el envío y configurar la API key en Secrets.')
+        else:
+            try:
+                solicitud = solicitar_iteracion(ultima, categoria_iter,
+                    INSTRUCCIONES[categoria_iter]['prompt'], nuevas_instrucciones,
+                    alcance_iter, ubicacion_iter)
+                with st.spinner('Procesando la nueva iteración...'):
+                    evento, nueva, aviso = procesar_revision(ultima, solicitud, api_key=api_key, model=modelo_astra)
+                st.session_state['eventos'].append(evento)
+                if nueva is not None:
+                    st.session_state['versiones'].append(nueva)
+                st.session_state['evaluacion'] = None
+                st.session_state['_testia_aviso'] = aviso or 'Iteración registrada.'
+                st.rerun()
+            except ValueError:
+                st.error('No se pudo validar la solicitud o el contenido Word.')
+            except Exception:
+                st.error('La iteración no pudo completarse. No se aplicaron cambios.')
     st.divider()
     if st.button('Finalizar revisión y evaluar atribución', type='primary', disabled=bool(cierre)):
-        st.session_state['cierre'] = solicitar_cierre(ultima, st.session_state['eventos'])
-        st.session_state['evaluacion'] = None
-        st.session_state['eventos'].append({
-            'tipo': 'Finalización solicitada',
-            'fecha_utc': st.session_state['cierre']['fecha_utc'],
-            'base_version': ultima['numero'],
-            'base_sha256': ultima['sha256'],
-            'estado': 'Evaluación final solicitada',
-        })
-        st.rerun()
+        if not autorizacion or not api_key:
+            st.warning('Para la atribución final debés autorizar el envío y configurar la API key.')
+        else:
+            try:
+                with st.spinner('Evaluando el historial completo de versiones...'):
+                    evaluacion_nueva, respuesta_final = procesar_atribucion(
+                        original, st.session_state.get('versiones', []),
+                        st.session_state.get('eventos', []), api_key=api_key, model=modelo_astra)
+                st.session_state['evaluacion'] = evaluacion_nueva
+                st.session_state['cierre'] = solicitar_cierre(ultima, st.session_state['eventos'])
+                st.session_state['eventos'].append({
+                    'tipo': 'Evaluación final de Astra', 'fecha_utc': st.session_state['cierre']['fecha_utc'],
+                    'base_version': ultima['numero'], 'base_sha256': ultima['sha256'],
+                    'estado': 'Evaluación final validada',
+                    'respuesta_completa': respuesta_final,
+                    'respuesta_sha256': sha256(respuesta_final.encode('utf-8')).hexdigest(),
+                    'modelo': modelo_astra,
+                })
+                st.rerun()
+            except (ValueError, ConexionErrorSegura):
+                st.error('No fue posible validar la evaluación final. No se generó atribución.')
+            except Exception:
+                st.error('No se pudo completar la evaluación final. No se generó atribución.')
     st.write(f'Eventos registrados: {len(eventos)}')
     with st.expander('Historial interno de iteraciones'):
         for evento in eventos:
@@ -202,7 +254,7 @@ else:
             st.download_button('Descargar Documento Anotado', word_final,
                                file_name='TEST-IA_final.docx', mime=MIME)
         except ValueError as exc:
-            st.error(f'Evaluación final inválida: {exc}')
+            st.error('Evaluación final inválida. No se generó el Word anotado.')
     try:
         zip_bytes = crear_zip_auditoria(
             original, versiones, eventos,
@@ -213,7 +265,7 @@ else:
         if not evaluacion_vigente:
             st.caption('Expediente provisional: conserva versiones y eventos, sin atribución final validada.')
     except ValueError as exc:
-        st.error(f'No se pudo preparar el expediente: {exc}')
+        st.error('No se pudo preparar el expediente de auditoría.')
 
 
 st.divider()
@@ -250,7 +302,7 @@ with col_recuperar:
                 try:
                     recuperado = recuperar_zip_auditoria(zip_subido.getvalue())
                 except ValueError as exc:
-                    st.error(f'No se recuperó el expediente: {exc}')
+                    st.error('No se recuperó el expediente: archivo inválido o incompatible.')
                 else:
                     limpiar_paper()
                     st.session_state.update(recuperado)
