@@ -1,5 +1,6 @@
 """Máquina de estados del cierre editorial de TEST-IA (sin llamada de red)."""
 from datetime import datetime, timezone
+from protocolos import PROTOCOLO_FINAL
 
 
 def solicitar_cierre(version, eventos):
@@ -7,7 +8,7 @@ def solicitar_cierre(version, eventos):
         raise ValueError('No existe un manuscrito para finalizar')
     if not isinstance(eventos, list):
         raise ValueError('El historial de eventos es inválido')
-    return {'estado': 'evaluacion_solicitada', 'version_final': version['numero'],
+    return {'estado': 'evaluacion_solicitada', 'protocolo_atribucion': PROTOCOLO_FINAL, 'version_final': version['numero'],
             'sha256_final': version['sha256'],
             'fecha_utc': datetime.now(timezone.utc).isoformat(),
             'eventos_al_cierre': len(eventos)}

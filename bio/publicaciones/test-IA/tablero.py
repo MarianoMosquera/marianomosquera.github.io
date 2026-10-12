@@ -19,6 +19,12 @@ def resumir_atribuciones(evaluacion):
         p = contribucion.get('porcentaje_estimado')
         if color == 'verde':
             continue  # La atribución total no participa de los cuartiles.
+        cuartil = contribucion.get('cuartil')
+        if cuartil is not None:
+            if cuartil not in ('Q1', 'Q2', 'Q3', 'Q4'):
+                raise ValueError('Cuartil de atribución inválido')
+            resumen['cuartiles'][int(cuartil[1]) - 1] += 1
+            continue
         if p is None:
             resumen['sin_porcentaje'] += 1
             continue

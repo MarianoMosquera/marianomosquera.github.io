@@ -174,8 +174,8 @@ for columna, rotulo, cantidad in zip(columnas, rotulos, resumen['cuartiles']):
     columna.metric(rotulo, cantidad if evaluacion_vigente else '—')
 if evaluacion_vigente:
     if resumen['sin_porcentaje']:
-        st.caption(f'{resumen["sin_porcentaje"]} contribución(es) sin porcentaje estimado; no se asignan a ningún intervalo.')
-    st.caption('Los cuartiles se aplican exclusivamente a atribuciones en incertidumbre; expresan la estimación individual de cada contribución.')
+        st.caption(f'{resumen["sin_porcentaje"]} contribución(es) sin cuartil asignado.')
+    st.caption('Los cuartiles se aplican exclusivamente a atribuciones en incertidumbre; expresan la clasificación por intervalo, sin porcentajes puntuales.')
 else:
     st.caption('El Tablero presenta los resultados de atribución del documento final, una vez concluida la revisión.')
 

@@ -1,6 +1,7 @@
 """Historial de solicitudes, cambios offline y evaluaciones finales."""
 from datetime import datetime, timezone
 from uuid import uuid4
+from protocolos import preparar_iteracion
 
 
 def fecha_actual():
@@ -14,7 +15,9 @@ def crear_solicitud(base, categoria, general, especifica, alcance, ubicacion='')
         raise ValueError('Alcance inválido.')
     if alcance == 'Fragmento' and not ubicacion.strip():
         raise ValueError('Indicá una ubicación precisa para el fragmento.')
+    protocolo = preparar_iteracion(base, categoria, general, especifica, alcance, ubicacion)
     return {'id': str(uuid4()), 'fecha_utc': fecha_actual(),
+            'protocolo_revision': protocolo,
             'base_version': base['numero'], 'base_sha256': base['sha256'],
             'categoria': categoria, 'instruccion_general': general,
             'instruccion_especifica': especifica, 'alcance': alcance,

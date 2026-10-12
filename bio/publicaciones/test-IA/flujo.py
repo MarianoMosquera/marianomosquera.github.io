@@ -63,9 +63,15 @@ def validar_evaluacion_final(evaluacion, contenido):
         if not item.get('texto') or not item.get('justificacion'):
             raise ValueError('Cada contribución necesita texto y justificación')
         if item['color'] == 'amarillo':
-            porcentaje = item.get('porcentaje_estimado')
-            if isinstance(porcentaje, bool) or not isinstance(porcentaje, (int, float)) or not 0 <= porcentaje <= 100:
-                raise ValueError('El amarillo requiere porcentaje estimado de 0 a 100')
+            cuartil = item.get('cuartil')
+            if cuartil is not None:
+                if cuartil not in ('Q1', 'Q2', 'Q3', 'Q4'):
+                    raise ValueError('Cuartil amarillo inválido')
+            else:
+                # Compatibilidad con expedientes anteriores; nuevas evaluaciones usan cuartiles.
+                porcentaje = item.get('porcentaje_estimado')
+                if isinstance(porcentaje, bool) or not isinstance(porcentaje, (int, float)) or not 0 <= porcentaje <= 100:
+                    raise ValueError('El amarillo requiere cuartil Q1, Q2, Q3 o Q4')
     # Verificar anclajes sin inventar autoría. El Word se crea únicamente si todos son únicos.
     word = crear_documento_final(contenido, evaluacion['contribuciones'])
     return word
