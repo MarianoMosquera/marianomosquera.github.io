@@ -1,59 +1,38 @@
-    alcance_iter = st.radio('Alcance de la nueva iteración',
-                            ['Manuscrito completo', 'Fragmento'], horizontal=True, key=f'alcance_iter_{nonce}')
--    ubicacion_iter = st.text_input('Ubicación del fragmento (si corresponde)', key=f'ubicacion_iter_{nonce}')
-+    ubicacion_iter = st.text_input('Ubicación', key=f'ubicacion_iter_{nonce}')
-
-(.venv) mariano@MacBook-Air-de-Mariano test-IA % cd /tmp/test-ia-publicacion/bio/publicaciones/test-IA
-
-python - <<'PY'
-from pathlib import Path
-
-p = Path("test_testia.py")
-s = p.read_text(encoding="utf-8")
-
-viejo = "Descargar ZIP del paper (guardar o recuperar)"
-nuevo = "Descargar ZIP del expediente"
-
-if s.count(viejo) != 1:
-    raise SystemExit("No se modificó nada: prueba inesperada.")
-
-p.write_text(s.replace(viejo, nuevo), encoding="utf-8")
-print("Prueba actualizada correctamente.")
-PY
-
-python -m unittest discover -p 'test_*.py' -q
-git status --short
-git diff --check
-git diff --stat
-Prueba actualizada correctamente.
-----------------------------------------------------------------------
-Ran 46 tests in 1.201s
-
-OK
- M app.py
- M test_testia.py
- bio/publicaciones/test-IA/app.py         | 5 ++---
- bio/publicaciones/test-IA/test_testia.py | 2 +-
- 2 files changed, 3 insertions(+), 4 deletions(-)
-(.venv) mariano@MacBook-Air-de-Mariano test-IA % cd /tmp/test-ia-publicacion/bio/publicaciones/test-IA || exit 1
-
-git fetch origin main &&
-test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" &&
-git add -- app.py test_testia.py &&
-git diff --cached --check &&
-git commit -m "TEST-IA: ajustes finales de interfaz" &&
-git push origin HEAD:main
-From https://github.com/MarianoMosquera/marianomosquera.github.io
- * branch            main       -> FETCH_HEAD
-[detached HEAD 58b252e] TEST-IA: ajustes finales de interfaz
- 2 files changed, 3 insertions(+), 4 deletions(-)
-Enumerating objects: 13, done.
-Counting objects: 100% (13/13), done.
-Delta compression using up to 8 threads
-Compressing objects: 100% (7/7), done.
-Writing objects: 100% (7/7), 639 bytes | 639.00 KiB/s, done.
-Total 7 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
-remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
-To https://github.com/MarianoMosquera/marianomosquera.github.io.git
-   9ae9a1d..58b252e  HEAD -> main
-(.venv) mariano@MacBook-Air-de-Mariano test-IA % 
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F7F6F2">
+<meta name="description" content="Deliberación basada en transparencia: simulación multiagente, ontología SKOS, deliberación simétrica y votación anónima.">
+<link rel="canonical" href="https://marianomosquera.github.io/deliberacion/">
+<title>Deliberación basada en transparencia — Mariano Mosquera</title>
+<style>
+:root{--paper:#F7F6F2;--ink:#171717;--muted:#666;--line:#dedbd5;--teal:#00a9a3;--pink:#e52e91;--violet:#7755e7;--orange:#f18a34;--blue:#2675d8;--max:1180px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}a:focus-visible{outline:3px solid var(--violet);outline-offset:5px}.shell{width:min(calc(100% - 64px),var(--max));margin:auto}
+.top{height:88px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.topnav{display:flex;gap:24px;align-items:center;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.09em}.topnav a:hover{color:var(--teal)}
+.hero{padding:92px 0 76px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}.eyebrow,.micro{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}.eyebrow{color:var(--muted);margin:0 0 30px}.hero h1{font-size:clamp(52px,8.3vw,112px);line-height:.98;letter-spacing:-.065em;max-width:1050px;margin:0;font-weight:700}.hero h1 span{display:block}.teal{color:var(--teal)}.pink{color:var(--pink)}.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-top:48px}.hero-bottom p{max-width:590px;font-size:21px;line-height:1.55;margin:0}.hero-mark{width:112px;height:112px;flex:none;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;position:relative}.hero-mark:before,.hero-mark:after{content:"";position:absolute;border-radius:50%;border:2px solid var(--teal);width:60px;height:60px;transform:translate(-10px,-4px)}.hero-mark:after{border-color:var(--pink);transform:translate(10px,4px)}
+.section{padding:85px 0;border-bottom:1px solid var(--line)}.sectionhead{display:grid;grid-template-columns:185px 1fr;gap:60px}.number{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding-top:12px}.section h2{font-size:clamp(38px,5.4vw,72px);letter-spacing:-.055em;line-height:1.03;margin:0 0 28px}.intro{font-size:clamp(19px,2.2vw,25px);line-height:1.52;max-width:830px;margin:0}.bodycopy{font-size:17px;line-height:1.75;color:#3f3f3f;max-width:790px;margin:20px 0 0}.question{display:inline-block;position:relative}.question:after{content:"";position:absolute;left:0;bottom:-10px;width:100%;height:7px;border-radius:9px;background:linear-gradient(90deg,var(--teal),var(--pink));transform-origin:left;animation:underline 1.3s ease both}@keyframes underline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.process{margin-top:54px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.step{border:1px solid var(--line);background:#fff;padding:25px 20px 28px;min-height:215px;position:relative;transition:transform .25s,box-shadow .25s}.step:hover{transform:translateY(-5px);box-shadow:0 14px 28px #0000000b}.step .stepnum{font-size:12px;font-weight:700;letter-spacing:.12em}.step h3{font-size:21px;letter-spacing:-.035em;line-height:1.14;margin:30px 0 12px}.step p{font-size:14px;line-height:1.55;margin:0;color:#565656}.step:nth-child(4n+1){border-top:5px solid var(--teal)}.step:nth-child(4n+2){border-top:5px solid var(--pink)}.step:nth-child(4n+3){border-top:5px solid var(--violet)}.step:nth-child(4n){border-top:5px solid var(--orange)}
+.ontology{margin-top:45px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.dimension{border-radius:3px;color:#fff;min-height:290px;padding:26px 22px;display:flex;flex-direction:column;justify-content:space-between}.dimension h3{font-size:27px;letter-spacing:-.045em;margin:0}.dimension p{font-size:15px;line-height:1.55;margin:18px 0 0}.dimension .dimnum{font-size:12px;letter-spacing:.12em}.values{background:#d82c85}.agenda{background:#148e91}.rational{background:#6853c9}.governance{background:#d46b2d}.note{margin-top:23px;color:var(--muted);font-size:14px;line-height:1.6}
+.principles{margin-top:38px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}.principle{border-top:2px solid var(--ink);padding-top:20px}.principle h3{font-size:21px;margin:0 0 13px;letter-spacing:-.025em}.principle p{font-size:15px;line-height:1.7;color:#555;margin:0}.highlight{background:#181818;color:#fff;padding:66px 0}.highlight h2{color:#fff}.highlight .bodycopy{color:#d7d7d7}.highlight .number{color:#b7b7b7}.highlight strong{color:#5ce1d7}
+.cta{padding:65px 0;display:flex;align-items:center;justify-content:space-between;gap:24px}.cta h2{font-size:clamp(29px,4vw,52px);letter-spacing:-.045em;margin:0 0 12px}.cta p{font-size:16px;line-height:1.6;color:var(--muted);margin:0;max-width:650px}.pill{border:1px solid var(--ink);padding:15px 22px;font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;white-space:nowrap;transition:background .2s,color .2s}.pill:hover{background:var(--ink);color:#fff}.footer{border-top:1px solid var(--line);padding:27px 0 45px;display:flex;justify-content:space-between;gap:20px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+@media(max-width:850px){.sectionhead{grid-template-columns:1fr;gap:20px}.process,.ontology{grid-template-columns:repeat(2,minmax(0,1fr))}.principles{grid-template-columns:1fr}.hero{padding:70px 0 60px}.hero-bottom{align-items:center}.hero-mark{width:80px;height:80px}.cta{align-items:flex-start;flex-direction:column}}
+@media(max-width:560px){.shell{width:min(calc(100% - 36px),var(--max))}.top{height:70px}.topnav{gap:14px;font-size:10px}.hero h1{font-size:clamp(45px,12vw,68px)}.hero-bottom p{font-size:17px}.hero-mark{display:none}.section{padding:60px 0}.process,.ontology{grid-template-columns:1fr}.step{min-height:unset}.dimension{min-height:210px}.footer{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="shell top"><a class="brand" href="/bio/">Mariano Mosquera</a><nav class="topnav" aria-label="Navegación principal"><a href="#que-hacemos">Proyecto</a><a href="#metodo">Método</a><a href="/bio/">Bio</a></nav></header>
+<main>
+<section class="shell hero" aria-labelledby="main-title"><p class="eyebrow">Investigación · Inteligencia artificial · Ética institucional</p><h1 id="main-title"><span class="teal">Deliberación</span><span>basada en</span><span class="pink">transparencia.</span></h1><div class="hero-bottom"><p>Una arquitectura experimental para explorar cómo perspectivas diferentes argumentan, deliberan y evalúan alternativas de decisión bajo reglas explícitas y verificables.</p><div class="hero-mark" aria-hidden="true"></div></div></section>
+<section class="shell section" id="que-hacemos"><div class="sectionhead"><div class="number">01 / Presentación</div><div><h2 class="question">¿Qué hacemos?</h2><p class="intro">Simulamos procesos de deliberación entre agentes de inteligencia artificial que representan perspectivas institucionales, sociales y técnicas distintas.</p><p class="bodycopy">Partimos de perfiles definidos y de un contexto compartido. Cada agente desarrolla primero una posición independiente. Una ontología ética externa permite examinar y profundizar sus argumentos antes de abrir una deliberación en la que todos reciben la misma información previa. Finalmente, se generan alternativas de decisión y se someten a votación anónima.</p><p class="bodycopy">El objetivo no es imponer un consenso, sino estudiar la formación de argumentos, la pluralidad de perspectivas, las condiciones de acuerdo y la persistencia del desacuerdo. El procedimiento conserva registros para permitir su revisión y comparación.</p></div></div></section>
+<section class="shell section" id="metodo"><div class="sectionhead"><div class="number">02 / Arquitectura</div><div><h2>Del perfil a la decisión.</h2><p class="intro">La simulación utiliza una versión experimental modificada de MALLM (Multi-Agent Large Language Models), con etapas diferenciadas de generación, análisis semántico, deliberación y decisión.</p></div></div><div class="process" aria-label="Ocho etapas del procedimiento"><article class="step"><span class="stepnum">01</span><h3>Perfiles estables</h3><p>Cada agente recibe un rol y una perspectiva. Su posición específica no está predeterminada.</p></article><article class="step"><span class="stepnum">02</span><h3>Posiciones independientes</h3><p>Todos producen un First Draft sin observar previamente las respuestas de los demás.</p></article><article class="step"><span class="stepnum">03</span><h3>Intervención SKOS</h3><p>La ontología externa estructura una segunda elaboración argumentativa: Second Draft.</p></article><article class="step"><span class="stepnum">04</span><h3>Información simétrica</h3><p>Todos acceden al mismo conjunto de Second Drafts antes de deliberar.</p></article><article class="step"><span class="stepnum">05</span><h3>Ronda deliberativa</h3><p>Cada agente responde desde su rol, sin ver respuestas simultáneas todavía en elaboración.</p></article><article class="step"><span class="stepnum">06</span><h3>Alternativas separadas</h3><p>Las propuestas de decisión se derivan de los argumentos sin sobrescribir la memoria deliberativa.</p></article><article class="step"><span class="stepnum">07</span><h3>Votación anónima</h3><p>Se evalúan propuestas sin revelar su autoría; cada agente puede aprobar varias.</p></article><article class="step"><span class="stepnum">08</span><h3>Acuerdo o desacuerdo</h3><p>Un máximo único de aprobaciones decide; los empates habilitan nuevas rondas hasta el límite establecido.</p></article></div><p class="note">En la configuración documentada, el límite es de cuatro rondas. Si persiste un empate en la última, el proceso termina sin acuerdo. El anonimato corresponde a las propuestas sometidas a votación, no a los roles durante la deliberación.</p></section>
+<section class="shell section" id="ontologia"><div class="sectionhead"><div class="number">03 / Estructura semántica</div><div><h2>Una ontología para hacer visibles los argumentos.</h2><p class="intro">La intervención semántica se apoya en una ontología SKOS/RDF externa, organizada en cuatro dimensiones complementarias. No determina qué debe pensar cada agente: orienta una reinterpretación más explícita de su posición inicial.</p></div></div><div class="ontology"><article class="dimension values"><span class="dimnum">01 / SKOS</span><div><h3>Valores</h3><p>Justicia, cooperación, igualdad, propiedad, libertad y competencia.</p></div></article><article class="dimension agenda"><span class="dimnum">02 / SKOS</span><div><h3>Agenda</h3><p>Dimensiones social, institucional, política, tecnológica, económica y ambiental.</p></div></article><article class="dimension rational"><span class="dimnum">03 / SKOS</span><div><h3>Racionalidad</h3><p>Teleología, teoría y evidencia: diferentes formas de fundamentar argumentos.</p></div></article><article class="dimension governance"><span class="dimnum">04 / SKOS</span><div><h3>Gobernanza</h3><p>Corrupción, responsabilidad, control, riesgos, compliance, colaboración, transparencia y sanciones.</p></div></article></div><p class="note">La ontología se mantiene separada del modelo de lenguaje y se representa mediante vocabularios SKOS/RDF en archivos TTL. Las dimensiones describen categorías analíticas, no criterios automáticos de verdad o legitimidad.</p></section>
+<section class="highlight"><div class="shell sectionhead"><div class="number">04 / Principio de diseño</div><div><h2>La <strong>transparencia</strong> es parte del método.</h2><p class="intro">No basta con observar una decisión final. Importa poder distinguir cómo se formaron las posiciones, qué información recibió cada agente y bajo qué reglas se evaluaron las alternativas.</p><p class="bodycopy">Por eso se preservan las posiciones iniciales y revisadas, los estados deliberativos, las alternativas sometidas a voto y los resultados. Los checkpoints permiten interrumpir y reanudar ejecuciones sin perder el estado relevante del experimento.</p></div></section>
+<section class="shell section"><div class="sectionhead"><div class="number">05 / Garantías metodológicas</div><div><h2>Reglas explícitas. Resultados examinables.</h2><p class="intro">El diseño separa tres mecanismos para facilitar el análisis: generación autónoma de posiciones, intervención semántica y deliberación con decisión anónima.</p></div></div><div class="principles"><article class="principle"><h3>Pluralidad de perspectivas</h3><p>Los agentes mantienen perfiles diferenciados. El acuerdo sobre una alternativa no implica identidad de intereses, argumentos o preferencias.</p></article><article class="principle"><h3>Simetría informacional</h3><p>En la ronda deliberativa inicial todos reciben el mismo estado informacional, evitando ventajas derivadas del orden de ejecución.</p></article><article class="principle"><h3>Trazabilidad y límites</h3><p>Los registros permiten auditar la secuencia. Es una simulación con modelos de lenguaje: no reproduce necesariamente las preferencias reales de actores humanos.</p></article></div></section>
+<section class="shell cta"><div><h2>Documentación abierta.</h2><p>El README técnico describe la implementación experimental, sus modificaciones a MALLM y las condiciones de reproducibilidad. Los casos particulares se documentan por separado.</p></div><a class="pill" href="https://github.com/MarianoMosquera/marianomosquera.github.io/blob/main/deliberacion/README.md" target="_blank" rel="noopener noreferrer">Leer README ↗</a></section>
+</main>
+<footer class="shell footer"><span>Mariano Mosquera · Deliberación</span><span>Investigación en ética y gobernanza</span></footer>
+</body>
+</html>
