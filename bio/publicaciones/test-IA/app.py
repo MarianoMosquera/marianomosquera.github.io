@@ -38,38 +38,6 @@ def limpiar_paper():
 
 
 nonce = st.session_state.get('_testia_paper_nonce', 0)
-st.subheader('Gestión de papers')
-col_nuevo, col_recuperar = st.columns(2)
-with col_nuevo:
-    if st.button('Nuevo paper', key=f'nuevo_paper_{nonce}'):
-        st.session_state['_testia_confirmar_nuevo'] = True
-    if st.session_state.get('_testia_confirmar_nuevo'):
-        st.warning('Si no descargaste el expediente, perderás el trabajo de este paper al abandonarlo.')
-        if st.button('Abandonar y comenzar nuevo paper', key=f'confirmar_nuevo_{nonce}'):
-            limpiar_paper()
-            st.rerun()
-        if st.button('Cancelar', key=f'cancelar_nuevo_{nonce}'):
-            st.session_state['_testia_confirmar_nuevo'] = False
-            st.rerun()
-with col_recuperar:
-    zip_subido = st.file_uploader('Recuperar paper (ZIP de TEST-IA)', type=['zip'],
-                                  key=f'recuperar_zip_{nonce}')
-    if zip_subido is not None:
-        st.caption('La recuperación reemplaza el paper actual. No se envía el ZIP a GitHub.')
-        if st.button('Verificar y recuperar paper', key=f'confirmar_recuperar_{nonce}'):
-            try:
-                recuperado = recuperar_zip_auditoria(zip_subido.getvalue())
-            except ValueError as exc:
-                st.error(f'No se recuperó el expediente: {exc}')
-            else:
-                limpiar_paper()
-                st.session_state.update(recuperado)
-                st.session_state['original_firma'] = None
-                st.session_state['_testia_recuperado'] = True
-                st.rerun()
-if st.session_state.pop('_testia_recuperado', False):
-    st.success('Paper recuperado: versiones y eventos restaurados; la atribución final se muestra únicamente si estaba validada en el expediente.')
-
 seccion(1, 'Instrucciones', 'Definí la intervención y el alcance sobre el manuscrito.', '#3566ad', 'rgba(53,102,173,.09)')
 archivo = st.file_uploader('Manuscrito original (.docx)', type=['docx'], key=f'original_upload_{nonce}')
 if archivo is not None:
@@ -246,3 +214,48 @@ else:
             st.caption('Expediente provisional: conserva versiones y eventos, sin atribución final validada.')
     except ValueError as exc:
         st.error(f'No se pudo preparar el expediente: {exc}')
+
+
+st.divider()
+seccion(6, 'Gestión de papers', 'Iniciá una auditoría independiente o retomá un expediente guardado.', '#377b87', 'rgba(55,123,135,.09)')
+st.markdown("""<style>
+.testia-paper-card {padding: .7rem .1rem .35rem;}
+.testia-paper-card h3 {font-size: 1.1rem; margin: 0 0 .4rem;}
+.testia-paper-card p {font-size: .9rem; margin: 0 0 .6rem; opacity: .85;}
+.testia-paper-new h3 {color: #198754;}
+.testia-paper-restore h3 {color: #3978c6;}
+</style>""", unsafe_allow_html=True)
+col_nuevo, col_recuperar = st.columns(2, gap='large')
+with col_nuevo:
+    with st.container(border=True):
+        st.markdown('<div class="testia-paper-card testia-paper-new"><h3>🟢 Nuevo paper</h3><p>Comenzá desde cero con un expediente independiente. Guardar el anterior es opcional.</p></div>', unsafe_allow_html=True)
+        if st.button('Nuevo paper', key=f'nuevo_paper_{nonce}', use_container_width=True):
+            st.session_state['_testia_confirmar_nuevo'] = True
+        if st.session_state.get('_testia_confirmar_nuevo'):
+            st.warning('Si no descargaste el expediente, perderás el trabajo de este paper al abandonarlo.')
+            if st.button('Abandonar y comenzar nuevo paper', key=f'confirmar_nuevo_{nonce}', use_container_width=True):
+                limpiar_paper()
+                st.rerun()
+            if st.button('Cancelar', key=f'cancelar_nuevo_{nonce}', use_container_width=True):
+                st.session_state['_testia_confirmar_nuevo'] = False
+                st.rerun()
+with col_recuperar:
+    with st.container(border=True):
+        st.markdown('<div class="testia-paper-card testia-paper-restore"><h3>🔵 Recuperar paper</h3><p>Subí un ZIP de TEST-IA para retomar versiones, eventos y evidencias de una auditoría anterior.</p></div>', unsafe_allow_html=True)
+        zip_subido = st.file_uploader('Expediente ZIP de TEST-IA', type=['zip'],
+                                      key=f'recuperar_zip_{nonce}')
+        if zip_subido is not None:
+            st.caption('La recuperación reemplaza el paper actual. No se envía el ZIP a GitHub.')
+            if st.button('Verificar y recuperar paper', key=f'confirmar_recuperar_{nonce}', use_container_width=True):
+                try:
+                    recuperado = recuperar_zip_auditoria(zip_subido.getvalue())
+                except ValueError as exc:
+                    st.error(f'No se recuperó el expediente: {exc}')
+                else:
+                    limpiar_paper()
+                    st.session_state.update(recuperado)
+                    st.session_state['original_firma'] = None
+                    st.session_state['_testia_recuperado'] = True
+                    st.rerun()
+if st.session_state.pop('_testia_recuperado', False):
+    st.success('Paper recuperado: versiones y eventos restaurados; la atribución final se muestra únicamente si estaba validada en el expediente.')
