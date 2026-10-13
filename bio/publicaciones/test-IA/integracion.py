@@ -17,7 +17,7 @@ def procesar_revision(version, solicitud, *, api_key, model=DEFAULT_MODEL, clien
                                      error='Error de conexión o respuesta vacía')
         return fallida, None, 'Falló la conexión; la solicitud quedó documentada.'
     evento = registrar_respuesta(solicitud, texto, modelo=model,
-                                parametros={'store': False, 'max_output_tokens': 12000})
+                                parametros={'store': False, 'max_output_tokens': 32000})
     try:
         respuesta = interpretar_json(texto)
         cambios = validar_cambios(respuesta)

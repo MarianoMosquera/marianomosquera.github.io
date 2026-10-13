@@ -12,7 +12,7 @@ from anclajes_word import texto_estructurado
 
 MAX_DOCX_BYTES = 8 * 1024 * 1024
 MAX_INPUT_CHARS = 125_000
-MAX_OUTPUT_TOKENS = 12_000
+MAX_OUTPUT_TOKENS = 32_000
 DEFAULT_MODEL = 'gpt-6-astra'  # configurable en Streamlit Secrets
 
 class ConexionErrorSegura(Exception):
@@ -159,7 +159,7 @@ def ejecutar_api(payload, *, api_key, model=DEFAULT_MODEL, client=None):
         raise ConexionErrorSegura('Falta identificar el modelo.')
     if client is None:
         from openai import OpenAI
-        client = OpenAI(api_key=api_key, timeout=600.0, max_retries=0)
+        client = OpenAI(api_key=api_key, timeout=1800.0, max_retries=0)
     try:
         respuesta = client.responses.create(
             model=model, instructions='Sos un revisor académico. Devolvé exclusivamente JSON válido.',
