@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Guía de archivos del experimento de deliberación multiagente de Tambogrande con MALLM y ontologías RDF/SKOS.">
+<title>Experimento de Tambogrande | Guía de archivos</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#fff;color:#20252b;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}main{max-width:960px;margin:0 auto;padding:54px 26px 75px}h1{font-size:2rem;line-height:1.2;margin:0 0 9px;letter-spacing:-.035em}h2{font-size:1.18rem;margin:37px 0 12px;letter-spacing:-.015em}p{margin:0 0 13px}.subtitle{color:#52606b;font-size:1.03rem;margin-bottom:19px}.intro{max-width:850px}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.91rem}th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid #e4e7eb}th{background:#f7f8fa;color:#394550;font-weight:650}td:first-child{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem;overflow-wrap:anywhere}td:last-child{width:57%}.note{font-size:.92rem;color:#495661}.result{margin-top:19px}.footer{border-top:1px solid #dce1e6;margin-top:42px;padding-top:22px}a{color:#174e82;text-decoration:underline;text-underline-offset:3px}a:hover{color:#0b355b}@media(max-width:600px){main{padding:32px 17px 55px}h1{font-size:1.65rem}table{font-size:.84rem}th,td{padding:9px 7px}td:first-child{font-size:.77rem}td:last-child{width:52%}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>Experimento de Tambogrande</h1>
+<p class="subtitle">Deliberación multiagente con integración ontológica RDF/SKOS y MALLM</p>
+<p class="intro">Experimento de deliberación artificial aplicado al conflicto minero histórico de Tambogrande (Perú), con ocho agentes que representan actores institucionales y sociales, integración de ontologías éticas y decisión mediante votación de aprobación.</p>
+</header>
+<section>
+<h2>1. Configuración del experimento</h2>
+<div class="table-wrap"><table><thead><tr><th>Archivo</th><th>Contenido</th></tr></thead><tbody>
+<tr><td>tambogrande.json</td><td>Contexto del caso, instrucciones y perfiles de los ocho agentes.</td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>2. Ejecuciones individuales</h2>
+<p class="note">Cada actor cuenta con archivos HTML y JSON de su ejecución.</p>
+<div class="table-wrap"><table><thead><tr><th>Actor</th><th>Archivos</th></tr></thead><tbody>
+<tr><td>Manhattan Minerals</td><td>manhattan_run.html · manhattan_run.json</td></tr>
+<tr><td>Centromin Perú</td><td>centromin_run.html · centromin_run.json</td></tr>
+<tr><td>Ministerio de Energía y Minas</td><td>ministerio_run.html · ministerio_run.json</td></tr>
+<tr><td>Municipalidad</td><td>municipalidad_run.html · municipalidad_run.json</td></tr>
+<tr><td>Frente de Defensa</td><td>frente_defensa_run.html · frente_defensa_run.json</td></tr>
+<tr><td>Productores agrícolas y regantes</td><td>productores_regantes_run.html · productores_regantes_run.json</td></tr>
+<tr><td>Mesa Técnica</td><td>mesa_tecnica_run.html · mesa_tecnica_run.json</td></tr>
+<tr><td>Sociedad Nacional de Minería, Petróleo y Energía</td><td>snmpe_run.html · snmpe_run.json</td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>3. Checkpoints de deliberación</h2>
+<div class="table-wrap"><table><thead><tr><th>Archivo</th><th>Contenido</th></tr></thead><tbody>
+<tr><td>checkpoints/round1.json</td><td>Registro de la primera ronda y las posiciones procesadas con SKOS.</td></tr>
+<tr><td>checkpoints/round2.json</td><td>Registro de la segunda ronda, la deliberación y la votación.</td></tr>
+<tr><td>checkpoints/round1_8_agentes_BACKUP.json</td><td>Copia de respaldo de la primera ronda con ocho agentes.</td></tr>
+<tr><td>checkpoints/round1_backup_manhattan.json</td><td>Copia de respaldo correspondiente a Manhattan Minerals.</td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>4. Resultados del experimento</h2>
+<div class="table-wrap"><table><thead><tr><th>Archivo</th><th>Contenido</th></tr></thead><tbody>
+<tr><td>tambogrande_round2_output.html</td><td>Presentación HTML de los resultados de la segunda ronda.</td></tr>
+<tr><td>tambogrande_round2_output.json</td><td>Registro estructurado de la ejecución y la decisión final.</td></tr>
+</tbody></table></div>
+<p class="result"><strong>Resultado:</strong> la propuesta de la Mesa Técnica, «Protocolo de Descarte Temprano y Verificación Pública», recibió ocho aprobaciones sobre ocho mediante votación anónima.</p>
+</section>
+<section>
+<h2>5. Documentación técnica</h2>
+<div class="table-wrap"><table><thead><tr><th>Archivo</th><th>Contenido</th></tr></thead><tbody>
+<tr><td>documentos/Configuracion_tecnica.pdf</td><td>Configuración de MALLM, integración SKOS y modificaciones del procedimiento deliberativo.</td></tr>
+<tr><td>documentos/calculo_diversidad_semantica.pdf</td><td>Comparación semántica de First Drafts y Second Drafts con embeddings y análisis de robustez.</td></tr>
+<tr><td>documentos/Informe_Ronda_2.pdf</td><td>Resultados, matriz de votación y texto completo de la propuesta aprobada.</td></tr>
+<tr><td>documentos/README.md</td><td>Presentación de los documentos técnicos del experimento.</td></tr>
+</tbody></table></div>
+</section>
+<footer class="footer"><p><strong>Repositorio del experimento Tambogrande</strong></p><p><a href="https://github.com/MarianoMosquera/marianomosquera.github.io/tree/main/deliberacion/mallm/experiments/tambogrande">Consultar el repositorio completo en GitHub</a></p></footer>
+</main>
+</body>
+</html>
