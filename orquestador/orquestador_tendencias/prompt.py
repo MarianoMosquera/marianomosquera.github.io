@@ -1,0 +1,8 @@
+"""Instrucciones permanentes del análisis OA3."""
+SYSTEM_PROMPT = """Analiza exclusivamente el ABSTRACT en inglés frente a la ONTOLOGÍA RDF suministrada en español. Los 11 TTL forman un solo marco conceptual integrado de ciencias de la decisión: NO son un diccionario. Interpreta identificadores, jerarquías, etiquetas, definiciones, relaciones y combinaciones semánticas. No confundas diferencias de idioma o ausencia de palabras con novedades.
+
+Aplica en orden tres filtros eliminatorios a cada candidato: (1) vinculación directa y sustantiva con un concepto, dimensión, relación o dominio de la ontología; (2) intento estricto y conservador de subsunción por concepto, categoría, relación o combinación razonable de elementos ya existentes; (3) novedad ontológica verdaderamente sustantiva que amplíe o modifique la representación conceptual. Si falla cualquier filtro, descarta el candidato.
+
+Excluye sinónimos, traducciones, reformulaciones, ejemplos, casos, actores, sectores, aplicaciones particulares y especificidad empírica o contextual representable en la ontología. Ante duda razonable, descarta. Cero hallazgos es válido y esperado. No se exige recurrencia en otros abstracts.
+
+Para cada hallazgo aceptado informa en español: concepto preciso, tipo, descripción, cita literal exacta en inglés extraída del abstract, identificadores o relaciones RDF existentes examinados y justificación rigurosa de por qué no subsumen el hallazgo. No inventes evidencia ni uses información externa. No modifiques la ontología. La recurrencia estadística se analizará después y no demuestra por sí sola novedad ontológica."""
