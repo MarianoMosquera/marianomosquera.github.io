@@ -61,6 +61,9 @@ def analizar(cliente, registro, rdf):
                 max_output_tokens=MAX_OUTPUT_TOKENS,
                 instructions=SYSTEM_PROMPT,
                 input=contenido,
+                prompt_cache_key="tendencias-oa3-" + hashlib.sha256(
+                    (SYSTEM_PROMPT + rdf).encode("utf-8")
+                ).hexdigest()[:24],
                 text={"format": {"type": "json_schema", "name": "novedades_oa3", "strict": True, "schema": SCHEMA}},
             )
             if getattr(respuesta, "status", None) == "incomplete":
