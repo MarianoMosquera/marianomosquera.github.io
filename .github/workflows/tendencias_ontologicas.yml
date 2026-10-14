@@ -12,6 +12,7 @@ on:
           - "0"
           - "2"
           - "4"
+          - "6"
       cantidad:
         description: "Cantidad de abstracts (0 = corpus completo)"
         required: true
