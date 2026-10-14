@@ -111,6 +111,11 @@ ex:Estabilidad
     skos:prefLabel "Estabilidad"@es ;
     skos:broader ex:Cooperacion .
 
+ex:Subsidiariedad
+    a skos:Concept ;
+    skos:prefLabel "Subsidiariedad"@es ;
+    skos:broader ex:Cooperacion .
+
 ex:Igualdad
     a skos:Concept ;
     skos:prefLabel "Igualdad"@es .
