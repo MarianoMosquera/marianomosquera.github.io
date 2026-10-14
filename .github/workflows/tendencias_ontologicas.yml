@@ -3,6 +3,15 @@ name: Tendencias ontologicas
 on:
   workflow_dispatch:
     inputs:
+      inicio:
+        description: "Cantidad de abstracts iniciales que se omiten"
+        required: true
+        default: "2"
+        type: choice
+        options:
+          - "0"
+          - "2"
+          - "4"
       cantidad:
         description: "Cantidad de abstracts (0 = corpus completo)"
         required: true
@@ -40,6 +49,7 @@ jobs:
         run: |
           python -m orquestador.orquestador_tendencias.motor \
             --limit "${{ inputs.cantidad }}" \
+            --offset "${{ inputs.inicio }}" \
             --out resultados_tendencias
 
       - name: Descargar resultados

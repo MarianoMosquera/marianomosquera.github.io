@@ -95,6 +95,7 @@ def analizar(cliente, registro, rdf):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=0, help="0: corpus completo")
+    parser.add_argument("--offset", type=int, default=0, help="Abstracts iniciales que se omiten")
     parser.add_argument("--out", default=str(BASE / "resultados"))
     args = parser.parse_args()
     if args.limit < 0:
@@ -102,6 +103,7 @@ def main():
     if not os.getenv("OPENAI_API_KEY"):
         raise SystemExit("Falta OPENAI_API_KEY; no se realizaron llamadas")
     registros = cargar_corpus()
+    registros = registros[args.offset:]
     if args.limit:
         registros = registros[:args.limit]
     grafo = cargar_ontologia()
